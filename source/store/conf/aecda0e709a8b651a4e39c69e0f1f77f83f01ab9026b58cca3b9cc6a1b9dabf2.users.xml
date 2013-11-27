@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<jappix xmlns="jappix:conf:users">
+	<user name="yunohost_admin" password="aaa0cc4c5bf16f0d8c5c5e351322b53d4606b7ea4ff211f0bb8279342530f075" />
+</jappix>
