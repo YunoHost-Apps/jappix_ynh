@@ -1,0 +1,33 @@
+{
+  "name": "Jappix",
+  "id": "jappix",
+  "description": {
+    "en": "A free social network",
+    "fr": "Un reseau social libre"
+  },
+  "developer": {
+    "name": "titoko",
+    "email": "titoko@titoko.fr",
+    "url": "http://dev.yunohost.org"
+  },
+  "multi_instance": "true",
+  "arguments": {
+    "install" : [
+    {
+      "name": "domain",
+      "ask": {
+        "en": "Choose a domain for Jappix"
+      },
+      "example": "domain.org"
+    },
+    {
+      "name": "path",
+      "ask": {
+        "en": "Choose a path for Jappix"
+      },
+      "example": "/jappix",
+      "default": "/jappix"
+    }
+    ]
+  }
+}

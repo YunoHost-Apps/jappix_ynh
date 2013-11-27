@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>                                                                
+<jappix xmlns="jappix:conf:hosts">                                                                       
+  <main>DOMAINTOCHANGE</main>                                                                       
+  <muc>muc.DOMAINTOCHANGE</muc>                                                                       
+  <pubsub>pubsub.DOMAINTOCHANGE</pubsub>                                                                       
+  <vjud>vjud.DOMAINTOCHANGE</vjud>                                                                       
+  <anonymous>anonymous.DOMAINTOCHANGE</anonymous>                                                                       
+  <bosh>https://DOMAINTOCHANGEPATHTOCHANGE/http-bind</bosh>
+  <bosh_main></bosh_main>                                                                       
+  <bosh_mini></bosh_mini>                                                                       
+  <static></static>                                                                      
+  <upload></upload>                                                                      
+  <bosh_proxy>off</bosh_proxy>                                                                       
+</jappix>
