@@ -19,7 +19,7 @@ db_pwd=$(dd if=/dev/urandom bs=1 count=200 2> /dev/null | tr -c -d '[A-Za-z0-9]'
   final_path=/var/www/jappix
   sudo mkdir -p $final_path
   sudo cp -r ../source/* $final_path
-  sudo cp ../conf/*.xml $fnal_path/store/conf/
+  sudo cp ../conf/*.xml $final_path/store/conf/
 
 # Set permissions to jappix directory
 sudo chown -R www-data: $final_path
