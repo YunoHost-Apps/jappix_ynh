@@ -11,7 +11,7 @@ exit 1
 fi
 
 # Remove trailing "/" for next commands
-if [ !$path = "/" ]; then
+if [ $path != "/" ]; then
 path=${path%/}
 fi
 
