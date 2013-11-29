@@ -5,7 +5,7 @@
   <pubsub>pubsub.DOMAINTOCHANGE</pubsub>                                                                       
   <vjud>vjud.DOMAINTOCHANGE</vjud>                                                                       
   <anonymous>anonymous.DOMAINTOCHANGE</anonymous>                                                                       
-  <bosh>https://DOMAINTOCHANGE/PATHTOCHANGE/http-bind</bosh>
+  <bosh>https://DOMAINTOCHANGEPATHTOCHANGE/http-bind</bosh>
   <bosh_main></bosh_main>                                                                       
   <bosh_mini></bosh_mini>                                                                       
   <static></static>                                                                      
