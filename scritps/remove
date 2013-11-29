@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo rm -rf /var/www/jappix
+sudo rm -f /etc/nginx/conf.d/$domain.d/jappix.conf
