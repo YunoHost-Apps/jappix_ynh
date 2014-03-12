@@ -1,5 +1,13 @@
-Jappix - An open social platform
-================================
+<img src="https://project.jappix.com/img/logos/jappix_github.png" alt="Jappix" />
+
+
+Jappix is a fresh new open social platform which enables you to create your own cloud, wherever you want to. People must be able to get in touch with all their friends on a free decentralized network!
+
+You can build your own Jappix installation for your own requirements: if you want to use it as a personal social client, you can download it and put it on your webserver. It's easy, fast and free.
+
+
+[![build status](https://ci.frenchtouch.pro/projects/7/status.png?ref=master)](https://ci.frenchtouch.pro/projects/7?ref=master)
+
 
 License
 -------
@@ -28,7 +36,7 @@ Links
 * Jappix project dev panel: https://github.com/jappix/jappix
 * Jappix nodes list: http://jappix.net/
 * Jappix main service: https://jappix.com/
-* Jappix commercial support: http://jappix.pro/
+* Jappix commercial support: https://jappix.pro/
 
 
 Mirrors
@@ -37,7 +45,7 @@ Mirrors
 In case a master service is down (GitHub for Git access or Jappix.org for project download), here is a list of available mirrors:
 
 * Project website mirror: https://project.jappix.com/
-* Git read-only mirror: git clone https://code.frenchtouch.pro/jappix/jappix.git
+* Development repository mirror: https://code.frenchtouch.pro/jappix/jappix
 
 
 MUC Links
