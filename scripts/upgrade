@@ -1,13 +1,9 @@
 #!/bin/bash
 
 # Retrieve arguments
-domain=$1
-path=$2
+domain=$(sudo yunohost app setting jappix domain)
+path=$(sudo yunohost app setting jappix path)
 
-# Check domain/path availability
-if [[ ! $? -eq 0 ]]; then
-exit 1
-fi
 
 # Remove trailing "/" for next commands
 path=${path%/}
