@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>                                                                
+<jappix xmlns="jappix:conf:hosts">                                                                       
+  <main>titoko.fr</main>                                                                       
+  <muc>muc.titoko.fr</muc>                                                                       
+  <pubsub>pubsub.titoko.fr</pubsub>                                                                       
+  <vjud>vjud.titoko.fr</vjud>                                                                       
+  <anonymous>anonymous.titoko.fr</anonymous>                                                                       
+  <bosh>https://titoko.fr/jappix/http-bind</bosh>
+  <bosh_main></bosh_main>                                                                       
+  <bosh_mini></bosh_mini>                                                                       
+  <static></static>                                                                      
+  <upload></upload>                                                                      
+  <bosh_proxy>off</bosh_proxy>                                                                       
+</jappix>
