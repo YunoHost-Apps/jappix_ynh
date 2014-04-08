@@ -1,14 +1,19 @@
-<?xml version="1.0" encoding="utf-8" ?>                                                                
-<jappix xmlns="jappix:conf:hosts">                                                                       
-  <main>DOMAINTOCHANGE</main>                                                                       
-  <muc>muc.DOMAINTOCHANGE</muc>                                                                       
-  <pubsub>pubsub.DOMAINTOCHANGE</pubsub>                                                                       
-  <vjud>vjud.DOMAINTOCHANGE</vjud>                                                                       
-  <anonymous>anonymous.DOMAINTOCHANGE</anonymous>                                                                       
-  <bosh>https://DOMAINTOCHANGEPATHTOCHANGE/http-bind</bosh>
-  <bosh_main></bosh_main>                                                                       
-  <bosh_mini></bosh_mini>                                                                       
-  <static></static>                                                                      
-  <upload></upload>                                                                      
-  <bosh_proxy>off</bosh_proxy>                                                                       
+<?xml version="1.0" encoding="utf-8" ?>
+<jappix xmlns="jappix:conf:hosts">
+    <main>DOMAINTOCHANGE</main>
+    <muc>muc.DOMAINTOCHANGE</muc>
+    <pubsub>pubsub.DOMAINTOCHANGE</pubsub>
+    <vjud>vjud.DOMAINTOCHANGE</vjud>
+    <anonymous>anonymous.DOMAINTOCHANGE</anonymous>
+    <stun>stun.jappix.com</stun>
+    <turn></turn>
+    <turn_username></turn_username>
+    <turn_password></turn_password>
+    <bosh>https://DOMAINTOCHANGEPATHTOCHANGE/http-bind</bosh>
+    <bosh_main></bosh_main>
+    <bosh_mini></bosh_mini>
+    <websocket></websocket>
+    <static></static>
+    <upload></upload>
+    <bosh_proxy>off</bosh_proxy>
 </jappix>
