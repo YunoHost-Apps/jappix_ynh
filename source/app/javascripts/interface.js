@@ -24,7 +24,7 @@ var Interface = (function () {
     self.chat_focus_hash = null;
 
 
-	/**
+    /**
      * Changes the title of the document
      * @public
      * @param {string} new_title
@@ -166,7 +166,7 @@ var Interface = (function () {
     };
 
 
-	/**
+    /**
      * Loads the complete chat switcher
      * @public
      * @return {undefined}
@@ -433,7 +433,7 @@ var Interface = (function () {
     };
 
 
-	/**
+    /**
      * Notifies the user from a new incoming message
      * @public
      * @param {string} hash
@@ -451,17 +451,19 @@ var Interface = (function () {
             // We notify the user if he has not the focus on the chat
             if(!active || !Common.isFocused() || (self.chat_focus_hash != hash)) {
                 if(!active) {
-                    if(type == 'personal')
+                    if(type == 'personal') {
                         $(tested + ', ' + chat_switch + 'more-button').addClass('chan-newmessage');
-                    else if(type == 'unread')
+                    } else if(type == 'unread') {
                         $(tested).addClass('chan-unread');
+                    }
                 }
                 
                 // Count the number of pending messages
                 var pending = 1;
                 
-                if(Common.exists('#' + hash + '[data-counter]'))
+                if(Common.exists('#' + hash + '[data-counter]')) {
                     pending = parseInt($('#' + hash).attr('data-counter')) + 1;
+                }
                 
                 $('#' + hash).attr('data-counter', pending);
             }
@@ -570,7 +572,7 @@ var Interface = (function () {
     };
 
 
-	/**
+    /**
      * Shows all the buddies in the roster
      * @public
      * @param {string} from

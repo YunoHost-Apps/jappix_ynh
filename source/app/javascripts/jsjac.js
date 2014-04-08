@@ -77,7 +77,7 @@ XmlHttp.create = function () {
       }
       
       // Fallback on JSONP
-    	return new jXHR();
+      return new jXHR();
     }
     // Might be local-domain?
     if (window.XMLHttpRequest) {
@@ -86,12 +86,12 @@ XmlHttp.create = function () {
       // some versions of Moz do not support the readyState property
       // and the onreadystate event so we patch it!
       if (req.readyState == null) {
-	req.readyState = 1;
-	req.addEventListener("load", function () {
-			       req.readyState = 4;
-			       if (typeof req.onreadystatechange == "function")
-				 req.onreadystatechange();
-			     }, false);
+  req.readyState = 1;
+  req.addEventListener("load", function () {
+             req.readyState = 4;
+             if (typeof req.onreadystatechange == "function")
+         req.onreadystatechange();
+           }, false);
       }
       
       return req;
@@ -146,12 +146,12 @@ XmlDocument.create = function (name,ns) {
       // some versions of Moz do not support the readyState property
       // and the onreadystate event so we patch it!
       if (doc.readyState == null) {
-	doc.readyState = 1;
-	doc.addEventListener("load", function () {
-			       doc.readyState = 4;
-			       if (typeof doc.onreadystatechange == "function")
-				 doc.onreadystatechange();
-			     }, false);
+        doc.readyState = 1;
+        doc.addEventListener("load", function () {
+             doc.readyState = 4;
+             if (typeof doc.onreadystatechange == "function")
+               doc.onreadystatechange();
+        }, false);
       }
     } else if (window.ActiveXObject) {
       doc = new ActiveXObject(XmlDocument.getPrefix() + ".DomDocument");
@@ -218,14 +218,14 @@ if (typeof(Document) != 'undefined' && window.DOMParser) {
    * @private
    */
   Document.prototype.loadXML = function (s) {
-	
+  
     // parse the string to a new doc
     var doc2 = (new DOMParser()).parseFromString(s, "text/xml");
-	
+  
     // remove all initial children
     while (this.hasChildNodes())
       this.removeChild(this.lastChild);
-		
+    
     // insert and import nodes
     for (var i = 0; i < doc2.childNodes.length; i++) {
       this.appendChild(this.importNode(doc2.childNodes[i], true));
@@ -312,7 +312,7 @@ String.prototype.htmlEnc = function() {
 String.prototype.revertHtmlEnc = function() {
   if(!this)
     return this;
-  
+
   var str = this.replace(/&amp;/gi,'&');
   str = str.replace(/&lt;/gi,'<');
   str = str.replace(/&gt;/gi,'>');
@@ -333,7 +333,7 @@ String.prototype.revertHtmlEnc = function() {
 Date.jab2date = function(ts) {
   // Timestamp
   if(!isNaN(ts))
-  	return new Date(ts * 1000);
+    return new Date(ts * 1000);
   
   // Get the UTC date
   var date = new Date(Date.UTC(ts.substr(0,4),ts.substr(5,2)-1,ts.substr(8,2),ts.substr(11,2),ts.substr(14,2),ts.substr(17,2)));
@@ -361,7 +361,17 @@ Date.hrTime = function(ts) {
   return Date.jab2date(ts).toLocaleString();
 };
 
-/**
+
+ /**
+  * Current timestamp.
+  * @return Seconds since 1.1.1970.
+  * @type int
+  */
+ if (!Date.now) {
+     Date.now = function() { return new Date().getTime(); }
+ }
+ 
+ /**
  * somewhat opposit to {@link #hrTime}
  * expects a javascript Date object as parameter and returns a jabber
  * date string conforming to
@@ -1195,6 +1205,7 @@ function cnonce(size) {
 
 JSJAC_HAVEKEYS = true;          // whether to use keys
 JSJAC_NKEYS    = 16;            // number of keys to generate
+
 JSJAC_INACTIVITY = 300;         // qnd hack to make suspend/resume 
                                     // work more smoothly with polling
 JSJAC_ERR_COUNT = 10;           // number of retries in case of connection
@@ -1209,11 +1220,19 @@ JSJAC_TIMERVAL = 2000;          // default polling interval
 JSJAC_ALLOW_PLAIN = true;       // whether to allow plaintext logins
 JSJAC_ALLOW_SCRAM = false;      // allow usage of SCRAM-SHA-1 authentication; please note that it is quite slow so it is disable by default
 
-// Options specific to HTTP Binding (BOSH)
-JSJACHBC_MAX_HOLD = 1;          // default for number of connections held by 
-                                    // connection manager 
-JSJACHBC_MAX_WAIT = 20;        // default 'wait' param - how long an idle connection
-                                    // should be held by connection manager
+JSJAC_RETRYDELAY = 5000;        // msecs to wait before trying next
+                                // request after error
+
+JSJAC_REGID_TIMEOUT = 20000;    // time in msec until registered
+                                // callbacks for ids timeout
+
+/* Options specific to HTTP Binding (BOSH) */
+JSJACHBC_MAX_HOLD = 1;          // default for number of connctions
+                                // held by connection manager
+
+JSJACHBC_MAX_WAIT = 300;        // default 'wait' param - how long an
+                                // idle connection should be held by
+                                // connection manager
 
 JSJACHBC_BOSH_VERSION  = "1.6";
 JSJACHBC_USE_BOSH_VER  = true;
@@ -1265,7 +1284,7 @@ JSJaCJSON.toString = function (obj) {
         v = x[i];
         f = s[typeof v];
         if (f) {
-	  try {
+    try {
             v = f(v);
             if (typeof v == 'string') {
               if (b) {
@@ -1274,8 +1293,8 @@ JSJaCJSON.toString = function (obj) {
               a[a.length] = v;
               b = true;
             }
-	  } catch(e) { 
-	  }
+    } catch(e) { 
+    }
         }
       }
       a[a.length] = ']';
@@ -1301,7 +1320,7 @@ JSJaCJSON.toString = function (obj) {
             v = x[i];
             f = s[typeof v];
             if (f) {
-	      try {
+        try {
                 v = f(v);
                 if (typeof v == 'string') {
                   if (b) {
@@ -1310,8 +1329,8 @@ JSJaCJSON.toString = function (obj) {
                   a.push(s.string(i), ':', v);
                   b = true;
                 }
-	      } catch(e) {
-	      }
+        } catch(e) {
+        }
             }
           }
         }
@@ -1517,7 +1536,7 @@ JSJaCJID.prototype.clone = function() {
  */
 JSJaCJID.prototype.isEntity = function(jid) {
   if (typeof jid == 'string')
-	  jid = (new JSJaCJID(jid));
+    jid = (new JSJaCJID(jid));
   jid.removeResource();
   return (this.clone().removeResource().toString() === jid.toString());
 };
@@ -2263,7 +2282,7 @@ JSJaCIQ.prototype.setQuery = function(xmlns) {
     query = this.getDoc().createElementNS(xmlns,'query');
   } catch (e) {
     query = this.getDoc().createElement('query');
-	query.setAttribute('xmlns',xmlns);
+  query.setAttribute('xmlns',xmlns);
   }
   this.getNode().appendChild(query);
   return query;
@@ -2483,7 +2502,7 @@ function JSJaCError(code,type,condition) {
  * @constructor
  * @param {Function} func The hash function to be used for creating the keys
  * @param {Debugger} oDbg Reference to debugger implementation [optional]
- */									 
+ */                  
 function JSJaCKeys(func,oDbg) {
   var seed = Math.random();
 
@@ -2965,9 +2984,9 @@ JSJaCConnection.prototype.resumeFromData = function(data) {
       this._handleEvent('onresume');
       setTimeout(JSJaC.bind(this._resume, this),this.getPollInterval());
       this._interval = setInterval(JSJaC.bind(this._checkQueue, this),
-				   JSJAC_CHECKQUEUEINTERVAL);
+           JSJAC_CHECKQUEUEINTERVAL);
       this._inQto = setInterval(JSJaC.bind(this._checkInQ, this),
-				JSJAC_CHECKINQUEUEINTERVAL);
+        JSJAC_CHECKINQUEUEINTERVAL);
     }
 
     return (this._connected === true);
@@ -3009,7 +3028,7 @@ JSJaCConnection.prototype.send = function(packet,cb,arg) {
 
   // remember id for response if callback present
   if (cb)
-    this._registerPID(packet.getID(),cb,arg);
+    this._registerPID(packet, cb, arg);
 
   try {
     this._handleEvent(packet.pType()+'_out', packet);
@@ -3063,7 +3082,7 @@ JSJaCConnection.prototype.sendIQ = function(iq, handlers, arg) {
 
 /**
  * Sets polling interval for this connection
- * @param {int} millisecs Milliseconds to set timer to
+ * @param {int} timerval Milliseconds to set timer to
  * @return effective interval this connection has been set to
  * @type int
  */
@@ -3502,6 +3521,11 @@ JSJaCConnection.prototype._doXMPPSess = function(iq) {
   this.fulljid = iq.getChildVal("jid");
   this.jid = this.fulljid.substring(0,this.fulljid.lastIndexOf('/'));
 
+  if (!this.legacy_sessions) {
+    this._handleEvent('onconnect');
+    return;
+  }
+
   iq = new JSJaCIQ();
   iq.setIQ(null,'set','sess_1');
   iq.appendNode("session", {xmlns: "urn:ietf:params:xml:ns:xmpp-session"},
@@ -3539,8 +3563,8 @@ JSJaCConnection.prototype._handleEvent = function(event,arg) {
         if (arg) {
           if (arg.pType) { // it's a packet
             if ((!arg.getNode().hasChildNodes() && aEvent.childName != '*') ||
-				(arg.getNode().hasChildNodes() &&
-				 !arg.getChild(aEvent.childName, aEvent.childNS)))
+        (arg.getNode().hasChildNodes() &&
+         !arg.getChild(aEvent.childName, aEvent.childNS)))
               continue;
             if (aEvent.type != '*' &&
                 arg.getType() != aEvent.type)
@@ -3573,29 +3597,39 @@ JSJaCConnection.prototype._handleEvent = function(event,arg) {
 /**
  * @private
  */
-JSJaCConnection.prototype._handlePID = function(aJSJaCPacket) {
-  if (!aJSJaCPacket.getID())
+JSJaCConnection.prototype._handlePID = function(packet) {
+  if (!packet.getID())
     return false;
-  for (var i in this._regIDs) {
-    if (this._regIDs.hasOwnProperty(i) &&
-        this._regIDs[i] && i == aJSJaCPacket.getID()) {
-      var pID = aJSJaCPacket.getID();
-      this.oDbg.log("handling "+pID,3);
-      try {
-        if (this._regIDs[i].cb.call(this, aJSJaCPacket, this._regIDs[i].arg) === false) {
-          // don't unregister
-          return false;
-        } else {
-          this._unregisterPID(pID);
-          return true;
-        }
-      } catch (e) {
-        // broken handler?
-        this.oDbg.log(e.name+": "+ e.message, 1);
-        this._unregisterPID(pID);
+
+  if (packet.pType() != 'iq' ||
+         (packet.getType() != 'error' && packet.getType() != 'result'))
+    return false; 
+
+  var jid = packet.getFrom() || this.jid;
+
+  if (packet.getFrom() == this.domain)
+    jid = this.jid;
+
+  var id = packet.getID();
+  if (this._regIDs[jid] && this._regIDs[jid][id]) {
+    try {
+      this.oDbg.log("handling id "+id,3);
+      var reg = this._regIDs[jid][id];
+      if (reg.cb.call(this, packet, reg.arg) === false) {
+        // don't unregister
+        return false;
+      } else {
+        delete this._regIDs[jid][id];
         return true;
       }
+    } catch (e) {
+      // broken handler?
+      this.oDbg.log(e.name+": "+ e.message, 1);
+      delete this._regIDs[jid][id];
+      return true;
     }
+  } else {
+    this.oDbg.log("not handling id '"+id+"' from jid "+jid, 1);
   }
   return false;
 };
@@ -3685,6 +3719,12 @@ JSJaCConnection.prototype._parseStreamFeatures = function(doc) {
         this.server_caps=v_sCaps;
         break;
       }
+    }
+
+    // Get legacy session capability if available
+    this.legacy_sessions=null;
+    if (doc.getElementsByTagName("session")[0]) {
+	this.legacy_sessions=true;
     }
     
     return true;
@@ -3784,20 +3824,69 @@ JSJaCConnection.prototype._process = function(timerval) {
 
 /**
  * @private
+   @param {JSJaCPacket} packet The packet to be sent.
+   @param {function} cb The callback to be called when response is received.
+   @param {any} arg Optional arguments to be passed to 'cb' when executing it.
+   @return Whether registering an ID was successful
+   @type boolean
  */
-JSJaCConnection.prototype._registerPID = function(pID,cb,arg) {
-  if (!pID || !cb)
+JSJaCConnection.prototype._registerPID = function(packet, cb, arg) {
+  this.oDbg.log("registering id for packet "+packet.xml(), 3);
+  var id = packet.getID();
+  if (!id) {
+    this.oDbg.log("id missing", 1);
     return false;
-  this._regIDs[pID] = new Object();
-  this._regIDs[pID].cb = cb;
-  if (arg)
-    this._regIDs[pID].arg = arg;
-  this.oDbg.log("registered "+pID,3);
+  }
+
+  if (typeof cb != 'function') {
+    this.oDbg.log("callback is not a function", 1);
+    return false;
+  }
+
+  var jid = packet.getTo() || this.jid;
+
+  if (packet.getTo() == this.domain)
+    jid = this.jid;
+
+  if (!this._regIDs[jid]) {
+    this._regIDs[jid] = {};
+  }
+
+  if (this._regIDs[jid][id] != null) {
+    this.oDbg.log("id already registered: " + id, 1);
+    return false;
+  }
+  this._regIDs[jid][id] = {
+      cb:  cb,
+      arg: arg,
+      ts:  Date.now()
+  };
+  this.oDbg.log("registered id "+id,3);
+  this._cleanupRegisteredPIDs();
   return true;
 };
 
 /**
- * partial function binding sendEmpty to callback
+ * @private
+ */
+JSJaCConnection.prototype._cleanupRegisteredPIDs = function() {
+  var now = Date.now();
+  for (var jid in this._regIDs) {
+    if (this._regIDs.hasOwnProperty(jid)) {
+      for (var id in this._regIDs[jid]) {
+        if (this._regIDs[jid].hasOwnProperty(id)) {
+          if (this._regIDs[jid][id].ts + JSJAC_REGID_TIMEOUT < now) {
+            this.oDbg.log("deleting registered id '"+id+ "' due to timeout", 1);
+            delete this._regIDs[jid][id];
+          }
+        }
+      }
+    }
+  }
+};
+
+/**
+ * Partial function binding sendEmpty to callback
  * @private
  */
 JSJaCConnection.prototype._prepSendEmpty = function(cb, ctx) {
@@ -3860,17 +3949,6 @@ JSJaCConnection.prototype._setStatus = function(status) {
     this._handleEvent('onstatuschanged', status);
     this._handleEvent('status_changed', status);
   }
-};
-
-/**
- * @private
- */
-JSJaCConnection.prototype._unregisterPID = function(pID) {
-  if (!this._regIDs[pID])
-    return false;
-  this._regIDs[pID] = null;
-  this.oDbg.log("unregistered "+pID,3);
-  return true;
 };
 
 
@@ -4240,18 +4318,18 @@ JSJaCHttpBindingConnection.prototype._parseResponse = function(req) {
     }
   } catch (e) {
     this.oDbg.log("XMLHttpRequest error: status not available", 1);
-	  this._errcnt++;
-	  if (this._errcnt > JSJAC_ERR_COUNT) {
-	    // abort
-	    this._abort();
-	  } else {
+    this._errcnt++;
+    if (this._errcnt > JSJAC_ERR_COUNT) {
+      // abort
+      this._abort();
+    } else {
       if (this.connected()) {
-	      this.oDbg.log("repeating ("+this._errcnt+")",1);
+        this.oDbg.log("repeating ("+this._errcnt+")",1);
 
-	      this._setStatus('proto_error_fallback');
+        this._setStatus('proto_error_fallback');
 
-	      // schedule next tick
-	      setTimeout(JSJaC.bind(this._resume, this),
+        // schedule next tick
+        setTimeout(JSJaC.bind(this._resume, this),
                    this.getPollInterval());
       }
     }
@@ -4260,7 +4338,7 @@ JSJaCHttpBindingConnection.prototype._parseResponse = function(req) {
 
   var body = r.responseXML.documentElement;
   if (!body || body.tagName != 'body' ||
-	  body.namespaceURI != 'http://jabber.org/protocol/httpbind') {
+    body.namespaceURI != 'http://jabber.org/protocol/httpbind') {
     this.oDbg.log("invalid response:\n" + r.responseText,1);
 
     clearTimeout(this._timeout); // remove timer
@@ -4273,7 +4351,7 @@ JSJaCHttpBindingConnection.prototype._parseResponse = function(req) {
 
     this._setStatus('internal_server_error');
     this._handleEvent('onerror',
-		      JSJaCError('500','wait','internal-server-error'));
+          JSJaCError('500','wait','internal-server-error'));
 
     return null;
   }
@@ -4841,7 +4919,7 @@ JSJaCWebSocketConnection.prototype.send = function(packet, cb, arg) {
     }
 
     // register callback with id
-    this._registerPID(packet.getID(), cb, arg);
+    this._registerPID(packet, cb, arg);
   }
 
   try {

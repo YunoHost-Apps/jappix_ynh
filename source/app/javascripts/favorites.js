@@ -20,7 +20,7 @@ var Favorites = (function () {
     var self = {};
 
 
-	/**
+    /**
      * Opens the favorites popup
      * @public
      * @return {undefined}
@@ -255,7 +255,7 @@ var Favorites = (function () {
     };
 
 
-	/**
+    /**
      * Edits a favorite
      * @public
      * @return {undefined}
@@ -365,6 +365,8 @@ var Favorites = (function () {
             Console.info('Action on this bookmark: ' + room + '@' + server + ' / ' + type);
         } catch(e) {
             Console.error('Favorites.terminateThis', e);
+        } finally {
+            return false;
         }
 
     };
@@ -444,7 +446,7 @@ var Favorites = (function () {
     };
 
 
-	/**
+    /**
      * Gets a list of the MUC items on a given server
      * @public
      * @return {undefined}
@@ -663,11 +665,11 @@ var Favorites = (function () {
                 if(e.keyCode == 13) {
                     // Edit a favorite
                     if($(path + 'fedit-edit').is(':visible'))
-                        terminateThis('edit');
+                        self.terminateThis('edit');
                     
                     // Add a favorite
                     else
-                        terminateThis('add');
+                        self.terminateThis('add');
                 }
             });
             
@@ -690,15 +692,15 @@ var Favorites = (function () {
             });
             
             $(path + 'fedit-add').click(function() {
-                return terminateThis('add');
+                return self.terminateThis('add');
             });
             
             $(path + 'fedit-edit').click(function() {
-                return terminateThis('edit');
+                return self.terminateThis('edit');
             });
             
             $(path + 'fedit-remove').click(function() {
-                return terminateThis('remove');
+                return self.terminateThis('remove');
             });
             
             $(path + 'bottom .finish').click(function() {

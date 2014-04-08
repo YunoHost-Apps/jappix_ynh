@@ -20,7 +20,7 @@ var PEP = (function () {
     var self = {};
 
 
-	/**
+    /**
      * Stores the PEP items
      * @public
      * @param {string} xid
@@ -549,7 +549,7 @@ var PEP = (function () {
     };
 
 
-	/**
+    /**
      * Sends the user's activity
      * @public
      * @param {string} main
@@ -777,7 +777,7 @@ var PEP = (function () {
     };
 
 
-	/**
+    /**
      * Geolocates the user
      * @public
      * @return {undefined}
@@ -809,7 +809,7 @@ var PEP = (function () {
 
 
     /**
-     * Gets the user's microblog to check it exists
+     * Gets the user's geolocation to check it exists
      * @public
      * @return {undefined}
      */
@@ -833,7 +833,7 @@ var PEP = (function () {
 
 
     /**
-     * Handles the user's microblog to create it in case of error
+     * Handles the user's geolocation to create note in case of error
      * @public
      * @param {object} iq
      * @return {undefined}

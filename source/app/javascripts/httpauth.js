@@ -20,7 +20,7 @@ var HTTPAuth = (function () {
     var self = {};
 
 
-	/**
+    /**
      * Login to a HTTP session
      * @public
      * @param {string} lNick
@@ -55,7 +55,7 @@ var HTTPAuth = (function () {
             }
             
             // And we handle everything that happen
-            self.setupCon(con);
+            Connection.setupCon(con);
             
             // Generate a resource
             var random_resource = DataStore.getDB(Connection.desktop_hash, 'session', 'resource');

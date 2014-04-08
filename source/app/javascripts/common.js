@@ -20,7 +20,7 @@ var Common = (function () {
     var self = {};
 
 
-	/**
+    /**
      * Checks if an element exists in the DOM
      * @public
      * @param {string} path
@@ -162,7 +162,7 @@ var Common = (function () {
     };
 
 
-	/**
+    /**
      * Replaces '%s' to a given value for a translated string
      * @public
      * @param {string} string
@@ -298,7 +298,7 @@ var Common = (function () {
     };
 
 
-	/**
+    /**
      * nodepreps an XMPP node
      * @public
      * @param {string} node
@@ -360,8 +360,9 @@ var Common = (function () {
             xid = self.cutResource(xid);
             
             // Launch nodeprep
-            if(xid.indexOf('@') != -1)
+            if(xid.indexOf('@') != -1) {
                 xid = self.nodeprep(self.getXIDNick(xid)) + '@' + self.getXIDHost(xid);
+            }
             
             return xid;
         } catch(e) {
@@ -417,7 +418,7 @@ var Common = (function () {
     };
 
 
-	/**
+    /**
      * Gets the host from a XID
      * @public
      * @param {string} aXID
@@ -482,7 +483,7 @@ var Common = (function () {
     };
 
 
-	/**
+    /**
      * Gets the full XID of the user
      * @public
      * @return {string}
@@ -572,12 +573,36 @@ var Common = (function () {
             var from = stanza.getFrom();
             
             // No from, we assume this is our XID
-            if(!from)
+            if(!from) {
                 from = self.getXID();
+            }
             
             return from;
         } catch(e) {
             Console.error('Common.getStanzaFrom', e);
+        }
+
+    };
+
+
+    /**
+     * Returns whether the stanza has been really sent from our own server or entity
+     * @public
+     * @param {object} stanza
+     * @return {string}
+     */
+    self.isSafeStanza = function(stanza) {
+
+        var is_safe = false;
+
+        try {
+            var from = self.getStanzaFrom(stanza);
+
+            is_safe = (!from || from == con.domain || from == self.getXID()) && true;
+        } catch(e) {
+            Console.error('Common.isSafeStanza', e);
+        } finally {
+            return is_safe;
         }
 
     };
@@ -610,17 +635,31 @@ var Common = (function () {
 
 
     /**
-     * Escapes a string for a regex usage
+     * Escapes a string (or an array of string) for a regex usage. In case of an
+     * array, escapes are not done "in place", keeping the query unmodified
      * @public
-     * @param {string} query
-     * @return {string}
+     * @param {object} query
+     * @return {object}
      */
     self.escapeRegex = function(query) {
 
-        try {
-            return query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-        } catch(e) {
-            Console.error('Common.escapeRegex', e);
+        if (query instanceof Array) {
+            var result = new Array(query.length);
+            for(i=0; i<query.length; i++) {
+                try {
+                    result[i] = Common.escapeRegex(query[i]);
+                } catch(e) {
+                    Console.error('Common.escapeRegex', e);
+                    result[i] = null;
+                }
+            }
+            return result;
+        } else {
+            try {
+                return query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+            } catch(e) {
+                Console.error('Common.escapeRegex', e);
+            }
         }
 
     };
@@ -663,7 +702,7 @@ var Common = (function () {
     };
 
 
-	/**
+    /**
      * Converts a XML document to a string
      * @public
      * @param {object} xmlData
