@@ -1,3 +1,5 @@
 #!/bin/bash
+domain=$(sudo yunohost app setting jappix domain)
+
 sudo rm -rf /var/www/jappix
 sudo rm -f /etc/nginx/conf.d/$domain.d/jappix.conf
