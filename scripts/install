@@ -3,6 +3,7 @@
 # Retrieve arguments
 domain=$1
 path=$2
+language=$3
 
 # Check domain/path availability
 sudo yunohost app checkurl $domain$path -a jappix
@@ -27,6 +28,12 @@ sudo sed -i "s@PATHTOCHANGE2@$path@g" ../conf/nginx.conf
 
 if [ -z "$path" ]; then
     path="/"
+fi
+
+ls $final_path/lang/$language > /dev/null 2>&1
+if [ $? != 0 ];
+then
+  language="en"
 fi
 
 sudo sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
