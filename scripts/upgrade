@@ -3,6 +3,12 @@
 # Retrieve arguments
 domain=$(sudo yunohost app setting jappix domain)
 path=$(sudo yunohost app setting jappix path)
+language=$(sudo yunohost app setting jappix language)
+
+if [[ "$language" = "" ]];
+then
+    language="en"
+fi
 
 
 # Remove trailing "/" for next commands
