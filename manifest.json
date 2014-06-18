@@ -27,7 +27,16 @@
       },
       "example": "/jappix",
       "default": "/jappix"
-    }
+    },
+    {
+      "name": "language",
+      "ask": {
+        "en": "Choose the language of the Jappix",
+        "fr": "Choissisez la langue du Jappix"
+      },
+      "example": "en",
+      "default": "en"
+      }
     ]
   }
 }
