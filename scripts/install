@@ -36,6 +36,8 @@ then
   language="en"
 fi
 
+sudo yunohost app setting jappix language -v $language
+
 sudo sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
 sudo sed -i "s@ALIASTOCHANGE@$final_path/@g" ../conf/nginx.conf
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/jappix.conf
