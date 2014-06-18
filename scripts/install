@@ -30,7 +30,7 @@ if [ -z "$path" ]; then
     path="/"
 fi
 
-sudo ls $final_path/lang/$language > /dev/null 2>&1
+sudo ls $final_path/i18n/$language > /dev/null 2>&1
 if [ $? != 0 ];
 then
   language="en"
