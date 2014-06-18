@@ -42,6 +42,7 @@ sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/jappix.conf
 sudo sed -i "s@PATHTOCHANGE@$path@g" $final_path/store/conf/main.xml
 sudo sed -i "s@PATHTOCHANGE@$path@g" $final_path/store/conf/hosts.xml
 sudo sed -i "s@DOMAINTOCHANGE@$domain@g" $final_path/store/conf/main.xml
+sudo sed -i "s@CHANGELANG@$language@g" $final_path/store/conf/main.xml
 sudo sed -i "s@DOMAINTOCHANGE@$domain@g" $final_path/store/conf/hosts.xml
 
 # Reload Nginx and regenerate SSOwat conf
