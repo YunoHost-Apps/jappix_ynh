@@ -18,7 +18,7 @@
       "name": "domain",
       "ask": {
         "en": "Choose a domain for Jappix",
-		"fr": "Choisissez un domaine pour Jappix"
+        "fr": "Choisissez un domaine pour Jappix"
       },
       "example": "domain.org"
     },
@@ -26,7 +26,7 @@
       "name": "path",
       "ask": {
         "en": "Choose a path for Jappix",
-		"fr": "Choisissez un chemin pour Jappix"
+        "fr": "Choisissez un chemin pour Jappix"
       },
       "example": "/jappix",
       "default": "/jappix"
@@ -35,12 +35,12 @@
       "name": "name",
       "ask": {
         "en": "Choose a name for Jappix",
-		"fr": "Choisissez un nom pour Jappix"
+        "fr": "Choisissez un nom pour Jappix"
       },
       "example": "YunoJappix",
       "default": "YunoJappix"
     },
-	{
+    {
       "name": "language",
       "ask": {
           "en": "Choose the language of the Jappix",
