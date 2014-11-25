@@ -4,6 +4,71 @@ Jappix Changelog
 Here's the log of what has changed over the Jappix releases.
 
 
+Primo, v1.1.2 (October 2014)
+----------------------------
+
+ * XEP-0353: Jingle Message Initiation  @valeriansaliou
+ * Fixes Jingle calls in Chrome 38+     @valeriansaliou
+
+
+Primo, v1.1.1 (September 2014)
+------------------------------
+
+ * Ignore empty XHTML-IM messages  @eijebong, @valeriansaliou
+ * Fix a bug with message markers  @valeriansaliou
+
+
+Primo, v1.1.0 (June 2014)
+-------------------------
+
+ * XEP-0272: Multiparty Jingle (Muji)      @valeriansaliou
+ * Prevent client crash on huge messages   @valeriansaliou
+ * Beautified client code (JavaScript)     @valeriansaliou
+ * Fix unavailable MUC rooms               @emamirazavi
+
+
+One, v1.0.7 (May 2014)
+----------------------
+
+ * Fix BackLinks design                         @valeriansaliou
+ * Sort Jappix Mobile contacts alphabetically   @valeriansaliou
+ * Display offline contacts in Jappix Mini      @valeriansaliou
+
+
+One, v1.0.6 (May 2014)
+----------------------
+
+ * XEP-0308: Last Message Correction               @valeriansaliou
+ * XEP-0333: Chat Markers                          @valeriansaliou
+ * XEP-0319: Last User Interaction into Presence   @valeriansaliou
+ * XEP-0224: Attention                             @valeriansaliou
+ * XEP-0152: Reachability Addresses                @valeriansaliou
+ * XEP-0334: Message Processing Hints              @valeriansaliou
+ * Fix gateway contacts management                 @valeriansaliou
+ * Fix sounds in Jappix Mini                       @aryo, @valeriansaliou
+
+
+One, v1.0.5 (May 2014)
+----------------------
+
+ * Fix MUC bookmark shortcut button                         @valeriansaliou
+ * Fix HTML5 notifications in Firefox 22+                   @valeriansaliou
+ * Fix server commands tool                                 @valeriansaliou
+ * New translations added (Uzbek), and a few ones updated   @nurkamol, @valeriansaliou
+
+
+One, v1.0.4 (May 2014)
+----------------------
+
+ * Fix update tool (on some environments)               @valeriansaliou
+ * Fix MUC room join                                    @maranda, @valeriansaliou
+ * Fix special chars in JIDs for Jappix Mini            @dunger, @valeriansaliou
+ * Fix WebSocket session termination in JSJaC           @sstrigler
+ * Enhance backend security (verify SSL certificates)   @valeriansaliou
+ * Add assets client cache option                       @valeriansaliou
+ * Add SSO support to Jappix Mobile                     @valeriansaliou
+
+
 One, v1.0.3 (March 2014)
 ------------------------
 

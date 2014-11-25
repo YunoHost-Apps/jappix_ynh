@@ -5,6 +5,7 @@
     "en": "A free social network",
     "fr": "Un réseau social libre"
   },
+  "licence": "AGPL v3",
   "developer": {
     "name": "titoko",
     "email": "titoko@titoko.fr",
@@ -16,27 +17,38 @@
     {
       "name": "domain",
       "ask": {
-        "en": "Choose a domain for Jappix"
+        "en": "Choose a domain for Jappix",
+        "fr": "Choisissez un domaine pour Jappix"
       },
       "example": "domain.org"
     },
     {
       "name": "path",
       "ask": {
-        "en": "Choose a path for Jappix"
+        "en": "Choose a path for Jappix",
+        "fr": "Choisissez un chemin pour Jappix"
       },
       "example": "/jappix",
       "default": "/jappix"
     },
     {
+      "name": "name",
+      "ask": {
+        "en": "Choose a name for Jappix",
+        "fr": "Choisissez un nom pour Jappix"
+      },
+      "example": "YunoJappix",
+      "default": "YunoJappix"
+    },
+    {
       "name": "language",
       "ask": {
-        "en": "Choose the language of the Jappix",
-        "fr": "Choissisez la langue du Jappix"
-      },
-      "example": "en",
-      "default": "en"
-      }
+          "en": "Choose the language of the Jappix",
+          "fr": "Choissisez la langue du Jappix"
+        },
+      "choices" : ["en", "fr", "es"],
+      "default" : "en"
+    }
     ]
   }
 }

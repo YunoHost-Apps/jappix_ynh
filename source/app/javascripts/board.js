@@ -20,6 +20,137 @@ var Board = (function () {
     var self = {};
 
 
+    /* Contants */
+    self.NOTIFICATION = (window.Notification || window.mozNotification || window.webkitNotification);
+
+
+    /**
+     * Generate board info message
+     * @private
+     * @param {string} id
+     * @return {string}
+     */
+    self._generateBoardInfo = function(id) {
+
+        var text = null;
+
+        try {
+            switch(id) {
+                // Password change
+                case 1:
+                    text = Common._e("Your password has been changed, now you can connect to your account with your new login data.");
+
+                    break;
+
+                // Account deletion
+                case 2:
+                    text = Common._e("Your XMPP account has been removed, bye!");
+
+                    break;
+
+                // Account logout
+                case 3:
+                    text = Common._e("You have been logged out of your XMPP account, have a nice day!");
+
+                    break;
+
+                // Groupchat join
+                case 4:
+                    text = Common._e("The room you tried to join doesn't seem to exist.");
+
+                    break;
+
+                // Groupchat removal
+                case 5:
+                    text = Common._e("The groupchat has been removed.");
+
+                    break;
+
+                // Non-existant groupchat user
+                case 6:
+                    text = Common._e("The user that you want to reach is not present in the room.");
+
+                    break;
+            }
+        } catch(e) {
+            Console.error('Board._generateBoardInfo', e);
+        } finally {
+            return text;
+        }
+
+    };
+
+
+    /**
+     * Generate board error message
+     * @private
+     * @param {string} id
+     * @return {string}
+     */
+    self._generateBoardError = function(id) {
+
+        var text = null;
+
+        try {
+            switch(id) {
+                // Custom error
+                case 1:
+                    text = '<b>' + Common._e("Error") + '</b> &raquo; <span></span>';
+
+                    break;
+
+                // Network error
+                case 2:
+                    text = Common._e("Jappix has been interrupted by a network issue, a bug or bad login (check that you entered the right credentials), sorry for the inconvenience.");
+
+                    break;
+
+                // List retrieving error
+                case 3:
+                    text = Common._e("The element list on this server could not be obtained!");
+
+                    break;
+
+                // Attaching error
+                case 4:
+                    text = Common.printf(Common._e("An error occured while uploading your file: maybe it is too big (%s maximum) or forbidden!"), JAPPIX_MAX_UPLOAD);
+
+                    break;
+            }
+        } catch(e) {
+            Console.error('Board._generateBoardError', e);
+        } finally {
+            return text;
+        }
+
+    };
+
+
+    /**
+     * Attaches board events
+     * @private
+     * @param {object} board_sel
+     * @return {undefined}
+     */
+    self._attachEvents = function(board_sel) {
+
+        try {
+            board_sel.click(function() {
+                self.closeThis(this);
+            });
+
+            board_sel.oneTime('5s', function() {
+                self.closeThis(this);
+            });
+
+            board_sel.slideDown();
+        } catch(e) {
+            Console.error('Board._attachEvents', e);
+        }
+
+    };
+
+
     /**
      * Creates a board panel
      * @public
@@ -32,97 +163,29 @@ var Board = (function () {
         try {
             // Text var
             var text = '';
-            
+
             // Info
             if(type == 'info') {
-                switch(id) {
-                    // Password change
-                    case 1:
-                        text = Common._e("Your password has been changed, now you can connect to your account with your new login data.");
-                        
-                        break;
-                    
-                    // Account deletion
-                    case 2:
-                        text = Common._e("Your XMPP account has been removed, bye!");
-                        
-                        break;
-                    
-                    // Account logout
-                    case 3:
-                        text = Common._e("You have been logged out of your XMPP account, have a nice day!");
-                        
-                        break;
-                    
-                    // Groupchat join
-                    case 4:
-                        text = Common._e("The room you tried to join doesn't seem to exist.");
-                        
-                        break;
-                    
-                    // Groupchat removal
-                    case 5:
-                        text = Common._e("The groupchat has been removed.");
-                        
-                        break;
-                    
-                    // Non-existant groupchat user
-                    case 6:
-                        text = Common._e("The user that you want to reach is not present in the room.");
-                        
-                        break;
-                }
+                text = self._generateBoardInfo(id);
+            } else {
+                text = self._generateBoardError(id);
             }
-            
-            // Error
-            else {
-                switch(id) {
-                    // Custom error
-                    case 1:
-                        text = '<b>' + Common._e("Error") + '</b> &raquo; <span></span>';
-                        
-                        break;
-                    
-                    // Network error
-                    case 2:
-                        text = Common._e("Jappix has been interrupted by a network issue, a bug or bad login (check that you entered the right credentials), sorry for the inconvenience.");
-                        
-                        break;
-                    
-                    // List retrieving error
-                    case 3:
-                        text = Common._e("The element list on this server could not be obtained!");
-                        
-                        break;
-                    
-                    // Attaching error
-                    case 4:
-                        text = Common.printf(Common._e("An error occured while uploading your file: maybe it is too big (%s maximum) or forbidden!"), JAPPIX_MAX_UPLOAD);
-                        
-                        break;
-                }
-            }
-            
+
             // No text?
-            if(!text)
+            if(!text) {
                 return false;
-            
+            }
+
             // Append the content
-            $('#board').append('<div class="one-board ' + type + '" data-id="' + id + '">' + text + '</div>');
-            
+            $('#board').append(
+                '<div class="one-board ' + type + '" data-id="' + id + '">' + text + '</div>'
+            );
+
             // Events (click and auto-hide)
-            $('#board .one-board.' + type + '[data-id="' + id + '"]')
-            
-            .click(function() {
-                self.closeThis(this);
-            })
-            
-            .oneTime('5s', function() {
-                self.closeThis(this);
-            })
-            
-            .slideDown();
-            
+            self._attachEvents(
+                $('#board .one-board.' + type + '[data-id="' + id + '"]')
+            );
+
             return true;
         } catch(e) {
             Console.error('Board.create', e);
@@ -158,7 +221,7 @@ var Board = (function () {
         try {
             // In a first, we destroy other boards
             self.destroy();
-            
+
             // Then we display the board
             self.create(type, id);
         } catch(e) {
@@ -235,99 +298,74 @@ var Board = (function () {
 
         try {
             // Cannot process?
-            if(Common.isFocused() || !content || !(window.webkitNotifications || window.Notification)) {
+            if(Common.isFocused() || !content || !self.NOTIFICATION) {
                 return;
             }
-            
+
             // Default icon?
             if(!icon) {
                 icon = './images/others/default-avatar.png';
-                
+
                 // Avatar icon?
                 if(xid) {
                     var avatar_xml = Common.XMLFromString(
                         DataStore.getPersistent('global', 'avatar', xid)
                     );
+
                     var avatar_type = $(avatar_xml).find('type').text() || 'image/png';
                     var avatar_binval = $(avatar_xml).find('binval').text();
-                    
-                    if(avatar_binval && avatar_type)
+
+                    if(avatar_binval && avatar_type) {
                         icon = 'data:' + avatar_type + ';base64,' + avatar_binval;
+                    }
                 }
             }
-            
+
             // Default title?
             if(!title) {
                 title = Common._e("New event!");
             }
 
-            // Click callback
-            var cb_click_fn = function() {
+            // Create notification
+            var notification = new self.NOTIFICATION(title, {
+                dir: 'auto',
+                lang: '',
+                body: content,
+                tag: type,
+                icon: icon
+            });
+
+            // Click event
+            notification.onclick = function() {
                 // Click action?
                 switch(type) {
                     case 'chat':
                         Interface.switchChan(hex_md5(xid));
                         break;
-                    
+
                     case 'groupchat':
                         Interface.switchChan(hex_md5(Common.bareXID(xid)));
                         break;
-                    
+
                     default:
                         break;
                 }
-                
+
                 // Focus on msg-me
                 window.focus();
-                
+
                 // Remove notification
-                this.cancel();
+                this.close();
             };
-            
-            // Check for notification permission
-            try {
-                if(Notification.permission == 'granted' || Notification.permission === undefined) {
-                    var notification = new Notification(title, {
-                        dir: 'auto',
-                        lang: '',
-                        body: content,
-                        tag: type,
-                        icon: icon
-                    });
 
-                    notification.onclick = cb_click_fn;
+            // Show event
+            notification.onshow = function() {
+                setTimeout(function() {
+                    notification.close();
+                }, 10000);
+            };
 
-                    setTimeout(function() {
-                        notification.close();
-                    }, 10000);
-
-                    if(notification.permission == 'granted') {
-                        return notification;
-                    }
-                }
-            } catch(_e) {
-                if(window.webkitNotifications.checkPermission() === 0) {
-                    // Create notification
-                    var notification = window.webkitNotifications.createNotification(icon, title, content);
-                    
-                    // Auto-hide after a while
-                    notification.ondisplay = function(event) {
-                        setTimeout(function() {
-                            event.currentTarget.cancel();
-                        }, 10000);
-                    };
-                    
-                    // Click event
-                    notification.onclick = cb_click_fn;
-                    
-                    // Show notification
-                    notification.show();
-                    
-                    return notification;
-                }
-            }
-
-            return null;
+            return notification;
         } catch(e) {
             Console.error('Board.quick', e);
         }
@@ -343,21 +381,7 @@ var Board = (function () {
     self.quickPermission = function() {
 
         try {
-            try {
-                // W3C Notification API (still a draft!)
-                if(Notification.permission !== 'granted') {
-                    // Ask for permission
-                    Notification.requestPermission();
-                }
-            } catch (_e) {
-                // WebKit Notification API (fallback)
-                if(!window.webkitNotifications || (window.webkitNotifications.checkPermission() === 0)) {
-                    return;
-                }
-                
-                // Ask for permission
-                window.webkitNotifications.requestPermission();
-            }
+            self.NOTIFICATION.requestPermission();
         } catch(e) {
             Console.error('Board.quickPermission', e);
         }
@@ -376,8 +400,9 @@ var Board = (function () {
             // Fires quickPermission() on document click
             $(document).click(function() {
                 // Ask for permission to use quick boards
-                if((typeof con != 'undefined') && con.connected())
+                if((typeof con != 'undefined') && con.connected()) {
                     self.quickPermission();
+                }
             });
         } catch(e) {
             Console.error('Board.launch', e);

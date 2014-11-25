@@ -30,6 +30,205 @@ var Connection = (function () {
 
 
     /**
+     * Do registration on Register API
+     * @private
+     * @param {string} username
+     * @param {string} domain
+     * @param {string} pass
+     * @param {string} captcha
+     * @return {boolean}
+     */
+    self._doRegisterAPI = function(username, domain, pass, captcha) {
+
+        var is_success = false;
+
+        try {
+            // Show the waiting image
+            Interface.showGeneralWait();
+
+            // Change the page title
+            Interface.title('wait');
+
+            // Send request
+            $.post('./server/register.php', {username: username, domain: domain, password: pass, captcha: captcha}, function(data) {
+                // Error registering
+                Interface.removeGeneralWait();
+                Interface.title('home');
+
+                // In all case, update CAPTCHA
+                $('#home img.captcha_img').attr('src', './server/captcha.php?id=' + genID());
+                $('#home input.captcha').val('');
+
+                // Registration okay
+                if($(data).find('query status').text() == '1') {
+                    is_success = true;
+                    self.handleRegistered();
+                } else {
+                    // Show error message
+                    var error_message = '';
+
+                    switch($(data).find('query message').text()) {
+                        case 'CAPTCHA Not Matching':
+                            error_message = Common._e("The security code you entered is invalid. Please retry with another one.");
+
+                            $('#home input.captcha').focus();
+
+                            break;
+
+                        case 'Username Unavailable':
+                            error_message = Common._e("The username you picked is not available. Please try another one.");
+
+                            $('#home input.nick').focus();
+
+                            break;
+
+                        default:
+                            error_message = Common._e("There was an error registering your account. Please retry.");
+
+                            break;
+                    }
+
+                    if(error_message) {
+                        Errors.show('', error_message, '');
+                    }
+                }
+            });
+        } catch(e) {
+            Console.error('Connection._doRegisterAPI', e);
+        } finally {
+            return is_success;
+        }
+
+    };
+
+
+    /**
+     * Do registration throug in-band stream
+     * @private
+     * @param {string} username
+     * @param {string} domain
+     * @param {string} pass
+     * @return {boolean}
+     */
+    self._doRegisterInBand = function(username, domain, pass) {
+
+        var is_success = true;
+
+        try {
+            if(Common.hasWebSocket()) {
+                // WebSocket supported & configured
+                con = new JSJaCWebSocketConnection({
+                    httpbase: HOST_WEBSOCKET
+                });
+            } else {
+                var httpbase = (HOST_BOSH_MAIN || HOST_BOSH);
+
+                // Check BOSH origin
+                BOSH_SAME_ORIGIN = Origin.isSame(httpbase);
+
+                // We create the new http-binding connection
+                con = new JSJaCHttpBindingConnection({
+                    httpbase: httpbase
+                });
+            }
+
+            // We setup the connection !
+            con.registerHandler('onconnect', self.handleRegistered);
+            con.registerHandler('onerror', Errors.handle);
+
+            con.connect({
+                'domain': $.trim(domain),
+                'username': $.trim(username),
+                'resource': JAPPIX_RESOURCE + ' Register (' + (new Date()).getTime() + ')',
+                'pass': pass,
+                'register': true,
+                'secure': true,
+                'xmllang': XML_LANG
+            });
+
+            // Show the waiting image
+            Interface.showGeneralWait();
+
+            // Change the page title
+            Interface.title('wait');
+        } catch(e) {
+            Console.error('Connection._doRegisterInBand', e);
+            is_success = false;
+        } finally {
+            return is_success;
+        }
+
+    };
+
+
+    /**
+     * Attaches reconnect events
+     * @private
+     * @param {string} mode
+     * @return {undefined}
+     */
+    self._eventsReconnect = function(mode) {
+
+        try {
+            // Click events
+            if(mode == 'normal') {
+                $('#reconnect a.finish.cancel').click(function() {
+                    return self.cancelReconnect();
+                });
+            }
+
+            $('#reconnect a.finish.reconnect').click(function() {
+                return self.acceptReconnect(mode);
+            });
+        } catch(e) {
+            Console.error('Connection._eventsReconnect', e);
+        }
+
+    };
+
+
+    /**
+     * Schedules the next auto reconnect
+     * @private
+     * @param {string} mode
+     * @return {undefined}
+     */
+    self._scheduleReconnect = function(mode) {
+
+        try {
+            // Try to reconnect automatically after a while
+            if(self.reconnect_try < 5) {
+                self.reconnect_timer = 5 + (5 * self.reconnect_try);
+            } else {
+                self.reconnect_timer = 120;
+            }
+
+            // Change the try number
+            self.reconnect_try++;
+
+            // Fire the event!
+            $('#reconnect a.finish.reconnect').everyTime('1s', function() {
+                // We can reconnect!
+                if(self.reconnect_timer === 0) {
+                    return self.acceptReconnect(mode);
+                }
+
+                // Button text
+                if(self.reconnect_timer <= 10) {
+                    $(this).text(Common._e("Reconnect") + ' (' + self.reconnect_timer + ')');
+                }
+
+                // Remove 1 second
+                self.reconnect_timer--;
+            });
+        } catch(e) {
+            Console.error('Connection._scheduleReconnect', e);
+        }
+
+    };
+
+
+    /**
      * Does the user login
      * @public
      * @param {string} lNick
@@ -45,14 +244,14 @@ var Connection = (function () {
 
         try {
             // get optionnal conn handlers
-            oExtend = loginOpts || {};
+            extend_obj = loginOpts || {};
 
             // We remove the not completed class to avoid problems
             $('#home .loginer input').removeClass('please-complete');
-            
+
             // We add the login wait div
             Interface.showGeneralWait();
-            
+
             if(Common.hasWebSocket()) {
                 // WebSocket supported & configured
                 con = new JSJaCWebSocketConnection({
@@ -63,56 +262,56 @@ var Connection = (function () {
 
                 // Check BOSH origin
                 BOSH_SAME_ORIGIN = Origin.isSame(httpbase);
-                
+
                 // We create the new http-binding connection
                 con = new JSJaCHttpBindingConnection({
                     httpbase: httpbase
                 });
             }
-            
+
             // And we handle everything that happen
-            self.setupCon(con, oExtend);
-            
+            self.setupCon(con, extend_obj);
+
             // Generate a resource
             var random_resource = DataStore.getDB(self.desktop_hash, 'session', 'resource');
-            
+
             if(!random_resource) {
                 random_resource = lResource + ' (' + (new Date()).getTime() + ')';
             }
-            
-            // We retrieve what the user typed in the login inputs
-            oArgs = {};
-            oArgs.domain = $.trim(lServer);
-            oArgs.username = $.trim(lNick);
-            oArgs.resource = random_resource;
-            oArgs.pass = lPass;
-            oArgs.secure = true;
-            oArgs.xmllang = XML_LANG;
 
-            self.desktop_hash = 'jd.' + hex_md5(oArgs.username + '@' + oArgs.domain);
-            
+            var con_args = {
+                'domain': lServer.trim(),
+                'username': lNick.trim(),
+                'resource': random_resource,
+                'pass': lPass,
+                'secure': true,
+                'xmllang': XML_LANG
+            };
+
+            self.desktop_hash = 'jd.' + hex_md5(con_args.username + '@' + con_args.domain);
+
             // Store the resource (for reconnection)
             DataStore.setDB(self.desktop_hash, 'session', 'resource', random_resource);
-            
+
             // Store session XML in temporary database
             self.storeSession(lNick, lServer, lPass, lResource, lPriority, lRemember);
-            
+
             // We store the infos of the user into the data-base
             DataStore.setDB(self.desktop_hash, 'priority', 1, lPriority);
-            
+
             // We connect !
-            con.connect(oArgs);
-            
+            con.connect(con_args);
+
             // Change the page title
             Interface.title('wait');
-            
+
             Console.info('Jappix is connecting...');
         } catch(e) {
             Console.error('Connection.doLogin', e);
 
             // Reset Jappix
             Talk.destroy();
-            
+
             // Open an unknown error
             Board.openThisError(2);
         } finally {
@@ -131,16 +330,16 @@ var Connection = (function () {
 
         try {
             Console.info('A new account has been registered.');
-            
+
             // We remove the waiting image
             Interface.removeGeneralWait();
-            
+
             // Reset the title
             Interface.title('home');
-            
+
             // We show the success information
             $('#home .registerer .success').fadeIn('fast');
-            
+
             // We quit the session
             if(Common.isConnected()) {
                 self.logout();
@@ -165,116 +364,25 @@ var Connection = (function () {
 
         try {
             Console.info('Trying to register an account...');
-    
+
             // We change the registered information text
             $('#home .homediv.registerer').append(
-                '<div class="info success">' + 
-                    Common._e("You have been registered, here is your XMPP address:") + ' <b>' + username.htmlEnc() + '@' + domain.htmlEnc() + '</b> - <a href="#">' + Common._e("Login") + '</a>' + 
+                '<div class="info success">' +
+                    Common._e("You have been registered, here is your XMPP address:") +
+                    ' <b>' + username.htmlEnc() + '@' + domain.htmlEnc() + '</b> - ' +
+                    '<a href="#">' + Common._e("Login") + '</a>' +
                 '</div>'
             );
-            
+
             // Login link
             $('#home .homediv.registerer .success a').click(function() {
                 return self.doLogin(username, domain, pass, '', '10', false);
             });
-            
+
             if((REGISTER_API == 'on') && (domain == HOST_MAIN) && captcha) {
-                // Show the waiting image
-                Interface.showGeneralWait();
-                
-                // Change the page title
-                Interface.title('wait');
-                
-                // Send request
-                $.post('./server/register.php', {username: username, domain: domain, password: pass, captcha: captcha}, function(data) {
-                    // Error registering
-                    Interface.removeGeneralWait();
-                    Interface.title('home');
-                    
-                    // In all case, update CAPTCHA
-                    $('#home img.captcha_img').attr('src', './server/captcha.php?id=' + genID());
-                    $('#home input.captcha').val('');
-                    
-                    // Registration okay
-                    if($(data).find('query status').text() == '1') {
-                        self.handleRegistered();
-                    } else {
-                        // Show error message
-                        var error_message = '';
-                        
-                        switch($(data).find('query message').text()) {
-                            case 'CAPTCHA Not Matching':
-                                error_message = Common._e("The security code you entered is invalid. Please retry with another one.");
-                                
-                                $('#home input.captcha').focus();
-                                
-                                break;
-                            
-                            case 'Username Unavailable':
-                                error_message = Common._e("The username you picked is not available. Please try another one.");
-                                
-                                $('#home input.nick').focus();
-                                
-                                break;
-                            
-                            default:
-                                error_message = Common._e("There was an error registering your account. Please retry.");
-                                
-                                break;
-                        }
-                        
-                        if(error_message)
-                            Errors.show('', error_message, '');
-                    }
-                });
+                self._doRegisterAPI(username, domain, pass, captcha);
             } else {
-                try {
-                    oArgs = {};
-
-                    if(Common.hasWebSocket()) {
-                        // WebSocket supported & configured
-                        con = new JSJaCWebSocketConnection({
-                            httpbase: HOST_WEBSOCKET
-                        });
-                    } else {
-                        var httpbase = (HOST_BOSH_MAIN || HOST_BOSH);
-
-                        // Check BOSH origin
-                        BOSH_SAME_ORIGIN = Origin.isSame(httpbase);
-                        
-                        // We create the new http-binding connection
-                        con = new JSJaCHttpBindingConnection({
-                            httpbase: httpbase
-                        });
-                    }
-                    
-                    // We setup the connection !
-                    con.registerHandler('onconnect', self.handleRegistered);
-                    con.registerHandler('onerror', Errors.handle);
-                    
-                    // We retrieve what the user typed in the register inputs
-                    oArgs = {};
-                    oArgs.domain = $.trim(domain);
-                    oArgs.username = $.trim(username);
-                    oArgs.resource = JAPPIX_RESOURCE + ' Register (' + (new Date()).getTime() + ')';
-                    oArgs.pass = pass;
-                    oArgs.register = true;
-                    oArgs.secure = true;
-                    oArgs.xmllang = XML_LANG;
-                    
-                    con.connect(oArgs);
-                    
-                    // Show the waiting image
-                    Interface.showGeneralWait();
-                    
-                    // Change the page title
-                    Interface.title('wait');
-                }
-                
-                catch(e) {
-                    // Logs errors
-                    Console.error('doRegister', e);
-                }
+                self._doRegisterInBand(username, domain, pass);
             }
         } catch(e) {
             Console.error('Connection.doRegister', e);
@@ -294,31 +402,29 @@ var Connection = (function () {
 
         try {
             Console.info('Trying to login anonymously...');
-            
-            var aPath = '#home .anonymouser ';
-            var room = $(aPath + '.room').val();
-            var nick = $(aPath + '.nick').val();
-            
-            // If the form is correctly completed
+
+            var path_sel = $('#home .anonymouser');
+            var room = path_sel.find('.room').val();
+            var nick = path_sel.find('.nick').val();
+
+            // Form correctly completed?
             if(room && nick) {
                 // We remove the not completed class to avoid problems
                 $('#home .anonymouser input').removeClass('please-complete');
-                
+
                 // Redirect the user to the anonymous room
                 window.location.href = JAPPIX_LOCATION + '?r=' + room + '&n=' + nick;
-            }
-            
-            // We check if the form is entirely completed
-            else {
-                $(aPath + 'input[type="text"]').each(function() {
-                    var select = $(this);
-                    
-                    if(!select.val())
+            } else {
+                path_sel.find('input[type="text"]').each(function() {
+                    var this_sel = $(this);
+
+                    if(!this_sel.val()) {
                         $(document).oneTime(10, function() {
-                            select.addClass('please-complete').focus();
+                            this_sel.addClass('please-complete').focus();
                         });
-                    else
-                        select.removeClass('please-complete');  
+                    } else {
+                        this_sel.removeClass('please-complete');
+                    }
                 });
             }
         } catch(e) {
@@ -339,23 +445,23 @@ var Connection = (function () {
 
         try {
             Console.info('Jappix is now connected.');
-            
+
             // Connection markers
             self.connected = true;
             self.reconnect_try = 0;
             self.reconnect_timer = 0;
-            
+
             // We hide the home page
             $('#home').hide();
-            
+
             // Any suggest to do before triggering connected event?
             Groupchat.suggestCheck();
-            
+
             // Remove the waiting item
             Interface.removeGeneralWait();
 
-            // Init Jingle
-            Jingle.init();
+            // Init call
+            Call.init();
         } catch(e) {
             Console.error('Connection.handleConnected', e);
         }
@@ -374,27 +480,28 @@ var Connection = (function () {
             // Not resumed?
             if(!self.resume) {
                 // Remember the session?
-                if(DataStore.getDB(self.desktop_hash, 'remember', 'session'))
+                if(DataStore.getDB(self.desktop_hash, 'remember', 'session')) {
                     DataStore.setPersistent('global', 'session', 1, self.current_session);
-                
+                }
+
                 // We show the chatting app.
                 Talk.create();
-                
+
                 // We reset the homepage
                 Home.change('default');
-                
+
                 // We get all the other things
                 self.getEverything();
-                
+
                 // Set last activity stamp
                 DateUtils.last_activity = DateUtils.getTimeStamp();
             }
-            
+
             // Resumed
             else {
                 // Send our presence
                 Presence.sendActions();
-                
+
                 // Change the title
                 Interface.updateTitle();
             }
@@ -414,7 +521,10 @@ var Connection = (function () {
 
         try {
             Console.info('Jappix is now disconnected.');
-            
+
+            // Abort ongoing call (if any)
+            Call.stop(true);
+
             // Normal disconnection
             if(!self.current_session && !self.connected) {
                 Talk.destroy();
@@ -431,24 +541,32 @@ var Connection = (function () {
      * Setups the normal connection
      * @public
      * @param {object} con
-     * @param {object} oExtend
+     * @param {object} extend_obj
      * @return {undefined}
      */
-    self.setupCon = function(con, oExtend) {
+    self.setupCon = function(con, extend_obj) {
 
         try {
-            // Setup connection handlers
-            con.registerHandler('message', Message.handle);
-            con.registerHandler('presence', Presence.handle);
-            con.registerHandler('iq', IQ.handle);
-            con.registerHandler('onconnect', self.handleConnected);
-            con.registerHandler('onerror', Errors.handle);
-            con.registerHandler('ondisconnect', self.handleDisconnected);
-            
+            var connection_handlers = {
+                'message':       Message.handle,
+                'presence':      Presence.handle,
+                'iq':            IQ.handle,
+                'onconnect':     self.handleConnected,
+                'onerror':       Errors.handle,
+                'ondisconnect':  self.handleDisconnected
+            };
+
+            for(var cur_handler in connection_handlers) {
+                con.registerHandler(
+                    cur_handler,
+                    connection_handlers[cur_handler]
+                );
+            }
+
             // Extended handlers
-            oExtend = oExtend || {};
-            
-            jQuery.each(oExtend, function(keywd,funct) {
+            extend_obj = extend_obj || {};
+
+            jQuery.each(extend_obj, function(keywd,funct) {
                 con.registerHandler(keywd, funct);
             });
         } catch(e) {
@@ -496,13 +614,13 @@ var Connection = (function () {
             if(Common.isConnected()) {
                 // Clear temporary session storage
                 self.resetConMarkers();
-                
+
                 // Show the waiting item (useful if BOSH is sloooow)
                 Interface.showGeneralWait();
-                
+
                 // Change the page title
                 Interface.title('wait');
-                
+
                 // Disconnect from the XMPP server
                 self.logout();
             }
@@ -525,13 +643,13 @@ var Connection = (function () {
             if(!Common.isConnected()) {
                 return;
             }
-            
+
             // We show the waiting image
             Interface.showGeneralWait();
-            
+
             // Change the page title
             Interface.title('wait');
-            
+
             // We disconnect from the XMPP server
             self.logout();
         } catch(e) {
@@ -551,60 +669,34 @@ var Connection = (function () {
 
         try {
             Console.error('This is not a normal disconnection, show the reconnect pane...');
-    
+
             // Reconnect pane not yet displayed?
             if(!Common.exists('#reconnect')) {
                 // Blur the focused input/textarea/select
                 $('input, select, textarea').blur();
-                
+
                 // Create the HTML code
-                var html = '<div id="reconnect" class="lock">' + 
-                        '<div class="pane">' + 
-                            Common._e("Due to a network issue, you were disconnected. What do you want to do now?");
-                
+                var html = '<div id="reconnect" class="lock">' +
+                           '<div class="pane">' +
+                              Common._e("Due to a network issue, you were disconnected. What do you want to do now?");
+
                 // Can we cancel reconnection?
-                if(mode == 'normal')
+                if(mode == 'normal') {
                     html += '<a href="#" class="finish cancel">' + Common._e("Cancel") + '</a>';
-                
-                html += '<a href="#" class="finish reconnect">' + Common._e("Reconnect") + '</a>' + 
-                    '</div></div>';
-                
+                }
+
+                html += '<a href="#" class="finish reconnect">' + Common._e("Reconnect") + '</a>' +
+                        '</div></div>';
+
                 // Append the code
                 $('body').append(html);
-                
-                // Click events
-                if(mode == 'normal')
-                    $('#reconnect a.finish.cancel').click(function() {
-                        return self.cancelReconnect();
-                    });
-                
-                $('#reconnect a.finish.reconnect').click(function() {
-                    return self.acceptReconnect(mode);
-                });
-                
-                // Try to reconnect automatically after a while
-                if(self.reconnect_try < 5)
-                    self.reconnect_timer = 5 + (5 * self.reconnect_try);
-                else
-                    self.reconnect_timer = 120;
-                
-                // Change the try number
-                self.reconnect_try++;
-                
-                // Fire the event!
-                $('#reconnect a.finish.reconnect').everyTime('1s', function() {
-                    // We can reconnect!
-                    if(self.reconnect_timer === 0)
-                        return self.acceptReconnect(mode);
-                    
-                    // Button text
-                    if(self.reconnect_timer <= 10)
-                        $(this).text(Common._e("Reconnect") + ' (' + self.reconnect_timer + ')');
-                    
-                    // Remove 1 second
-                    self.reconnect_timer--;
-                });
-                
+
+                // Attach events
+                self._eventsReconnect(mode);
+
+                // Schedule next reconnect
+                self._scheduleReconnect(mode);
+
                 // Page title
                 Interface.updateTitle();
             }
@@ -625,30 +717,33 @@ var Connection = (function () {
 
         try {
             Console.info('Trying to reconnect the user...');
-            
+
             // Resume marker
             self.resume = true;
-            
+
             // Show waiting item
             Interface.showGeneralWait();
-            
+
             // Reset some various stuffs
             var groupchats = '#page-engine .page-engine-chan[data-type="groupchat"]';
-            $(groupchats + ' .list .role').hide();
-            $(groupchats + ' .one-group, ' + groupchats + ' .list .user').remove();
-            $(groupchats).attr('data-initial', 'false');
-            
+            var groupchats_sel = $(groupchats);
+
+            groupchats_sel.find('.list .role').hide();
+            groupchats_sel.find('.one-group, ' + groupchats + ' .list .user').remove();
+            groupchats_sel.attr('data-initial', 'false');
+
             // Stop the timer
             $('#reconnect a.finish.reconnect').stopTime();
-            
+
             // Remove the reconnect pane
             $('#reconnect').remove();
-            
+
             // Try to login again
-            if(mode == 'normal')
+            if(mode == 'normal') {
                 self.loginFromSession(Common.XMLFromString(self.current_session));
-            else if(mode == 'anonymous')
+            } else if(mode == 'anonymous') {
                 Anonymous.login(HOST_ANONYMOUS);
+            }
         } catch(e) {
             Console.error('Connection.acceptReconnect', e);
         } finally {
@@ -667,16 +762,16 @@ var Connection = (function () {
 
         try {
             Console.info('User has canceled automatic reconnection...');
-            
+
             // Stop the timer
             $('#reconnect a.finish.reconnect').stopTime();
-            
+
             // Remove the reconnect pane
             $('#reconnect').remove();
-            
+
             // Destroy the talk page
             Talk.destroy();
-            
+
             // Renitialize the previous session parameters
             self.resetConMarkers();
         } catch(e) {
@@ -698,7 +793,7 @@ var Connection = (function () {
         try {
             // Clear temporary storage
             self.resetConMarkers();
-            
+
             // Clear persistent storage
             if($(Common.XMLFromString(DataStore.getPersistent('global', 'session', 1))).find('stored').text() == 'true') {
                 DataStore.removePersistent('global', 'session', 1);
@@ -741,7 +836,7 @@ var Connection = (function () {
         try {
             // Select the data
             var session = $(data);
-            
+
             // Fire the login event
             self.doLogin(
                 session.find('username').text(),
@@ -768,10 +863,10 @@ var Connection = (function () {
         try {
             // Reset our database
             self.clearLastSession();
-            
+
             // We quit the current session
             self.quit();
-            
+
             // We show an info
             Board.openThisInfo(3);
         } catch(e) {
@@ -817,16 +912,23 @@ var Connection = (function () {
 
         try {
             // Generate a session XML to be stored
-            session_xml = '<session><stored>true</stored><domain>' + lServer.htmlEnc() + '</domain><username>' + lNick.htmlEnc() + '</username><resource>' + lResource.htmlEnc() + '</resource><password>' + lPass.htmlEnc() + '</password><priority>' + lPriority.htmlEnc() + '</priority></session>';
-            
+            session_xml = '<session>' +
+                              '<stored>true</stored>' +
+                              '<domain>' + lServer.htmlEnc() + '</domain>' +
+                              '<username>' + lNick.htmlEnc() + '</username>' +
+                              '<resource>' + lResource.htmlEnc() + '</resource>' +
+                              '<password>' + lPass.htmlEnc() + '</password>' +
+                              '<priority>' + lPriority.htmlEnc() + '</priority>' +
+                          '</session>';
+
             // Save the session parameters (for reconnect if network issue)
             self.current_session = session_xml;
-            
+
             // Remember me?
             if(lRemember) {
                 DataStore.setDB(self.desktop_hash, 'remember', 'session', 1);
             }
-            
+
             return session_xml;
         } catch(e) {
             Console.error('Connection.storeSession', e);
@@ -846,11 +948,12 @@ var Connection = (function () {
             $(document).ready(function() {
                 // Logouts when Jappix is closed
                 $(window).bind('beforeunload', Connection.terminate);
-                
+
                 // Nothing to do when anonymous!
-                if(Utils.isAnonymous())
+                if(Utils.isAnonymous()) {
                     return;
-                
+                }
+
                 // Connection params submitted in URL?
                 if(XMPPLinks.links_var.u && XMPPLinks.links_var.q) {
                     // Generate login data
@@ -861,51 +964,56 @@ var Connection = (function () {
                     var login_resource = JAPPIX_RESOURCE + ' (' + (new Date()).getTime() + ')';
                     var login_priority = '10';
                     var login_remember = 1;
-                    
+
                     // Must store session?
                     if(XMPPLinks.links_var.h && (XMPPLinks.links_var.h === '1')) {
                         // Store session
-                        var session_xml = self.storeSession(login_nick, login_server, login_pwd, login_resource, login_priority, true);
+                        var session_xml = self.storeSession(
+                            login_nick,
+                            login_server,
+                            login_pwd,
+                            login_resource,
+                            login_priority,
+                            true
+                        );
+
                         DataStore.setPersistent('global', 'session', 1, session_xml);
-                        
+
                         // Redirect to a clean URL
                         document.location.href = './';
                     } else {
                         // Hide the homepage
                         $('#home').hide();
-                        
+
                         // Show the waiting icon
                         Interface.showGeneralWait();
-                        
+
                         // Proceed login
                         self.doLogin(login_nick, login_server, login_pwd, login_resource, login_priority, login_remember);
                     }
-                    
+
                     return;
                 }
-                
+
                 // Try to resume a stored session, if not anonymous
                 var session = Common.XMLFromString(
                     DataStore.getPersistent('global', 'session', 1)
                 );
-                
+
                 if($(session).find('stored').text() == 'true') {
                     // Hide the homepage
                     $('#home').hide();
-                    
+
                     // Show the waiting icon
                     Interface.showGeneralWait();
-                    
+
                     // Login!
                     self.loginFromSession(session);
-                    
+
                     Console.info('Saved session found, resuming it...');
-                }
-                
-                // Not connected, maybe a XMPP link is submitted?
-                else if((parent.location.hash != '#OK') && XMPPLinks.links_var.x) {
+                } else if((parent.location.hash != '#OK') && XMPPLinks.links_var.x) {
                     Home.change('loginer');
-                    
+
                     Console.info('A XMPP link is set, switch to login page.');
                 }
             });

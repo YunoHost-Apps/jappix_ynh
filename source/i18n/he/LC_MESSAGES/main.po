@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Jappix\n"
-"PO-Revision-Date: 2014-01-24 16:01+0100\n"
+"PO-Revision-Date: 2014-08-09 15:36+0100\n"
 "Last-Translator: Valérian Saliou <valerian@valeriansaliou.name>\n"
 "Language-Team: Hebrew (http://www.transifex.com/projects/p/jappix/language/"
 "he/)\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Language: he\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "POT-Creation-Date: \n"
-"X-Generator: Poedit 1.6.3\n"
+"X-Generator: Poedit 1.6.5\n"
 
 msgid "default:LTR"
 msgstr "default:RTL"
@@ -36,7 +36,7 @@ msgid "Social channel, chat and more."
 msgstr "ערוץ חברתי, צ'אט ועוד."
 
 msgid "Create your public profile."
-msgstr "צור את הדיקן הפומבי שלך."
+msgstr "צור דיקן פומבי משלך."
 
 msgid "A mini-chat for your website."
 msgstr "מיני צ'אט עבור אתר הרשת שלך."
@@ -60,7 +60,7 @@ msgid "Jappix for your company."
 msgstr "Jappix עבור הפירמה שלך."
 
 msgid "Find a public Jappix node."
-msgstr "מצא נקודת ממסר Jappix פומבית."
+msgstr "מצא צומת Jappix פומבי."
 
 msgid "Credits"
 msgstr "תודות"
@@ -84,10 +84,10 @@ msgid "Owner"
 msgstr "בעלים"
 
 msgid "Node owner"
-msgstr "בעל הממסר"
+msgstr "בעל צומת"
 
 msgid "By using our service, you accept %s."
-msgstr "בעושך שימוש בשירותנו, הינך מסכים/ה %s."
+msgstr "על ידי שימוש בשירותנו, הינך מסכים/ה %s."
 
 msgid "our terms of use"
 msgstr "לתנאי השימוש שלנו"
@@ -144,7 +144,7 @@ msgid "Register"
 msgstr "הרשמה"
 
 msgid "Here we go!"
-msgstr "קדימה לדרך!"
+msgstr "המשך!"
 
 msgid "Server"
 msgstr "שרת"
@@ -181,10 +181,25 @@ msgid "Filter"
 msgstr "סינון"
 
 msgid "Add a friend"
-msgstr "הוסף חבר/ה"
+msgstr "הוספת חברים"
 
 msgid "Your groupchats"
 msgstr "שיחות הקבוצה שלך"
+
+msgid "Audio/video conference"
+msgstr "ועידת אודיו/וידאו"
+
+msgid "Launch a group call"
+msgstr "שגר שיחה קבוצתית"
+
+msgid "Audio conference"
+msgstr "ועידה קולית"
+
+msgid "Video conference"
+msgstr "ועידה חזותית"
+
+msgid "Conference call"
+msgstr "שיחת ועידה"
 
 msgid "Manage your favorite groupchats"
 msgstr "ניהול שיחות הקבוצה המועדפות עליך"
@@ -328,7 +343,7 @@ msgid "Your profile"
 msgstr "הדיוקן שלך"
 
 msgid "Identity"
-msgstr "זהותך"
+msgstr "זהות"
 
 msgid "Profile image"
 msgstr "תמונת דיוקן"
@@ -403,14 +418,14 @@ msgid ""
 "Be careful with the information you store into your profile, because it "
 "might be accessible by everyone (even someone you don't want to)."
 msgstr ""
-"יש לעשות שימוש זהיר עם המידע שיוזן אל הדיוקן שלך, מכיוון שמידע זה עלול להיות "
-"נגיש על ידי כולם (אפילו לכאלו שאין לך עניין שיראו זאת)."
+"יש לעשות שימוש זהיר עם המידע אשר יוזן אל תוך הדיוקן שלך, משום שמידע זה עשוי "
+"להיות נגיש על ידי כולם (אפילו לכאלו שאין לך עניין שיראו זאת)."
 
 msgid ""
 "Not everything is private on XMPP; this is one of those things, your public "
 "profile (vCard)."
 msgstr ""
-"לא כל דבר הינו פרטי אצל XMPP; זהו אחד מן הדברים הללו, הדיוקן הפומבי שלך "
+"לא כל דבר הינו פרטי בתוך XMPP; זהו אחד מן הדברים הללו, הדיוקן הפומבי שלך "
 "(vCard)."
 
 msgid ""
@@ -419,7 +434,7 @@ msgid ""
 "friends."
 msgstr ""
 "מומלץ מאוד להעלות תמונת דיוקן (%s לכל היותר), כגון תמונה של עצמך, מכיוון שזו "
-"תביאי לידי כך שחברייך יוכלו לזהותך בקלות."
+"תביא לידי כך שהחברים שלך יוכלו לזהותך בקלות."
 
 msgid "Save"
 msgstr "שמור"
@@ -428,7 +443,7 @@ msgid "Cancel"
 msgstr "ביטול"
 
 msgid "Edit options"
-msgstr "ערוך אפשרויות"
+msgstr "עריכת אפשרויות"
 
 msgid "Channel"
 msgstr "ערוץ"
@@ -548,7 +563,7 @@ msgid "Smiley insertion"
 msgstr "שיבוץ רגשונים"
 
 msgid "Change style"
-msgstr "שנה סגנון"
+msgstr "עיצוב סגנון"
 
 msgid "Text in bold"
 msgstr "תמליל מודגש"
@@ -567,7 +582,7 @@ msgid ""
 msgstr "ברגע שההעלאה תסתיים, חברך יתבקש להוריד את הקובץ ששלחת."
 
 msgid "Save chat"
-msgstr "שמור שיחה"
+msgstr "שמירת שיחה"
 
 msgid ""
 "Click on the following link to get the chat log, and wait. Then click again "
@@ -580,7 +595,7 @@ msgid "This chat is empty!"
 msgstr "שיחה זו הינה ריקה!"
 
 msgid "Generate file!"
-msgstr "חולל קובץ!"
+msgstr "צור קובץ!"
 
 msgid "Download file!"
 msgstr "הורד קובץ!"
@@ -592,7 +607,7 @@ msgid "Show user profile"
 msgstr "הצג דיוקן משתמש"
 
 msgid "Add this contact to your friends"
-msgstr "הוסף את איש קשר זה אל חברייך"
+msgstr "הוסף את איש קשר זה אל החברים שלך"
 
 msgid "Add this groupchat to your favorites"
 msgstr "הוסף שיחת קבוצה זו אל המועדפים שלך"
@@ -700,7 +715,7 @@ msgid "Hierarchy"
 msgstr "היררכיה"
 
 msgid "Proxies"
-msgstr "מתווכים (Proxy)"
+msgstr "צירים (Proxy)"
 
 msgid "Publication/Subscription"
 msgstr "פרסום/מינוי"
@@ -718,13 +733,13 @@ msgid "Available actions"
 msgstr "פעולות זמינות"
 
 msgid "Clean"
-msgstr "טיהור"
+msgstr "טהר"
 
 msgid "New"
 msgstr "חדשה"
 
 msgid "Received"
-msgstr "התקבלה"
+msgstr "התקבל"
 
 msgid "Subject"
 msgstr "נושא"
@@ -843,7 +858,7 @@ msgid "Hi there!"
 msgstr "שלום לך!"
 
 msgid "Welcome to %1s, “%2s”."
-msgstr "ברוך בואך אל %1s, &#x200f;“%2s”."
+msgstr "ברוך בואך אל %1s, “%2s”."
 
 msgid "Login to your existing XMPP account or create a new one for free!"
 msgstr "באפשרותך להיכנס בעזרת חשבון XMPP קיים או ליצור חשבון חדש בחינם!"
@@ -896,7 +911,7 @@ msgid "login page"
 msgstr "עמוד התחברות"
 
 msgid "Share this link with your friends:"
-msgstr "שתף את קישור זה עם חברייך:"
+msgstr "שתף את קישור זה עם החברים שלך:"
 
 msgid ""
 "Register a new XMPP account to join your friends on your own social cloud. "
@@ -925,7 +940,7 @@ msgid "What's up with you?"
 msgstr "מה המצב איתך?"
 
 msgid "Type something you want to share with your friends..."
-msgstr "בשדה זה ניתן להקליד הודעת מצב אותה ברצונך לשתף עם חברייך..."
+msgstr "בשדה זה אפשר להקליד הודעת מצב אותה ברצונך לשתף עם החברים שלך..."
 
 msgid "Fetching the social channel..."
 msgstr "מאחזר כעת את הערוץ החברתי..."
@@ -949,7 +964,7 @@ msgid "Subscribe"
 msgstr "הרשמה"
 
 msgid "Join"
-msgstr "הצטרפות"
+msgstr "הצטרף"
 
 msgid "Automatic"
 msgstr "אוטומטית"
@@ -1128,7 +1143,7 @@ msgid "Comments locked!"
 msgstr "תגובות נעולות!"
 
 msgid "Type your comment here..."
-msgstr "הקלד את תגובתך כאן..."
+msgstr "הקלד את התגובה שלך כאן..."
 
 msgid "Your channel"
 msgstr "הערוץ שלך"
@@ -1140,7 +1155,7 @@ msgid "More notices..."
 msgstr "התראות נוספות..."
 
 msgid "Attach a file"
-msgstr "צרף קובץ"
+msgstr "צירוף קובץ"
 
 msgid "Send"
 msgstr "שלח"
@@ -1171,7 +1186,7 @@ msgid "Your form has been sent."
 msgstr "התבנית שלך נשלחה."
 
 msgid "Application"
-msgstr "יישום"
+msgstr "אפליקציה"
 
 msgid "Media integration"
 msgstr "מיזוג מדיה"
@@ -1183,10 +1198,10 @@ msgid "XMPP links"
 msgstr "קישורי XMPP"
 
 msgid "Open XMPP links with Jappix"
-msgstr "פתיחת קישורי XMPP באמצעות Jappix"
+msgstr "פתח קישורי XMPP בעזרת Jappix"
 
 msgid "changed the subject to:"
-msgstr "שינה את הנושא אל:"
+msgstr "קבע/ה את הנושא אל:"
 
 msgid "Welcome!"
 msgstr "ברוך בואך!"
@@ -1195,13 +1210,13 @@ msgid "Friends"
 msgstr "חברים"
 
 msgid "Welcome to Jappix, your own social cloud!"
-msgstr "ברוך בואך אל Jappix, הענן החברתי העצמאי שלך!"
+msgstr "ברוך בואך אל ‫Jappix, הענן החברתי האוטונומי שלך!"
 
 msgid ""
 "Before you start using it, you will have to change some settings, search for "
 "friends and complete your profile."
 msgstr ""
-"לפני שימושך בפלטפורמה זו, עליך לשנות מספר הגדרות, לחפש חברים ולהשלים את "
+"לפני יישומך בפלטפורמה זו, עליך לשנות מספר הגדרות, לחפש חברים ולהשלים את "
 "הדיוקן שלך."
 
 msgid "Enable notification sounds"
@@ -1214,17 +1229,17 @@ msgid "Offline friends"
 msgstr "חברים לא מקוונים"
 
 msgid "Don't hide offline friends"
-msgstr "לא להסתיר חברים בלתי מקוונים"
+msgstr "אי הסתרת חברים בלתי מקוונים"
 
 msgid ""
 "Use this tool to find your friends on the server you are using right now, or "
 "add them later."
 msgstr ""
-"ניתן למצוא את חברייך על השרת שבו הינך עושה שימוש כעת, וניתן גם להוסיפם מאוחר "
-"יותר בעזרת כלי זה."
+"עם כלי זה ניתן למצוא את החברים שלך על השרת שמצוי בשימוש כעת, וניתן גם "
+"להוסיפם מאוחר יותר."
 
 msgid "Good job! Now, you can share Jappix with your friends!"
-msgstr "עבודה טובה! כעת, באפשרותך לשתף את Jappix עם חברייך!"
+msgstr "עבודה טובה! כעת, באפשרותך לשתף את Jappix עם החברים שלך!"
 
 msgid ""
 "When you will press the save button, the profile editor will be opened. "
@@ -1232,7 +1247,7 @@ msgid ""
 msgstr "בלוחצך על לחצן השמירה, עורך הדיוקן יפתח. שיהיה לך גיבוש נעים!"
 
 msgid "Share Jappix on %s"
-msgstr "שתפו את Jappix אצל %s"
+msgstr "שתפו את Jappix בתוך %s"
 
 msgid "Follow Jappix topic on %s"
 msgstr "עקוב אחר נושא Jappix בתוך %s"
@@ -1300,8 +1315,8 @@ msgid ""
 "If you want to get some help about the Jappix installation and "
 "configuration, you can use our whole documentation, available at:"
 msgstr ""
-"במידה וברצונך לקבל עזרה בכל הנוגע אל התקנת ותצורת Jappix, ניתן לעשות שימוש "
-"בתיעוד שלנו בשלמותו, זמין בכתובת:"
+"במידה וברצונך לקבל עזרה בכל הנוגע אל התקנת ותצורת Jappix, ניתן להשתמש בתיעוד "
+"שלנו בשלמותו, זמין בכתובת:"
 
 msgid "It's time to build your own social cloud: just go to the next step!"
 msgstr "זהו הזמן לבנות את הענן החברתי שלך: צריך פשוט לעבור אל השלב הבא!"
@@ -1310,12 +1325,17 @@ msgid ""
 "Jappix stores persistent data (such as shared files, chat logs, your own "
 "music and its configuration) into multiple storage folders."
 msgstr ""
+"‫Jappix מאחסנת מידע נמשך (כגון קבצים משותפים, רשומות שיחה, את המוזיקה שלך ואת "
+"תצורתה) לתוך תיקיות אחסון מרובות."
 
 msgid ""
 "Jappix must be able to write in this folder to create its sub-directories. "
 "If not, you must set the rights of %1s to %2s or change the folder owner to "
 "%3s (depending of your configuration)."
 msgstr ""
+"על Jappix לקבל הרשאה לכתוב בתוך תיקייה זו כדי ליצור את מדורי המשנה שלה. היה "
+"ולא, עליך להגדיר את ההרשאות של %1s אל %2s או לשנות את הבעלים של התיקייה אל "
+"%3s (תלוי בתצורה שלך)."
 
 msgid "The folder is writable, you can continue!"
 msgstr "תיקייה זו הינה ברת כתיבה, ניתן להמשיך!"
@@ -1390,7 +1410,7 @@ msgid "HTTP authentication"
 msgstr "אימות HTTP"
 
 msgid "Registration allowed"
-msgstr "ההרשמה פתוחה"
+msgstr "הרשמה פתוחה"
 
 msgid "Use the built-in BOSH proxy"
 msgstr "השתמש בציר BOSH מובנה"
@@ -1416,13 +1436,16 @@ msgstr "החלת חיבור מאובטח (HTTPS)"
 msgid "Compression"
 msgstr "דחיסה"
 
+msgid "Cache assets"
+msgstr ""
+
 msgid ""
 "This page helps you specify the default hosts Jappix will connect to. You "
 "can leave it as it is and continue if you want to use the official service "
 "hosts."
 msgstr ""
 "עמוד זה מסייע לך לציין את המארחים המשתמטים אליהם Jappix תתחבר. ניתן להשאירו "
-"כפי שהוא (as is) ולהמשיך, אם ברצונך לעשות שימוש במארחי השירות הרשמיים."
+"כפי שהוא (as is) ולהמשיך, אם ברצונך להשתמש במארחי השירות הרשמיים."
 
 msgid ""
 "Maybe you don't know what a BOSH server is? In fact, this is a relay between "
@@ -1477,7 +1500,7 @@ msgid ""
 "button."
 msgstr ""
 "לאחר שתסיים את ההתקנה, Jappix תלחין את קבצי המטמון. תהליך זה עשוי להיות "
-"איטי, יש להמתין עד אשר היישום יהיה מוצג ואין ללחוץ על שום כפתור עד אז."
+"איטי, יש להמתין עד אשר היישום הינו מוצג ואין ללחוץ על שום כפתור עד אז."
 
 msgid "Thanks for using Jappix!"
 msgstr "תודה שבחרת להשתמש בשירות Jappix!"
@@ -1563,7 +1586,7 @@ msgstr "משתמשים"
 msgid ""
 "This is a restricted area: only the authorized users can manage this Jappix "
 "node."
-msgstr "זהו אזור מוגבל: רק משתמשים מורשים יכולים לנהל את ממסר Jappix זה."
+msgstr "זהו אזור מוגבל: רק משתמשים מורשים יכולים לנהל את צומת Jappix זה."
 
 msgid "Please use the form below to login to the administration panel."
 msgstr "אנא השתמש בתבנית שלמטה כדי להתחבר את לוח הניהול."
@@ -1594,16 +1617,16 @@ msgstr ""
 "אותן למטה."
 
 msgid "Change your Jappix node configuration with this tool."
-msgstr "שינוי תצורת ממסר Jappix בעזרת כלי זה."
+msgstr "שינוי תצורת צומת Jappix בעזרת כלי זה."
 
 msgid "Change the XMPP hosts that this Jappix node serves with this tool."
-msgstr "שנה מארחי XMPP שממסר Jappix זה משרת, בעזרת כלי זה."
+msgstr "שנה מארחי XMPP אשר צומת Jappix זה משרת, בעזרת כלי זה."
 
 msgid ""
 "All this Jappix node stored files can be managed with this tool: please "
 "select a sub-folder and start editing its content!"
 msgstr ""
-"כל הקבצים אשר מאוחסנים בממסר ‫Jappix זה יכולים להתנהל בעזרת כלי זה: אנא בחר "
+"כל הקבצים אשר מאוחסנים בצומת ‫Jappix זה יכולים להתנהל בעזרת כלי זה: אנא בחר "
 "תיקיית משנה ולאחר מכן תעמוד לרשותך האפשרות להתחיל לערוך את התוכן שלה!"
 
 msgid "Jappix is fully customisable: you can change its design right here."
@@ -1655,14 +1678,14 @@ msgid ""
 "You can define more than one administrator for this Jappix node. You can "
 "also change a password with this tool."
 msgstr ""
-"ניתן לתחום יותר ממנהלן אחד עבור ממסר Jappix זה. ניתן גם לשנות את הסיסמה "
-"בעזרת כלי זה."
+"באפשרותך לתחום יותר מאשר מנהלן אחד עבור צומת Jappix זה. באפשרותך גם לשנות את "
+"הסיסמה בעזרת כלי זה."
 
 msgid ""
 "Update your Jappix node with this tool, or check if a new one is available. "
 "Informations about the latest version are also displayed (in english)."
 msgstr ""
-"עדכון ממסר Jappix בעזרת כלי זה, לחלופין ניתן לבדוק אם ממסר חדש זמין כעת. "
+"עדכון צומת Jappix בעזרת כלי זה, לחלופין ניתן לבדוק אם ממסר חדש זמין כעת. "
 "מידע אודות הגרסה האחרונה גם כן מוצג (באנגלית)."
 
 msgid "Access statistics"
@@ -1762,7 +1785,7 @@ msgid ""
 "Change your Jappix node background with this tool. You can either set a "
 "custom color or an uploaded image. Let your creativity flow!"
 msgstr ""
-"שינוי רקע ממסר Jappix בעזרת כלי זה. ניתן להגדיר צבע מותאם או להעלות תמונה. "
+"שינוי רקע צומת Jappix בעזרת כלי זה. ניתן להגדיר צבע מותאם או להעלות תמונה. "
 "התירו ליצירתיות לזרום!"
 
 msgid "Use default background"
@@ -1778,7 +1801,7 @@ msgid "Use your own color"
 msgstr "השתמש בצבע מותאם"
 
 msgid "Type the hexadecimal color value you want to use as a background."
-msgstr "הקלד ערך הצבע ההקסדצימלי שברצונך לעשות בו שימוש כרקע."
+msgstr "הקלד ערך הצבע ההקסדצימלי שברצונך להשתמש בו בתור רקע."
 
 msgid "Manage backgrounds"
 msgstr "נהל רקעים"
@@ -1789,7 +1812,7 @@ msgid ""
 msgstr "ניתן להוסיף רקע אל הרשימה בעזרת כלי זה. אנא שלח תמונה תקפה."
 
 msgid "If you want to remove some backgrounds, use the browser below."
-msgstr "אם ברצונך להסיר רקעים, עליך לעשות שימוש בדפדפן מטה."
+msgstr "אם ברצונך להסיר רקעים, עליך להשתמש בדפדפן מטה."
 
 msgid ""
 "Define a homepage notice for all your users, such as a warn, an important "
@@ -1833,7 +1856,7 @@ msgid ""
 "repository by executing: %s."
 msgstr ""
 "הינך עושה שימוש בגרסת פיתוח של Jappix. ניתן לעדכנה דרך המאגר שלנו על ידי "
-"הרצת הפקודה: %s."
+"הרצת: %s."
 
 msgid ""
 "A new Jappix version is available! Check what is new and launch the update!"
@@ -1926,7 +1949,7 @@ msgstr "תיקיית האחסון שרצית לטהר, הינה ריקה כעת!
 
 msgid ""
 "Keep your Jappix node fresh and fast, clean the storage folders regularly!"
-msgstr "שמור על ממסר Jappix רענן ומהיר, על ידי טיהור תיקיות האחסון בקביעות!"
+msgstr "שמור על צומת Jappix רענן ומהיר, על ידי טיהור תיקיות האחסון בקביעות!"
 
 msgid ""
 "Upload your music (Ogg Vorbis, MP3 or WAV) to be able to listen to it in "
@@ -2075,10 +2098,10 @@ msgid "Everybody"
 msgstr "כולם"
 
 msgid "Send messages"
-msgstr "שליחת הודעות"
+msgstr "לשלוח הודעות"
 
 msgid "Send queries"
-msgstr "שליחת שאילתות"
+msgstr "לשלוח שאילתות"
 
 msgid "See my status"
 msgstr "הצג את מצבי"
@@ -2159,7 +2182,7 @@ msgid "Public profile"
 msgstr "דיוקן פומבי"
 
 msgid "Your profile anywhere on the Web."
-msgstr "הפרופיל שלך בכל מקום ברשת."
+msgstr "הדיוקן שלך בכל מקום ברשת."
 
 msgid ""
 "%s is a Jappix.com service which makes your XMPP profile public. It is "
@@ -2183,14 +2206,14 @@ msgid ""
 "everywhere. What a genius improvement!"
 msgstr ""
 "באפשרותך גם להשתמש באווטאר XMPP בתור אווטאר בודד עבור כל אתר רשת, בלוג "
-"ופורום אשר הינך עושה בו שימוש. כאשר יוחלט על ידך לשנותו אצל XMPP, האווטאר "
+"ופורום אשר הינך עושה בו שימוש. כאשר יוחלט על ידך לשנותו בתוך XMPP, האווטאר "
 "החדש יופיע בכל מקום. איזו השבחה גאונית!"
 
 msgid "Yay, let's create your public profile!"
 msgstr "יאללה, בוא/י ניצור את הדיוקן הפומבי שלך!"
 
 msgid "Enable my public profile"
-msgstr "אפשר את הפרופיל הפומבי שלי"
+msgstr "אפשר את הדיוקן הפומבי שלי"
 
 msgid "Jappix for your phone"
 msgstr "Jappix עבור הטלפון שלך"
@@ -2288,11 +2311,23 @@ msgstr "משבצת AdSense"
 msgid "Stop"
 msgstr "עצור"
 
+msgid "Leave"
+msgstr ""
+
 msgid "Mute"
 msgstr "השתק"
 
 msgid "Unmute"
 msgstr "בטל השתקה"
+
+msgid "Nobody there. Invite some people!"
+msgstr "אף אחד לא נמצא שם. הזמן כמה אנשים!"
+
+msgid "Invite people..."
+msgstr "הזמנת אנשים..."
+
+msgid "Enter people names..."
+msgstr "הזנת שמות אנשים..."
 
 msgid "Is calling you"
 msgstr "מחייג/ת אליך"
@@ -2301,7 +2336,7 @@ msgid "Initiating call"
 msgstr "מתחיל כעת קריאה"
 
 msgid "Connecting to call..."
-msgstr "כעת מתחבר אל קריאה..."
+msgstr "כעת מתחבר אל שיחה..."
 
 msgid "Waiting..."
 msgstr "כעת ממתין..."
@@ -2333,6 +2368,24 @@ msgstr "כבר בעיצומה של שיחה"
 msgid "Ending call..."
 msgstr "כעת מסיים שיחה..."
 
+msgid "Incoming group call"
+msgstr "שיחת קבוצה נכנסת"
+
+msgid "Preparing group call..."
+msgstr "כעת מכין שיחת קבוצה..."
+
+msgid "Connecting to group call..."
+msgstr "כעת מתחבר אל שיחת קבוצה..."
+
+msgid "Group call error"
+msgstr "שגיאת שיחת קבוצה"
+
+msgid "Ending group call..."
+msgstr "כעת מסיים שיחת קבוצה..."
+
+msgid "Group call ended"
+msgstr "שיחת קבוצה הסתיימה"
+
 msgid "Accept"
 msgstr "קבל"
 
@@ -2346,7 +2399,55 @@ msgid "Retry"
 msgstr "נסה שוב"
 
 msgid "Audio Call"
-msgstr "שיחה קולית (אודיו)"
+msgstr "שיחה קולית"
 
 msgid "Video Call"
-msgstr "שיחה חזותית (וידאו)"
+msgstr "שיחה חזותית"
+
+msgid "%s participant"
+msgstr "משתתף %s"
+
+msgid "%s participants"
+msgstr "%s משתתפים"
+
+msgid "(full)"
+msgstr "(מלא)"
+
+msgid "%s is able to receive group calls."
+msgstr "%s מסוגל/ת לקבל שיחות קבוצתיות."
+
+msgid "%s may not support group calls."
+msgstr "%s עשוי שלא לתמוך בשיחות קבוצתיות."
+
+msgid "Send a message..."
+msgstr "שליחת הודעה..."
+
+msgid "Edited"
+msgstr ""
+
+msgid "Edited (%s)"
+msgstr ""
+
+msgid "Editing"
+msgstr ""
+
+msgid "Being edited"
+msgstr ""
+
+msgid "Delivered"
+msgstr ""
+
+msgid "Read"
+msgstr ""
+
+msgid "Sending..."
+msgstr "כעת שולח..."
+
+msgid "%s requested your attention to the conversation"
+msgstr "%s ביקש/ה את תשומת לבך אל הדיון"
+
+msgid "You requested %s's attention to the conversation"
+msgstr "ביקשת את הסבת צומת הלב של %s אל הדיון"
+
+msgid "Attention to conversation requested."
+msgstr "הסבת צומת לב אל הדיון התבקשה."
