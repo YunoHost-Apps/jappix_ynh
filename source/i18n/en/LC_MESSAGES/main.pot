@@ -165,6 +165,21 @@ msgstr ""
 msgid "Your groupchats"
 msgstr ""
 
+msgid "Audio/video conference"
+msgstr ""
+
+msgid "Launch a group call"
+msgstr ""
+
+msgid "Audio conference"
+msgstr ""
+
+msgid "Video conference"
+msgstr ""
+
+msgid "Conference call"
+msgstr ""
+
 msgid "Manage your favorite groupchats"
 msgstr ""
 
@@ -1296,6 +1311,9 @@ msgstr ""
 msgid "Compression"
 msgstr ""
 
+msgid "Cache assets"
+msgstr ""
+
 msgid "This page helps you specify the default hosts Jappix will connect to. You can leave it as it is and continue if you want to use the official service hosts."
 msgstr ""
 
@@ -2043,10 +2061,22 @@ msgstr ""
 msgid "Stop"
 msgstr ""
 
+msgid "Leave"
+msgstr ""
+
 msgid "Mute"
 msgstr ""
 
 msgid "Unmute"
+msgstr ""
+
+msgid "Nobody there. Invite some people!"
+msgstr ""
+
+msgid "Invite people..."
+msgstr ""
+
+msgid "Enter people names..."
 msgstr ""
 
 msgid "Is calling you"
@@ -2088,6 +2118,24 @@ msgstr ""
 msgid "Ending call..."
 msgstr ""
 
+msgid "Incoming group call"
+msgstr ""
+
+msgid "Preparing group call..."
+msgstr ""
+
+msgid "Connecting to group call..."
+msgstr ""
+
+msgid "Group call error"
+msgstr ""
+
+msgid "Ending group call..."
+msgstr ""
+
+msgid "Group call ended"
+msgstr ""
+
 msgid "Accept"
 msgstr ""
 
@@ -2104,4 +2152,52 @@ msgid "Audio Call"
 msgstr ""
 
 msgid "Video Call"
+msgstr ""
+
+msgid "%s participant"
+msgstr ""
+
+msgid "%s participants"
+msgstr ""
+
+msgid "(full)"
+msgstr ""
+
+msgid "%s is able to receive group calls."
+msgstr ""
+
+msgid "%s may not support group calls."
+msgstr ""
+
+msgid "Send a message..."
+msgstr ""
+
+msgid "Edited"
+msgstr ""
+
+msgid "Edited (%s)"
+msgstr ""
+
+msgid "Editing"
+msgstr ""
+
+msgid "Being edited"
+msgstr ""
+
+msgid "Delivered"
+msgstr ""
+
+msgid "Read"
+msgstr ""
+
+msgid "Sending..."
+msgstr ""
+
+msgid "%s requested your attention to the conversation"
+msgstr ""
+
+msgid "You requested %s's attention to the conversation"
+msgstr ""
+
+msgid "Attention to conversation requested."
 msgstr ""

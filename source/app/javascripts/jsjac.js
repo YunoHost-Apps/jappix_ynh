@@ -14,20 +14,17 @@ Authors: Stefan Strigler, Valérian Saliou, Zash, Maranda
  * @fileoverview Magic dependency loading. Taken from script.aculo.us
  * and modified to break it.
  * @author Stefan Strigler steve@zeank.in-berlin.de 
- * @version $Revision$
+ * @version 1.3
  */
 
 var JSJaC = {
-  Version: '$Rev$',
+  Version: '1.3',
   bind: function(fn, obj, optArg) {
     return function(arg) {
       return fn.apply(obj, [arg, optArg]);
     };
   }
 };
-
-if (typeof JSJaCConnection == 'undefined')
-  JSJaC.load();
 
 
 
@@ -52,7 +49,7 @@ if (typeof JSJaCConnection == 'undefined')
  * this code is taken from
  * http://webfx.eae.net/dhtml/xmlextras/xmlextras.html
  * @author Stefan Strigler steve@zeank.in-berlin.de
- * @version $Revision$
+ * @version 1.3
  */
 
 /**
@@ -282,7 +279,7 @@ if (window.XMLSerializer &&
 /**
  * @fileoverview Collection of functions to make live easier
  * @author Stefan Strigler
- * @version $Revision$
+ * @version 1.3
  */
 
 /**
@@ -1381,7 +1378,7 @@ JSJaCJSON.parse = function (str) {
  * @fileoverview This file contains all things that make life easier when
  * dealing with JIDs
  * @author Stefan Strigler
- * @version $Revision$
+ * @version 1.3
  */
 
 /**
@@ -1714,7 +1711,7 @@ var JSJaCBuilder = {
 /**
  * @fileoverview Contains all Jabber/XMPP packet related classes.
  * @author Stefan Strigler steve@zeank.in-berlin.de
- * @version $Revision$
+ * @version 1.3
  */
 
 var JSJACPACKET_USE_XMLNS = true;
@@ -2567,7 +2564,7 @@ function JSJaCKeys(func,oDbg) {
  * @fileoverview Contains all things in common for all subtypes of connections
  * supported.
  * @author Stefan Strigler steve@zeank.in-berlin.de
- * @version $Revision$
+ * @version 1.3
  */
 
 /**
@@ -3601,10 +3598,6 @@ JSJaCConnection.prototype._handlePID = function(packet) {
   if (!packet.getID())
     return false;
 
-  if (packet.pType() != 'iq' ||
-         (packet.getType() != 'error' && packet.getType() != 'result'))
-    return false; 
-
   var jid = packet.getFrom() || this.jid;
 
   if (packet.getFrom() == this.domain)
@@ -3723,7 +3716,7 @@ JSJaCConnection.prototype._parseStreamFeatures = function(doc) {
 
     // Get legacy session capability if available
     this.legacy_sessions=null;
-    if (doc.getElementsByTagName("session")[0]) {
+    if (doc.getElementsByTagName("session")) {
 	this.legacy_sessions=true;
     }
     
@@ -3955,7 +3948,7 @@ JSJaCConnection.prototype._setStatus = function(status) {
 /**
  * @fileoverview All stuff related to HTTP Binding
  * @author Stefan Strigler steve@zeank.in-berlin.de
- * @version $Revision$
+ * @version 1.3
  */
 
 /**
@@ -4865,7 +4858,26 @@ JSJaCWebSocketConnection.prototype._parseXml = function(s) {
   this.oDbg.log('Parsing: ' + s, 4);
   try {
     doc = XmlDocument.create('stream', NS_STREAM);
-    if(s.indexOf('<stream:stream') === -1) {
+    if(s.trim() == '</stream:stream>') {
+      // Consider session as closed
+      this.oDbg.log("session terminated", 1);
+
+      clearTimeout(this._timeout); // remove timer
+      clearInterval(this._interval);
+      clearInterval(this._inQto);
+
+      try {
+        DataStore.removeDB(MINI_HASH, 'jsjac', 'state');
+      } catch (e) {}
+
+      this._connected = false;
+      this._handleEvent('onerror',JSJaCError('503','cancel','session-terminate'));
+
+      this.oDbg.log("Disconnected.",1);
+      this._handleEvent('ondisconnect');
+
+      return null;
+    } else if(s.indexOf('<stream:stream') === -1) {
       // Wrap every stanza into stream element, so that XML namespaces work properly.
       doc.loadXML("<stream:stream xmlns:stream='" + NS_STREAM + "' xmlns='jabber:client'>" + s + "</stream:stream>");
       return doc.documentElement.firstChild;
@@ -5018,3 +5030,61 @@ JSJaCWebSocketConnection.prototype._sendRaw = function(xml, cb, arg) {
   return true;
 };
 
+/*exported JSJaCUtils */
+
+/**
+ * Various utilities put together so that they don't pollute global
+ * name space.
+ * @namespace
+ */
+var JSJaCUtils = {
+  /**
+   * XOR two strings of equal length.
+   * @param {string} s1 first string to XOR.
+   * @param {string} s2 second string to XOR.
+   * @return {string} s1 ^ s2.
+   */
+  xor: function(s1, s2) {
+    /*jshint bitwise: false */
+    if(!s1) {
+      return s2;
+    }
+    if(!s2) {
+      return s1;
+    }
+
+    var result = '';
+    for(var i = 0; i < s1.length; i++) {
+      result += String.fromCharCode(s1.charCodeAt(i) ^ s2.charCodeAt(i));
+    }
+    return result;
+  },
+
+  /**
+   * Create nonce value of given size.
+   * @param {int} size size of the nonce that should be generated.
+   * @return {string} generated nonce.
+   */
+  cnonce: function(size) {
+    var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var cnonce = '';
+    for (var i = 0; i < size; i++) {
+      cnonce += tab.charAt(Math.round(Math.random(new Date().getTime()) * (tab.length - 1)));
+    }
+    return cnonce;
+  },
+
+  /**
+   * Current timestamp.
+   * @return Seconds since 1.1.1970.
+   * @type int
+   */
+  now: function() {
+    if (Date.now && typeof Date.now == 'function') {
+      return Date.now();
+    } else {
+      return new Date().getTime();
+    }
+  }
+
+};

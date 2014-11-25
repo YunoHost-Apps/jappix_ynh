@@ -25,6 +25,196 @@ var Groupchat = (function () {
 
 
     /**
+     * Apply generate events
+     * @private
+     * @param {object} input_sel
+     * @param {string} hash
+     * @param {string} room
+     * @return {undefined}
+     */
+    self._createEvents = function(input_sel, hash, room) {
+
+        try {
+            self._createEventsInput(input_sel, hash);
+            self._createEventsKey(input_sel, hash, room);
+        } catch(e) {
+            Console.error('Groupchat._createEvents', e);
+        }
+
+    };
+
+
+    /**
+     * Apply generate events (input)
+     * @private
+     * @param {object} input_sel
+     * @param {string} hash
+     * @return {undefined}
+     */
+    self._createEventsInput = function(input_sel, hash) {
+
+        try {
+            // Focus event
+            input_sel.focus(function() {
+                // Clean notifications for this chat
+                Interface.chanCleanNotify(hash);
+                
+                // Store focus on this chat!
+                Interface.chat_focus_hash = hash;
+            });
+            
+            // Blur event
+            input_sel.blur(function() {
+                // Reset storage about focus on this chat!
+                if(Interface.chat_focus_hash == hash) {
+                    Interface.chat_focus_hash = null;
+                }
+
+                // Reset autocompletion
+                Autocompletion.reset(hash);
+            });
+        } catch(e) {
+            Console.error('Groupchat._createEventsInput', e);
+        }
+
+    };
+
+
+    /**
+     * Apply generate events (key)
+     * @private
+     * @param {object} input_sel
+     * @param {string} hash
+     * @param {string} room
+     * @return {undefined}
+     */
+    self._createEventsKey = function(input_sel, hash, room) {
+
+        try {
+            // Lock to the input
+            input_sel.keydown(function(e) {
+                // Enter key
+                if(e.keyCode == 13) {
+                    // If shift key (without any others modifiers) was pressed, add a new line
+                    if(e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
+                        input_sel.val(input_sel.val() + '\n');
+                    } else {
+                        if(Correction.isIn(room) === true) {
+                                var corrected_value = input_sel.val().trim();
+
+                                if(corrected_value) {
+                                    // Send the corrected message
+                                    Correction.send(room, 'groupchat', corrected_value);
+                                }
+
+                                Correction.leave(room);
+                        } else {
+                            // Send the message
+                            Message.send(hash, 'groupchat');
+                            
+                            // Reset the composing database entry
+                            DataStore.setDB(Connection.desktop_hash, 'chatstate', room, 'off');
+                        }
+                    }
+                    
+                    return false;
+                }
+
+                // Remove chars (leave correction)
+                else if(e.keyCode == 8) {
+                    // Leave correction mode? (another way, by flushing input value progressively)
+                    if(Correction.isIn(room) === true && !input_sel.val()) {
+                        Correction.leave(room);
+                    }
+                }
+                
+                // Tabulation key (without any modifiers)
+                else if(!e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && e.keyCode == 9) {
+                    Autocompletion.create(hash);
+                    
+                    return false;
+                }
+                
+                // Reset the autocompleter
+                else {
+                    Autocompletion.reset(hash);
+                }
+            });
+
+            input_sel.keyup(function(e) {
+                if(e.keyCode == 27) {
+                    // Escape key
+                    input_sel.val('');
+
+                    // Leave correction mode? (simple escape way)
+                    if(Correction.isIn(room) === true) {
+                        Correction.leave(room);
+                    }
+                } else {
+                    Correction.detect(room, input_sel);
+                }
+            });
+        } catch(e) {
+            Console.error('Groupchat._createEventsKey', e);
+        }
+
+    };
+
+
+    /**
+     * Apply suggest check events
+     * @private
+     * @return {undefined}
+     */
+    self._suggestCheckEvents = function() {
+
+        try {
+            // Click events
+            $('#suggest .content a.one').click(function() {
+                var this_sel = $(this);
+
+                // Add/remove the active class
+                this_sel.toggleClass('active');
+                
+                // We require at least one room to be chosen
+                if(Common.exists('#suggest .content a.one.active')) {
+                    $('#suggest a.next').removeClass('disabled');
+                } else {
+                    $('#suggest a.next').addClass('disabled');
+                }
+                
+                return false;
+            });
+            
+            $('#suggest a.next').click(function() {
+                var this_sel = $(this);
+
+                // Disabled?
+                if(this_sel.hasClass('disabled')) {
+                    return false;
+                }
+                
+                // Store groupchats to join?
+                if(this_sel.is('.continue')) {
+                    $('#suggest .content a.one.active').each(function() {
+                        JOIN_SUGGEST.push(this_sel.attr('data-xid'));
+                    });
+                }
+                
+                // Switch to talk UI
+                $('#suggest').remove();
+                Connection.triggerConnected();
+                
+                return false;
+            });
+        } catch(e) {
+            Console.error('Groupchat._suggestCheckEvents', e);
+        }
+
+    };
+
+
+    /**
      * Displays the MUC admin elements
      * @public
      * @param {string} affiliation
@@ -37,16 +227,19 @@ var Groupchat = (function () {
 
         try {
             // We must be in the "login" mode
-            if(Utils.isAnonymous())
+            if(Utils.isAnonymous()) {
                 return;
+            }
             
             // We check if the user is a room owner or administrator to give him privileges
-            if(affiliation == 'owner' || affiliation == 'admin')
+            if(affiliation == 'owner' || affiliation == 'admin') {
                 $('#' + id + ' .tools-mucadmin').show();
+            }
             
             // We check if the room hasn't been yet created
-            if(statuscode == 201)
+            if(statuscode == 201) {
                 Board.openThisInfo(4);
+            }
             
             // We add the click event
             $('#' + id + ' .tools-mucadmin').click(function() {
@@ -80,14 +273,16 @@ var Groupchat = (function () {
             // No nickname?
             if(!nickname) {
                 // Get some values
-                if(!Utils.isAnonymous())
+                if(!Utils.isAnonymous()) {
                     nickname = Name.getNick();
-                else
+                } else {
                     nickname = ANONYMOUS_NICK;
+                }
                 
                 // If the nickname could not be retrieved, ask it
-                if(!nickname)
+                if(!nickname) {
                     self.generateMUCAsk('nickname', room, hash, nickname, password);
+                }
             }
             
             // Got our nickname?
@@ -126,10 +321,12 @@ var Groupchat = (function () {
             var room = Common.bareXID(from);
             var nickname = Common.thisResource(from);
             var hash = hex_md5(room);
+            var id = presence.getID();
             
             // No ID: must fix M-Link bug
-            if(presence.getID() === null) {
-                presence.setID(1);
+            if(id === null) {
+                id = 1;
+                presence.setID(id);
             }
             
             Console.info('First MUC presence: ' + from);
@@ -139,10 +336,16 @@ var Groupchat = (function () {
                 // Define some stuffs
                 var muc_user = $(xml).find('x[xmlns="' + NS_MUC_USER + '"]');
                 var affiliation = muc_user.find('item').attr('affiliation');
-                        var statuscode = parseInt(muc_user.find('status').attr('code'));
+                var statuscode = parseInt(muc_user.find('status').attr('code'));
                 
                 // Handle my presence
                 Presence.handle(presence);
+                
+                // Configure the new room
+                if(affiliation == 'owner' || affiliation == 'admin') {
+                    console.debug('presence', presence.xml());
+                    self._initialConfiguration(id, room);
+                }
                 
                 // Check if I am a room owner
                 self.openAdmin(affiliation, hash, room, statuscode);
@@ -279,65 +482,16 @@ var Groupchat = (function () {
             });
             
             // Must show the add button?
-            if(!DataStore.existDB('favorites', room))
+            if(!DataStore.existDB(Connection.desktop_hash, 'favorites', room)) {
                 $('#' + hash + ' .tools-add').show();
+            }
             
             // The event handlers
-            var inputDetect = $('#' + hash + ' .message-area');
-            
-            // Focus event
-            inputDetect.focus(function() {
-                // Clean notifications for this chat
-                Interface.chanCleanNotify(hash);
-                
-                // Store focus on this chat!
-                Interface.chat_focus_hash = hash;
-            });
-            
-            // Blur event
-            inputDetect.blur(function() {
-                // Reset storage about focus on this chat!
-                if(Interface.chat_focus_hash == hash)
-                    Interface.chat_focus_hash = null;
-
-                // Reset autocompletion
-                Autocompletion.reset(hash);
-            });
-            
-            // Lock to the input
-            inputDetect.keydown(function(e) {
-                // Enter key
-                if(e.keyCode == 13) {
-                    // If shift key (without any others modifiers) was pressed, add a new line
-                    if(e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey)
-                        inputDetect.val(inputDetect.val() + '\n');
-                    
-                    // Send the message
-                    else {
-                        Message.send(hash, 'groupchat');
-                        
-                        // Reset the composing database entry
-                        DataStore.setDB(Connection.desktop_hash, 'chatstate', room, 'off');
-                    }
-                    
-                    return false;
-                }
-                
-                // Tabulation key (without any modifiers)
-                else if(!e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && e.keyCode == 9) {
-                    Autocompletion.create(hash);
-                    
-                    return false;
-                }
-                
-                // Reset the autocompleter
-                else {
-                    Autocompletion.reset(hash);
-                }
-            });
+            var input_sel = $('#' + hash + ' .message-area');
+            self._createEvents(input_sel, hash, room);
             
             // Chatstate events
-            ChatState.events(inputDetect, room, hash, 'groupchat');
+            ChatState.events(input_sel, room, hash, 'groupchat');
             
             // Get the current muc informations and content
             self.getMUC(room, nickname, password);
@@ -361,23 +515,26 @@ var Groupchat = (function () {
             var new_arr = [];
             
             // Try to split it
-            if(GROUPCHATS_JOIN.indexOf(',') != -1)
+            if(GROUPCHATS_JOIN.indexOf(',') != -1) {
                 muc_arr = GROUPCHATS_JOIN.split(',');
+            }
             
             for(var i in muc_arr) {
                 // Get the current value
                 var muc_current = $.trim(muc_arr[i]);
                 
                 // No current value?
-                if(!muc_current)
+                if(!muc_current) {
                     continue;
+                }
                 
                 // Filter the current value
                 muc_current = Common.generateXID(muc_current, 'groupchat');
                 
                 // Add the current value
-                if(!Utils.existArrayValue(new_arr, muc_current))
+                if(!Utils.existArrayValue(new_arr, muc_current)) {
                     new_arr.push(muc_current);
+                }
             }
             
             return new_arr;
@@ -397,8 +554,9 @@ var Groupchat = (function () {
 
         try {
             // Nothing to join?
-            if(!JOIN_SUGGEST)
+            if(!JOIN_SUGGEST) {
                 return;
+            }
             
             // Join the chats
             if(JOIN_SUGGEST.length) {
@@ -425,8 +583,9 @@ var Groupchat = (function () {
     
             // Must suggest the user?
             if((GROUPCHATS_SUGGEST == 'on') && groupchat_arr.length) {
-                if(Common.exists('#suggest'))
+                if(Common.exists('#suggest')) {
                     return;
+                }
                 
                 // Create HTML code
                 var html = '<div id="suggest" class="removable">';
@@ -452,39 +611,8 @@ var Groupchat = (function () {
                 // Append HTML code
                 $('body').append(html);
                 
-                // Click events
-                $('#suggest .content a.one').click(function() {
-                    // Add/remove the active class
-                    $(this).toggleClass('active');
-                    
-                    // We require at least one room to be chosen
-                    if(Common.exists('#suggest .content a.one.active'))
-                        $('#suggest a.next').removeClass('disabled');
-                    else
-                        $('#suggest a.next').addClass('disabled');
-                    
-                    return false;
-                });
-                
-                $('#suggest a.next').click(function() {
-                    // Disabled?
-                    if($(this).hasClass('disabled')) {
-                        return false;
-                    }
-                    
-                    // Store groupchats to join?
-                    if($(this).is('.continue')) {
-                        $('#suggest .content a.one.active').each(function() {
-                            JOIN_SUGGEST.push($(this).attr('data-xid'));
-                        });
-                    }
-                    
-                    // Switch to talk UI
-                    $('#suggest').remove();
-                    Connection.triggerConnected();
-                    
-                    return false;
-                });
+                // Attach events
+                self._suggestCheckEvents();
             } else {
                 JOIN_SUGGEST = groupchat_arr;
                 
@@ -512,7 +640,7 @@ var Groupchat = (function () {
             if(!ban_xid) {
                 Board.openThisInfo(6);
 
-                Console.warning('Could not ban user with XID: ' + ban_xid + ' from room: ' + room_xid);
+                Console.warn('Could not ban user with XID: ' + ban_xid + ' from room: ' + room_xid);
             } else {
                 // We generate the ban IQ
                 var iq = new JSJaCIQ();
@@ -520,10 +648,16 @@ var Groupchat = (function () {
                 iq.setType('set');
                 
                 var iqQuery = iq.setQuery(NS_MUC_ADMIN);
-                var item = iqQuery.appendChild(iq.buildNode('item', {'affiliation': 'outcast', 'jid': ban_xid, 'xmlns': NS_MUC_ADMIN}));
+                var item = iqQuery.appendChild(iq.buildNode('item', {
+                    'affiliation': 'outcast',
+                    'jid': ban_xid,
+                    'xmlns': NS_MUC_ADMIN
+                }));
                 
                 if(reason) {
-                    item.appendChild(iq.buildNode('reason', {'xmlns': NS_MUC_ADMIN}, reason));
+                    item.appendChild(iq.buildNode('reason', {
+                        'xmlns': NS_MUC_ADMIN
+                    }, reason));
                 }
                 
                 con.send(iq, Errors.handleReply);
@@ -561,10 +695,16 @@ var Groupchat = (function () {
                 iq.setType('set');
                 
                 var iqQuery = iq.setQuery(NS_MUC_ADMIN);
-                var item = iqQuery.appendChild(iq.buildNode('item', {'nick': nick, 'role': 'none', 'xmlns': NS_MUC_ADMIN}));
+                var item = iqQuery.appendChild(iq.buildNode('item', {
+                    'nick': nick,
+                    'role': 'none',
+                    'xmlns': NS_MUC_ADMIN
+                }));
                 
                 if(reason) {
-                    item.appendChild(iq.buildNode('reason', {'xmlns': NS_MUC_ADMIN}, reason));
+                    item.appendChild(iq.buildNode('reason', {
+                        'xmlns': NS_MUC_ADMIN
+                    }, reason));
                 }
                 
                 con.send(iq, Errors.handleReply);
@@ -670,6 +810,50 @@ var Groupchat = (function () {
         }
 
     };
+    
+    /**
+     * Sends initial configuration of the room
+     * @private
+     * @param {string} pid
+     * @param {string} xid
+     * @return {undefined}
+     */
+    self._initialConfiguration = function(pid, xid) {
+
+        try {
+            var iq = new JSJaCIQ();
+
+            iq.setTo(xid);
+            iq.setType('set');
+            iq.setID('first-muc-config-' + pid);
+
+            var iqQuery = iq.setQuery(NS_MUC_OWNER);
+
+            // Configure room with nil(null) fields
+            var iqX = iqQuery.appendChild(iq.buildNode('x', {
+                'xmlns': NS_XDATA,
+                'type': 'submit'
+            }));
+            
+            // Build a new field node
+            var iqField = iqX.appendChild(iq.buildNode('field', {
+                'var': 'FORM_TYPE',
+                'type': 'hidden',
+                'xmlns': NS_XDATA
+            }));
+
+            iqField.appendChild(iq.buildNode('value', {
+                'xmlns': NS_XDATA
+            }, NS_MUC_CONFIG)); 
+
+            con.send(iq);
+
+            Console.info('Groupchat._initialConfiguration', 'Sent initial room configuration: ' + xid);
+        } catch(e) {
+            Console.error('Groupchat._initialConfiguration', e);
+        }
+    };
+    
 
 
     /**

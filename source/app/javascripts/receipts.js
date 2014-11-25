@@ -108,8 +108,9 @@ var Receipts = (function () {
             aMsg.setID(id);
             
             // Any type?
-            if(type)
+            if(type) {
                 aMsg.setType(type);
+            }
             
             // Append the received node
             aMsg.appendNode('received', {'xmlns': NS_URN_RECEIPTS, 'id': id});
@@ -147,7 +148,7 @@ var Receipts = (function () {
             // Remove the group marker
             if(!group.find('.one-line[data-lost]').size()) {
                 group.find('b.name').removeClass('talk-images')
-                            .removeAttr('title');
+                                    .removeAttr('title');
             }
         } catch(e) {
             Console.error('Receipts.messageReceived', e);
@@ -170,14 +171,19 @@ var Receipts = (function () {
         try {
             // Fire a check 10 seconds later
             $('#' + hash + ' .one-line[data-id="' + id + '"]').oneTime('10s', function() {
+                var this_sel = $(this);
+
                 // Not received?
-                if($(this).attr('data-received') != 'true') {
+                if(this_sel.attr('data-received') != 'true') {
                     // Add a "lost" marker
-                    $(this).attr('data-lost', 'true');
+                    this_sel.attr('data-lost', 'true');
                     
                     // Add a warn on the buddy-name
-                    $(this).parent().find('b.name').addClass('talk-images')
-                                       .attr('title', Common._e("Your friend seems not to have received your message(s)!"));
+                    this_sel.parent().find('b.name').addClass('talk-images')
+                                                    .attr(
+                                                        'title',
+                                                        Common._e("Your friend seems not to have received your message(s)!")
+                                                    );
                 }
             });
         } catch(e) {

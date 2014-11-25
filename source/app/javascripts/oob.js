@@ -39,8 +39,9 @@ var OOB = (function () {
                 to = Caps.getFeatureResource(to, NS_IQOOB);
                 
                 // IQs cannot be sent to offline users
-                if(!to)
+                if(!to) {
                     return;
+                }
                 
                 // Register the ID
                 DataStore.setDB(Connection.desktop_hash, 'send/url', id, url);
@@ -92,19 +93,15 @@ var OOB = (function () {
     self.handle = function(from, id, type, node) {
 
         try {
-            var xid = '';
-            var url = '';
-            var desc = '';
+            var xid = '', url = '', desc = '';
             
-            // IQ stanza?
             if(type == 'iq') {
+                // IQ stanza
                 xid = Common.fullXID(from);
                 url = $(node).find('url').text();
                 desc = $(node).find('desc').text();
-            }
-            
-            // Message stanza?
-            else {
+            } else {
+                // Message stanza
                 xid = Common.bareXID(from);
                 url = $(node).find('url').text();
                 desc = $(node).find('body').text();
@@ -140,8 +137,9 @@ var OOB = (function () {
 
         try {
             // Not IQ type?
-            if(type != 'iq')
+            if(type != 'iq') {
                 return;
+            }
             
             // New IQ
             var aIQ = new JSJaCIQ();
@@ -160,11 +158,17 @@ var OOB = (function () {
                 aIQ.setType('error');
                 
                 // Append stanza content
-                for(var i = 0; i < node.childNodes.length; i++)
+                for(var i = 0; i < node.childNodes.length; i++) {
                     aIQ.getNode().appendChild(node.childNodes.item(i).cloneNode(true));
+                }
                 
                 // Append error content
-                var aError = aIQ.appendNode('error', {'xmlns': NS_CLIENT, 'code': '406', 'type': 'modify'});
+                var aError = aIQ.appendNode('error', {
+                    'xmlns': NS_CLIENT,
+                    'code': '406',
+                    'type': 'modify'
+                });
+
                 aError.appendChild(aIQ.buildNode('not-acceptable', {'xmlns': NS_STANZAS}));
                 
                 Console.info('Rejected file request from: ' + to);
@@ -187,11 +191,16 @@ var OOB = (function () {
 
         try {
             // Append the wait icon
-            $('#page-engine .chat-tools-file:not(.mini) .tooltip-subitem *').hide();
-            $('#page-engine .chat-tools-file:not(.mini) .tooltip-subitem').append('<div class="wait wait-medium"></div>');
+            var chat_tools_file_sel = page_engine_sel.find('.chat-tools-file:not(.mini)');
+            var subitem_sel = chat_tools_file_sel.find('.tooltip-subitem');
+
+            subitem_sel.find('*').hide();
+            subitem_sel.append(
+                '<div class="wait wait-medium"></div>'
+            );
             
             // Lock the bubble
-            $('#page-engine .chat-tools-file:not(.mini)').addClass('mini');
+            chat_tools_file_sel.addClass('mini');
         } catch(e) {
             Console.error('OOB.waitUpload', e);
         }
@@ -208,6 +217,8 @@ var OOB = (function () {
     self.handleUpload = function(responseXML) {
 
         try {
+            var page_engine_sel = $('#page-engine');
+
             // Data selector
             var dData = $(responseXML).find('jappix');
             
@@ -220,25 +231,27 @@ var OOB = (function () {
             var oob_has;
             
             // No ID provided?
-            if(!fID)
+            if(!fID) {
                 oob_has = ':has(.wait)';
-            else
+            } else {
                 oob_has = ':has(#oob-upload input[value="' + fID + '"])';
+            }
             
-            var xid = $('#page-engine .page-engine-chan' + oob_has).attr('data-xid');
-            var oob_type = $('#page-engine .chat-tools-file' + oob_has).attr('data-oob');
+            var xid = page_engine_sel.find('.page-engine-chan' + oob_has).attr('data-xid');
+            var oob_type = page_engine_sel.find('.chat-tools-file' + oob_has).attr('data-oob');
             
             // Reset the file send tool
-            $('#page-engine .chat-tools-file' + oob_has).removeClass('mini');
-            $('#page-engine .bubble-file' + oob_has).remove();
+            page_engine_sel.find('.chat-tools-file' + oob_has).removeClass('mini');
+            page_engine_sel.find('.bubble-file' + oob_has).remove();
             
             // Not available?
-            if($('#page-engine .chat-tools-file' + oob_has).is(':hidden') && (oob_type == 'iq')) {
+            if(page_engine_sel.find('.chat-tools-file' + oob_has).is(':hidden') && (oob_type == 'iq')) {
                 Board.openThisError(4);
                 
                 // Remove the file we sent
-                if(fURL)
+                if(fURL) {
                     $.get(fURL + '&action=remove');
+                }
             }
             
             // Everything okay?
@@ -250,10 +263,7 @@ var OOB = (function () {
                 Notification.create('send_pending', xid, [xid, fURL, oob_type, '', ''], fDesc, hex_md5(fURL + fDesc + fID));
                 
                 Console.info('File request sent.');
-            }
-            
-            // Upload error?
-            else {
+            } else {
                 Board.openThisError(4);
                 
                 Console.error('Error while sending the file', dData.find('error').text());

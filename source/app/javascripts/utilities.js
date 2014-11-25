@@ -52,8 +52,9 @@ var Utils = (function () {
 
         try {
             // HTTPS not allowed
-            if((HTTPS_STORAGE != 'on') && url.match(/^https(.+)/))
+            if((HTTPS_STORAGE != 'on') && url.match(/^https(.+)/)) {
                 url = 'http' + RegExp.$1;
+            }
             
             return url;
         } catch(e) {
@@ -217,28 +218,34 @@ var Utils = (function () {
             var browser_version = BrowserDetect.version;
             
             // No DOM storage
-            if(!DataStore.hasDB() || !DataStore.hasPersistent())
+            if(!DataStore.hasDB() || !DataStore.hasPersistent()) {
                 return true;
+            }
             
             // Obsolete IE
-            if((browser_name == 'Explorer') && (browser_version < 8))
+            if((browser_name == 'Explorer') && (browser_version < 8)) {
                 return true;
+            }
             
             // Obsolete Chrome
-            if((browser_name == 'Chrome') && (browser_version < 7))
+            if((browser_name == 'Chrome') && (browser_version < 7)) {
                 return true;
+            }
             
             // Obsolete Safari
-            if((browser_name == 'Safari') && (browser_version < 4))
+            if((browser_name == 'Safari') && (browser_version < 4)) {
                 return true;
+            }
             
             // Obsolete Firefox
-            if((browser_name == 'Firefox') && (browser_version < 3.5))
+            if((browser_name == 'Firefox') && (browser_version < 3.5)) {
                 return true;
+            }
             
             // Obsolete Opera
-            if((browser_name == 'Opera') && (browser_version < 9))
+            if((browser_name == 'Opera') && (browser_version < 9)) {
                 return true;
+            }
             
             return false;
         } catch(e) {
@@ -586,6 +593,33 @@ var Utils = (function () {
 
 
     /**
+     * Removes duplicate values from array
+     * @public
+     * @param {object} arr
+     * @return {object}
+     */
+    self.uniqueArrayValues = function(arr) {
+
+        try {
+            var a = arr.concat();
+
+            for(var i = 0; i < a.length; ++i) {
+                for(var j = i + 1; j < a.length; ++j) {
+                    if(a[i] === a[j]) {
+                        a.splice(j--, 1);
+                    }
+                }
+            }
+
+            return a;
+        } catch(e) {
+            Console.error('Utils.uniqueArrayValues', e);
+        }
+
+    };
+
+
+    /**
      * Converts a string to an array
      * @public
      * @param {string} string
@@ -603,10 +637,11 @@ var Utils = (function () {
                     var string_split = string.split(',');
                     
                     for(var i in string_split) {
-                        if(string_split[i])
+                        if(string_split[i]) {
                             array.push(string_split[i]);
-                        else
+                        } else {
                             array.push('');
+                        }
                     }
                 }
                 
@@ -634,8 +669,9 @@ var Utils = (function () {
 
         try {
             // Nothing?
-            if(!array || !array.length)
+            if(!array || !array.length) {
                 return 0;
+            }
             
             // Read the index of the value
             var index = 0;

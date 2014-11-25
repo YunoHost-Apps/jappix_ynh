@@ -53,8 +53,9 @@ var Name = (function () {
 
         try {
             // Was it an obsolete request?
-            if(!Common.exists('.add-contact-name-get[data-for="' + escape(Common.bareXID(Common.getStanzaFrom(iq))) + '"]'))
+            if(!Common.exists('.add-contact-name-get[data-for="' + escape(Common.bareXID(Common.getStanzaFrom(iq))) + '"]')) {
                 return false;
+            }
             
             // Reset the waiting item
             $('.add-contact-name-get').hide().removeAttr('data-for');
@@ -63,8 +64,9 @@ var Name = (function () {
             if(iq.getType() == 'result') {
                 var full_name = self.generateBuddy(iq)[0];
                 
-                if(full_name)
+                if(full_name) {
                     $('.add-contact-name').val(full_name);
+                }
             }
         } catch(e) {
             Console.error('Name.handleAddUser', e);
@@ -85,16 +87,16 @@ var Name = (function () {
 
         try {
             // Get the IQ content
-            var xml = $(iq.getNode()).find('vCard');
+            var vcard_sel = $(iq.getNode()).find('vCard');
             
             // Get the full name & the nickname
-            var pFull = xml.find('FN:first').text();
-            var pNick = xml.find('NICKNAME:first').text();
+            var pFull = vcard_sel.find('FN:first').text();
+            var pNick = vcard_sel.find('NICKNAME:first').text();
             
             // No full name?
             if(!pFull) {
                 // Get the given name
-                var pN = xml.find('N:first');
+                var pN = vcard_sel.find('N:first');
                 var pGiven = pN.find('GIVEN:first').text();
                 
                 if(pGiven) {
@@ -103,8 +105,9 @@ var Name = (function () {
                     // Get the family name (optional)
                     var pFamily = pN.find('FAMILY:first').text();
                     
-                    if(pFamily)
+                    if(pFamily) {
                         pFull += ' ' + pFamily;
+                    }
                 }
             }
             
@@ -132,22 +135,22 @@ var Name = (function () {
             xid = Common.bareXID(xid);
             
             // This is me?
-            if(Utils.isAnonymous() && !xid)
+            if(Utils.isAnonymous() && !xid) {
                 bname = Common._e("You");
-            else if(xid == Common.getXID())
+            } else if(xid == Common.getXID()) {
                 bname = self.get();
+            }
             
             // Not me!
             else {
                 cname = $('#roster .buddy[data-xid="' + escape(xid) + '"]:first .buddy-name').html();
                 
-                // If the complete name exists
-                if(cname)
+                // Complete name exists?
+                if(cname) {
                     bname = cname.revertHtmlEnc();
-                
-                // Else, we just get the nickname of the buddy
-                else
+                } else {
                     bname = Common.getXIDNick(xid);
+                }
             }
             
             return bname;
@@ -170,8 +173,9 @@ var Name = (function () {
             var nick = DataStore.getDB(Connection.desktop_hash, 'profile', 'nick');
             
             // No nick?
-            if(!nick)
+            if(!nick) {
                 nick = con.username;
+            }
             
             return nick;
         } catch(e) {
@@ -192,9 +196,10 @@ var Name = (function () {
             // Try to read the user name
             var name = DataStore.getDB(Connection.desktop_hash, 'profile', 'name');
             
-            // No name? Use the nickname instead!
-            if(!name)
+            // No name? Use the nickname instead
+            if(!name) {
                 name = self.getNick();
+            }
             
             return name;
         } catch(e) {

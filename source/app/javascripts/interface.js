@@ -74,8 +74,9 @@ var Interface = (function () {
 
         try {
             // Item exists?
-            if(Common.exists('#general-wait'))
+            if(Common.exists('#general-wait')) {
                 return false;
+            }
             
             // Generate the HTML code
             var html = 
@@ -178,8 +179,9 @@ var Interface = (function () {
             var more_content = '#page-switch .more-content';
             
             // Yet displayed?
-            if(Common.exists(more_content))
+            if(Common.exists(more_content)) {
                 return Bubble.close();
+            }
             
             // Add the bubble
             Bubble.show(more_content);
@@ -397,37 +399,78 @@ var Interface = (function () {
             var date = DateUtils.getXMPPTime('local');
             var type = $('#' + hash).attr('data-type');
             var direction = $('html').attr('dir') || 'ltr';
+
+            var content_sel = $(content);
             
             // Filter the content smileys
-            $(content).find('img.emoticon').each(function() {
+            content_sel.find('img.emoticon').each(function() {
                 $(this).replaceWith($(this).attr('alt'));
             });
             
             // Remove the useless attributes
-            $(content).removeAttr('data-type').removeAttr('data-stamp');
+            content_sel.removeAttr('data-type').removeAttr('data-stamp');
             
             // Remove the content avatars
-            $(content).find('.avatar-container').remove();
+            content_sel.find('.avatar-container').remove();
+
+            // Remove the content info
+            content_sel.find('.correction-edit, .message-marker, .corrected-info, .correction-label').remove();
             
             // Remove the content click events
-            $(content).find('a').removeAttr('onclick');
+            content_sel.find('a').removeAttr('onclick');
             
             // Extract the content HTML code
-            content = $(content).parent().html();
+            content = content_sel.parent().html();
             
             // No avatar?
-            if(!avatar || !avatar.match(/data:/))
+            if(!avatar || !avatar.match(/data:/)) {
                 avatar = 'none';
+            }
             
             // POST the values to the server
-            $.post('./server/generate-chat.php', { 'content': content, 'xid': xid, 'nick': nick, 'avatar': avatar, 'date': date, 'type': type, 'direction': direction }, function(data) {
+            $.post('./server/generate-chat.php', {
+                'content': content,
+                'xid': xid,
+                'nick': nick,
+                'avatar': avatar,
+                'date': date,
+                'type': type,
+                'direction': direction
+            }, function(data) {
                 // Handled!
-                $(path + 'tooltip-waitlog').replaceWith('<a class="tooltip-actionlog" href="./server/download-chat.php?id=' + data + '" target="_blank">' + Common._e("Download file!") + '</a>');
+                $(path + 'tooltip-waitlog').replaceWith(
+                    '<a class="tooltip-actionlog" href="./server/download-chat.php?id=' + data + '" target="_blank">' + Common._e("Download file!") + '</a>'
+                );
             });
         } catch(e) {
             Console.error('Interface.generateChatLog', e);
         } finally {
             return false;
+        }
+
+    };
+
+
+    /**
+     * Returns whether chan has focus or not
+     * @public
+     * @param {string} hash
+     * @return {boolean}
+     */
+    self.hasChanFocus = function(hash) {
+
+        var has_focus = true;
+
+        try {
+            if(!$('#page-switch .' + hash).hasClass('activechan')  || 
+                !Common.isFocused()                                || 
+                (self.chat_focus_hash != hash)) {
+                has_focus = false;
+            }
+        } catch(e) {
+            Console.error('Interface.hasChanFocus', e);
+        } finally {
+            return has_focus;
         }
 
     };
@@ -449,7 +492,7 @@ var Interface = (function () {
             var active = $(tested).hasClass('activechan');
             
             // We notify the user if he has not the focus on the chat
-            if(!active || !Common.isFocused() || (self.chat_focus_hash != hash)) {
+            if(self.hasChanFocus(hash) === false) {
                 if(!active) {
                     if(type == 'personal') {
                         $(tested + ', ' + chat_switch + 'more-button').addClass('chan-newmessage');
@@ -509,10 +552,11 @@ var Interface = (function () {
 
         try {
             // Any pending events?
-            if(Common.exists('.one-counter[data-counter]'))
+            if(Common.exists('.one-counter[data-counter]')) {
                 self.title('new');
-            else
+            } else {
                 self.title('talk');
+            }
         } catch(e) {
             Console.error('Interface.updateTitle', e);
         }
@@ -534,8 +578,9 @@ var Interface = (function () {
             $(chat_switch + hash).removeClass('chan-newmessage chan-unread');
             
             // We reset the global notifications if no more unread messages
-            if(!$(chat_switch + 'chans .chan-newmessage').size())
+            if(!$(chat_switch + 'chans .chan-newmessage').size()) {
                 $(chat_switch + 'more-button').removeClass('chan-newmessage');
+            }
             
             // We reset the chat counter
             $('#' + hash).removeAttr('data-counter');
@@ -598,8 +643,9 @@ var Interface = (function () {
             // We show all the groups
             $('#roster .one-group').show();
             
-            if(Search.search_filtered)
+            if(Search.search_filtered) {
                 Search.funnelFilterBuddy();
+            }
             
             // Store this in the options
             if((from == 'roster') && Options.loaded()) {
@@ -687,6 +733,39 @@ var Interface = (function () {
             $(document).ready(function() {
                 // Focus on the first visible input
                 $(window).focus(self.inputFocus);
+
+                // Re-focus to visible chat/groupchat input if typing when input blurred
+                $(document).keypress(function(evt) {
+                    try {
+                        // Don't trigger if not connected or popup opened
+                        if(Common.isConnected() && !Common.exists('div.lock')) {
+                            // Cannot work if an input/textarea is already focused or chat is not opened
+                            var target_input_sel = $('.page-engine-chan .message-area:visible');
+
+                            if(!target_input_sel.size() || $('input, textarea').is(':focus')) {
+                                return;
+                            }
+
+                            // Get key value
+                            var key_value = $.trim(String.fromCharCode(evt.which));
+                            
+                            // Re-focus on opened chat?
+                            if(key_value) {
+                                // Get input values
+                                value_input = target_input_sel.val();
+
+                                // Append pressed key value
+                                target_input_sel.val(value_input + key_value);
+                                target_input_sel.focus();
+
+                                // Put cursor at the end of input
+                                target_input_sel[0].selectionStart = target_input_sel[0].selectionEnd = value_input.length + 1;
+                            }
+                        }
+                    } catch(e) {
+                        Console.error('Interface.launch[autofocus]', e);
+                    }
+                });
             });
         } catch(e) {
             Console.error('Interface.launch', e);

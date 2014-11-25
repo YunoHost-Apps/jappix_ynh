@@ -51,8 +51,9 @@ var Talk = (function () {
 
         try {
             // Talkpage exists?
-            if(Common.exists('#talk'))
+            if(Common.exists('#talk')) {
                 return false;
+            }
             
             // Anonymous detector
             var anonymous = Utils.isAnonymous();
@@ -116,14 +117,14 @@ var Talk = (function () {
 
                     if(!anonymous) html += 
                     '<div class="tools-all">' + 
-                        '<div class="tools jingle talk-images" onclick="return Jingle.open();">' + 
+                        '<div class="tools call talk-images" onclick="return Call.open();">' + 
                             '<span class="streaming-items">' + 
                                 '<span class="counter" data-default="00:00:00">00:00:00</span>' + 
-                                '<a class="stop" href="#" onclick="return Jingle.stop();">' + Common._e("Stop") + '</a>' + 
+                                '<a class="stop" href="#" onclick="return Call.stop();">' + Common._e("Stop") + '</a>' + 
                             '</span>' + 
                         '</div>' + 
 
-                        '<div class="jingle-content tools-content">' + 
+                        '<div class="call-content tools-content">' + 
                             '<div class="tools-content-subarrow talk-images"></div>' + 
                             
                             '<div class="tools-content-subitem"></div>' + 
@@ -155,6 +156,10 @@ var Talk = (function () {
                                 
                                 '<div class="roster-groupchat roster-icon">' + 
                                     '<a href="#" class="groupchat talk-images" title="' + Common._e("Your groupchats") +  '"></a>' + 
+                                '</div>' + 
+                                
+                                '<div class="roster-muji roster-icon muji-hidable">' + 
+                                    '<a href="#" class="muji talk-images" title="' + Common._e("Audio/video conference") +  '"></a>' + 
                                 '</div>' + 
                                 
                                 '<div class="roster-more roster-icon">' + 

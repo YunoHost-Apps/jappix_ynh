@@ -97,34 +97,44 @@ var RosterX = (function () {
             
             // Parse data
             x.find('item').each(function() {
+                var this_sel = $(this);
+
                 // Generate group XML
                 var group = '';
                 
-                $(this).find('group').each(function() {
-                    group += '<group>' + $(this).text().htmlEnc() + '</group>';
+                this_sel.find('group').each(function() {
+                    group += '<group>' + this_sel.text().htmlEnc() + '</group>';
                 });
                 
-                if(group)
+                if(group) {
                     group = '<groups>' + group + '</groups>';
+                }
                 
                 // Display it!
-                self.display($(this).attr('jid'), $(this).attr('name'), group, $(this).attr('action'));
+                self.display(
+                    this_sel.attr('jid'),
+                    this_sel.attr('name'),
+                    group,
+                    this_sel.attr('action')
+                );
             });
             
             // Click to check/uncheck
             $('#rosterx .oneresult').click(function(evt) {
                 // No need to apply when click on input
-                if($(evt.target).is('input[type="checkbox"]'))
+                if($(evt.target).is('input[type="checkbox"]')) {
                     return;
+                }
                 
                 // Input selector
                 var checkbox = $(this).find('input[type="checkbox"]');
                 
                 // Check or uncheck?
-                if(checkbox.filter(':checked').size())
+                if(checkbox.filter(':checked').size()) {
                     checkbox.removeAttr('checked');
-                else
+                } else {
                     checkbox.attr('checked', true);
+                }
             });
         } catch(e) {
             Console.error('RosterX.parse', e);
@@ -146,16 +156,19 @@ var RosterX = (function () {
 
         try {
             // End if no XID
-            if(!xid)
+            if(!xid) {
                 return false;
+            }
             
             // Set up a default action if no one
-            if(!action || (action != 'modify') || (action != 'delete'))
+            if(!action || (action != 'modify') || (action != 'delete')) {
                 action = 'add';
+            }
             
             // Override "undefined" for nickname
-            if(!nick)
+            if(!nick) {
                 nick = '';
+            }
             
             // Display it
             $('#rosterx .results').append(
@@ -178,25 +191,27 @@ var RosterX = (function () {
     /**
      * Saves the rosterx settings
      * @public
-     * @return {undefined}
+     * @return {boolean}
      */
     self.save = function() {
 
         try {
             // Send the requests
             $('#rosterx .results input[type="checkbox"]').filter(':checked').each(function() {
+                var this_sel = $(this);
+
                 // Read the attributes
-                var nick = $(this).attr('data-name');
-                var xid = $(this).attr('data-xid');
-                var action = $(this).attr('data-action');
-                var group = $(this).attr('data-group');
+                var nick = this_sel.attr('data-name');
+                var xid = this_sel.attr('data-xid');
+                var action = this_sel.attr('data-action');
+                var group = this_sel.attr('data-group');
                 
                 // Parse groups XML
                 var group_arr = [];
                 
                 if(group) {
                     $(group).find('group').each(function() {
-                        group_arr.push($(this).text().revertHtmlEnc());
+                        group_arr.push(this_sel.text().revertHtmlEnc());
                     });
                 }
                 
@@ -233,6 +248,8 @@ var RosterX = (function () {
             self.close();
         } catch(e) {
             Console.error('RosterX.save', e);
+        } finally {
+            return false;
         }
 
     };
@@ -248,17 +265,25 @@ var RosterX = (function () {
         try {
             // Click events
             $('#rosterx .bottom .finish').click(function() {
-                if($(this).is('.save'))
+                var this_sel = $(this);
+
+                if(this_sel.is('.save')) {
                     return self.save();
-                if($(this).is('.cancel'))
+                }
+
+                if(this_sel.is('.cancel')) {
                     return self.close();
+                }
             });
             
             $('#rosterx .rosterx-head a').click(function() {
-                if($(this).is('.check'))
+                var this_sel = $(this);
+                
+                if(this_sel.is('.check')) {
                     $('#rosterx .results input[type="checkbox"]').attr('checked', true);
-                else if($(this).is('.uncheck'))
+                } else if(this_sel.is('.uncheck')) {
                     $('#rosterx .results input[type="checkbox"]').removeAttr('checked');
+                }
                 
                 return false;
             });

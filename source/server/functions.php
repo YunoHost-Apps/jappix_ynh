@@ -141,8 +141,40 @@ function readXML($type, $xmlns) {
     return false;
 }
 
+// Creates a secure download context (StartSSL provider, used on Jappix.org which is the update source)
+function requestContext($remote_url, $type = 'default', $opt = null) {
+    $options = array();
+    $url_parse = parse_url($remote_url);
+
+    $ca_path = JAPPIX_BASE.'/misc/certs/';
+
+    // Official update host?
+    if($url_parse['scheme'] === 'https' && $url_parse['host'] === 'jappix.org') {
+        if($type === 'curl') {
+            curl_setopt($opt, CURLOPT_SSL_VERIFYPEER, TRUE);
+            curl_setopt($opt, CURLOPT_CAPATH, $ca_path);
+        } else {
+            $options['ssl'] = array(
+                'verify_peer'       => TRUE,
+                'capath'            => $ca_path,
+                'verify_depth'      => 10,
+                'SNI_enabled'       => TRUE,
+                'SNI_server_name'   => $url_parse['host']
+            );
+        }
+    }
+
+    if($type === 'curl') {
+        return true;
+    } else {
+        $ssl_context = stream_context_create($options);
+
+        return $ssl_context;
+    }
+}
+
 // The function to read remote URLs
-function read_url($url) {
+function readUrl($url) {
     // Any cURL?
     if(function_exists('curl_init')) {
         $ch = curl_init();
@@ -151,11 +183,16 @@ function read_url($url) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
 
+        // Set dynamic request context
+        requestContext($url, 'curl', $ch);
+
         $data = curl_exec($ch);
         curl_close($ch);
     } else {
+        $context = requestContext($url);
+
         // Fallback on default method
-        $data = @file_get_contents($url);
+        $data = @file_get_contents($url, false, $context);
     }
     
     return $data;
@@ -571,6 +608,11 @@ function hasCompression() {
     return (COMPRESSION != 'off');
 }
 
+// The function to check caching is enabled
+function hasCaching() {
+    return (CACHING != 'off');
+}
+
 // The function to check compression is available with the current client
 function canCompress() {
     // Compression allowed by admin & browser?
@@ -749,7 +791,7 @@ function httpAuthEnabled() {
 }
 
 // The function to authenticate with HTTP
-function httpAuthentication() {
+function httpAuthCredentials() {
     $auth = authHeaders();
 
     if(isset($_SERVER['HTTP_EMAIL'])) {
@@ -760,9 +802,20 @@ function httpAuthentication() {
         $host = HOST_MAIN;
     }
 
+    return array(
+        'user'     => $user,
+        'password' => $auth['password'],
+        'host'     => $host
+    );
+}
+
+// The function to authenticate with HTTP
+function httpAuthentication() {
+    $auth = httpAuthCredentials();
+
     echo '<script type="text/javascript">
             jQuery(document).ready(function() {
-                HTTPAuth.go('.json_encode($user).', '.json_encode($auth['password']).', '.json_encode($host).', 10);
+                HTTPAuth.go('.json_encode($auth['user']).', '.json_encode($auth['password']).', '.json_encode($auth['host']).', 10);
             });
           </script>';
 }
@@ -1601,6 +1654,9 @@ function hideErrors() {
         ini_set('display_errors', 1);
         ini_set('error_reporting', E_ALL);
     }
+
+    // Force timezone (avoids getting warnings on some PHP setups)
+    date_default_timezone_set(@date_default_timezone_get());
 }
 
 // Handles errors (to be appended in log file)

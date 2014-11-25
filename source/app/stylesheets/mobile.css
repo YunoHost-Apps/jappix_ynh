@@ -143,7 +143,7 @@ a {
 }
 
 #talk a.one-buddy {
-    display: none;
+    display: block;
     background-color: #87a5ab;
     border-bottom: 1px solid #5b8088;
     text-shadow: 1px 1px 1px #5b8088;
@@ -154,6 +154,7 @@ a {
 }
 
 #talk a.one-buddy:hover {
+    background-color: #8fb0b7;
     cursor: pointer;
 }
 
@@ -248,7 +249,7 @@ a {
     border-bottom: 1px solid #cbcbcb;
     top: 23px;
     left: 0;
-    bottom: 25px;
+    bottom: 37px;
     overflow: auto;
     text-align: left;
 }

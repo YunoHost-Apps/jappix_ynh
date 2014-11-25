@@ -272,7 +272,7 @@ var vCard = (function () {
                 $('#USER-PHOTO-TYPE').val(aType);
                 $('#USER-PHOTO-BINVAL').val(aBinval);
                 
-                // We display the avatar !
+                // We display the avatar!
                 $('#vcard .avatar-container').replaceWith('<div class="avatar-container"><img class="avatar" src="data:' + aType + ';base64,' + aBinval + '" alt="" /></div>');
             }
             
@@ -374,9 +374,7 @@ var vCard = (function () {
                 
                 // Send the IQ
                 con.send(iq, self.handleUser);
-            }
-            
-            else {
+            } else {
                 // Show the wait icon
                 $('#userinfos .wait').show();
                 
@@ -456,12 +454,14 @@ var vCard = (function () {
             var values_yet = [];
             
             $(iqNode).find('vCard').children().each(function() {
+                var this_sel = $(this);
+
                 // Read the current parent node name
                 var tokenname = (this).nodeName.toUpperCase();
                 
                 // Node with a parent
-                if($(this).children().size()) {
-                    $(this).children().each(function() {
+                if(this_sel.children().size()) {
+                    this_sel.children().each(function() {
                         // Get the node values
                         var currentID = tokenname + '-' + (this).nodeName.toUpperCase();
                         var currentText = $(this).text();
@@ -473,10 +473,11 @@ var vCard = (function () {
                             
                             // Userinfos viewer popup
                             if((type == 'buddy') && currentText) {
-                                if(currentID == 'EMAIL-USERID')
+                                if(currentID == 'EMAIL-USERID') {
                                     $(path_userInfos + ' #BUDDY-' + currentID).html('<a href="mailto:' + currentText.htmlEnc() + '" target="_blank">' + currentText.htmlEnc() + '</a>');
-                                else
+                                } else {
                                     $(path_userInfos + ' #BUDDY-' + currentID).text(currentText.htmlEnc());
+                                }
                             }
                             
                             // Profile editor popup
@@ -505,8 +506,9 @@ var vCard = (function () {
                             // URL modification
                             if(tokenname == 'URL') {
                                 // No http:// or https:// prefix, we should add it
-                                if(!currentText.match(/^https?:\/\/(.+)/))
+                                if(!currentText.match(/^https?:\/\/(.+)/)) {
                                     currentText = 'http://' + currentText;
+                                }
                                 
                                 currentText = '<a href="' + currentText + '" target="_blank">' + currentText.htmlEnc() + '</a>';
                             }
@@ -525,8 +527,9 @@ var vCard = (function () {
                         }
                         
                         // Profile editor popup
-                        else if(type == 'user')
+                        else if(type == 'user') {
                             $(path_vcard + ' #USER-' + tokenname).val(currentText);
+                        }
                         
                         // Avoid duplicating the value
                         values_yet.push(tokenname);
@@ -556,9 +559,7 @@ var vCard = (function () {
                 aBinval = $('#USER-PHOTO-BINVAL').val();
                 aType = $('#USER-PHOTO-TYPE').val();
                 aContainer = path_vcard + ' .avatar-container';
-            }
-            
-            else {
+            } else {
                 aBinval = $(iqNode).find('BINVAL:first').text();
                 aType = $(iqNode).find('TYPE:first').text();
                 aContainer = path_userInfos + ' .avatar-container';
@@ -578,8 +579,10 @@ var vCard = (function () {
                     $(path_vcard + ' .avatar').remove();
                 }
                 
+                var avatar_src = ('data:' + aType + ';base64,' + aBinval);
+
                 // We display the avatar we have just received
-                $(aContainer).replaceWith('<div class="avatar-container"><img class="avatar" src="data:' + aType + ';base64,' + aBinval + '" alt="" /></div>');
+                $(aContainer).replaceWith('<div class="avatar-container"><img class="avatar" src="' + avatar_src + '" alt="" /></div>');
             }
             
             else if(type == 'buddy') {
@@ -668,10 +671,11 @@ var vCard = (function () {
                         var tagname = Common.explodeThis('-', item_id, 0);
                         var cur_node;
 
-                        if(node.getElementsByTagName(tagname).length > 0)
+                        if(node.getElementsByTagName(tagname).length > 0) {
                             cur_node = node.getElementsByTagName(tagname).item(0);
-                        else
+                        } else {
                             cur_node = node.appendChild(stanza.buildNode(tagname, {'xmlns': namespace}));
+                        }
                         
                         cur_node.appendChild(
                             stanza.buildNode(
@@ -874,18 +878,22 @@ var vCard = (function () {
             // Keyboard events
             $('#vcard input[type="text"]').keyup(function(e) {
                 // Enter pressed: send the vCard
-                if((e.keyCode == 13) && !$('#vcard .finish.save').hasClass('disabled'))
+                if((e.keyCode == 13) && !$('#vcard .finish.save').hasClass('disabled')) {
                     return self.send();
+                }
             });
             
             // Click events
             $('#vcard .tab a').click(function() {
+                var this_sel = $(this);
+
                 // Yet active?
-                if($(this).hasClass('tab-active'))
+                if(this_sel.hasClass('tab-active')) {
                     return false;
+                }
                 
                 // Switch to the good tab
-                var key = parseInt($(this).attr('data-key'));
+                var key = parseInt(this_sel.attr('data-key'));
                 
                 return self.switchTab(key);
             });
@@ -895,10 +903,15 @@ var vCard = (function () {
             });
             
             $('#vcard .bottom .finish').click(function() {
-                if($(this).is('.cancel'))
+                var this_sel = $(this);
+
+                if(this_sel.is('.cancel')) {
                     return self.close();
-                if($(this).is('.save') && !$(this).hasClass('disabled'))
+                }
+
+                if(this_sel.is('.save') && !this_sel.hasClass('disabled')) {
                     return self.send();
+                }
                 
                 return false;
             });
@@ -912,16 +925,22 @@ var vCard = (function () {
             
             // Avatar upload form submit event
             $('#vcard-avatar').submit(function() {
-                if($('#vcard .wait').is(':hidden') && $('#vcard .avatar-info.avatar-wait').is(':hidden') && $('#vcard-avatar input[type="file"]').val())
+                if($('#vcard .wait').is(':hidden') && 
+                    $('#vcard .avatar-info.avatar-wait').is(':hidden') && 
+                    $('#vcard-avatar input[type="file"]').val()) {
                     $(this).ajaxSubmit(avatar_options);
+                }
                 
                 return false;
             });
             
             // Avatar upload input change event
             $('#vcard-avatar input[type="file"]').change(function() {
-                if($('#vcard .wait').is(':hidden') && $('#vcard .avatar-info.avatar-wait').is(':hidden') && $(this).val())
+                if($('#vcard .wait').is(':hidden') && 
+                    $('#vcard .avatar-info.avatar-wait').is(':hidden') && 
+                    $(this).val()) {
                     $('#vcard-avatar').ajaxSubmit(avatar_options);
+                }
                 
                 return false;
             });

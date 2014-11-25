@@ -177,7 +177,7 @@ if(!anonymousMode() && !httpAuthEnabled()) { ?>
                 
                 <h2>Jappix.org</h2>
                 <div class="tabulate">
-                    <a href="http://jappix.org/">
+                    <a href="https://jappix.org/">
                         <span class="name">Jappix Download</span>
                         <span class="desc"><?php _e("Get Jappix, get support."); ?></span>
                     </a>
@@ -197,7 +197,7 @@ if(!anonymousMode() && !httpAuthEnabled()) { ?>
                 
                 <h2>Jappix.net</h2>
                 <div class="tabulate">
-                    <a href="http://jappix.net/">
+                    <a href="https://jappix.net/">
                         <span class="name">Jappix Network</span>
                         <span class="desc"><?php _e("Find a public Jappix node."); ?></span>
                     </a>
@@ -215,8 +215,8 @@ if(!anonymousMode() && !httpAuthEnabled()) { ?>
                     <a class="desc" href="http://www.post-pro.fr/"><?php _e("Association"); ?></a>
                 </span>
                 <span class="one">
-                    <a class="name" href="http://frenchtouch.pro/">FrenchTouch</a>
-                    <a class="desc" href="http://frenchtouch.pro/"><?php _e("Web agency"); ?></a>
+                    <a class="name" href="https://frenchtouch.pro/">FrenchTouch</a>
+                    <a class="desc" href="https://frenchtouch.pro/"><?php _e("Web agency"); ?></a>
                 </span>
                 
                 <?php if(hasLegal()) { ?>

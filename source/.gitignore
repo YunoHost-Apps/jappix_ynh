@@ -1,0 +1,11 @@
+mini/
+store/
+tmp/cache/
+tmp/jingle/
+tmp/avatar/
+tmp/archives/
+tmp/send/
+log/
+test/node_modules/
+.DS_Store
+*.esproj

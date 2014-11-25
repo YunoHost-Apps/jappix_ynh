@@ -84,12 +84,34 @@ var DateUtils = (function () {
 
         try {
             // Last activity not yet initialized?
-            if(self.last_activity === 0)
+            if(self.last_activity === 0) {
                 return 0;
+            }
             
             return self.getTimeStamp() - self.last_activity;
         } catch(e) {
             Console.error('DateUtils.getLastActivity', e);
+        }
+
+    };
+
+
+    /**
+     * Gets the last user activity as a date
+     * @public
+     * @return {string}
+     */
+    self.getLastActivityDate = function() {
+
+        try {
+            var last_activity = self.last_activity || self.getTimeStamp();
+
+            var last_date = new Date();
+            last_date.setTime(last_activity * 1000);
+
+            return self.getDatetime(last_date, 'utc');
+        } catch(e) {
+            Console.error('DateUtils.getLastActivityDate', e);
         }
 
     };
@@ -104,12 +126,63 @@ var DateUtils = (function () {
 
         try {
             // Last presence stamp not yet initialized?
-            if(self.presence_last_activity === 0)
+            if(self.presence_last_activity === 0) {
                 return 0;
+            }
             
             return self.getTimeStamp() - self.presence_last_activity;
         } catch(e) {
             Console.error('DateUtils.getPresenceLast', e);
+        }
+
+    };
+
+
+    /**
+     * Generates a normalized datetime
+     * @public
+     * @param {Date} date
+     * @param {string} location
+     * @return {string}
+     */
+    self.getDatetime = function(date, location) {
+
+        /* FROM : http://trac.jwchat.org/jsjac/browser/branches/jsjac_1.0/jsextras.js?rev=221 */
+
+        var year, month, day, hours, minutes, seconds;
+        var date_string = null;
+
+        try {
+            if(location == 'utc') {
+                // UTC date
+                year = date.getUTCFullYear();
+                month = date.getUTCMonth();
+                day = date.getUTCDate();
+                hours = date.getUTCHours();
+                minutes = date.getUTCMinutes();
+                seconds = date.getUTCSeconds();
+            } else {
+                // Local date
+                year = date.getFullYear();
+                month = date.getMonth();
+                day = date.getDate();
+                hours = date.getHours();
+                minutes = date.getMinutes();
+                seconds = date.getSeconds();
+            }
+            
+            // Generates the date string
+            date_string = year + '-';
+            date_string += Common.padZero(month + 1) + '-';
+            date_string += Common.padZero(day) + 'T';
+            date_string += Common.padZero(hours) + ':';
+            date_string += Common.padZero(minutes) + ':';
+            date_string += Common.padZero(seconds) + 'Z';
+            
+            // Returns the date string
+            return date_string;
+        } catch(e) {
+            Console.error('DateUtils.getDatetime', e);
         }
 
     };
@@ -123,43 +196,11 @@ var DateUtils = (function () {
      */
     self.getXMPPTime = function(location) {
 
-        /* FROM : http://trac.jwchat.org/jsjac/browser/branches/jsjac_1.0/jsextras.js?rev=221 */
-
         try {
-            // Initialize
-            var jInit = new Date();
-            var year, month, day, hours, minutes, seconds;
-            
-            // Gets the UTC date
-            if(location == 'utc') {
-                year = jInit.getUTCFullYear();
-                month = jInit.getUTCMonth();
-                day = jInit.getUTCDate();
-                hours = jInit.getUTCHours();
-                minutes = jInit.getUTCMinutes();
-                seconds = jInit.getUTCSeconds();
-            }
-            
-            // Gets the local date
-            else {
-                year = jInit.getFullYear();
-                month = jInit.getMonth();
-                day = jInit.getDate();
-                hours = jInit.getHours();
-                minutes = jInit.getMinutes();
-                seconds = jInit.getSeconds();
-            }
-            
-            // Generates the date string
-            var jDate = year + '-';
-            jDate += Common.padZero(month + 1) + '-';
-            jDate += Common.padZero(day) + 'T';
-            jDate += Common.padZero(hours) + ':';
-            jDate += Common.padZero(minutes) + ':';
-            jDate += Common.padZero(seconds) + 'Z';
-            
-            // Returns the date string
-            return jDate;
+            return self.getDatetime(
+                (new Date()),
+                location
+            );
         } catch(e) {
             Console.error('DateUtils.getXMPPTime', e);
         }
@@ -176,6 +217,7 @@ var DateUtils = (function () {
 
         try {
             var init = new Date();
+
             var time = Common.padZero(init.getHours()) + ':';
             time += Common.padZero(init.getMinutes()) + ':';
             time += Common.padZero(init.getSeconds());
@@ -332,20 +374,24 @@ var DateUtils = (function () {
             var days = Math.round((current_stamp - old_stamp) / 86400000);
             
             // Invalid date?
-            if(isNaN(old_stamp) || isNaN(days))
+            if(isNaN(old_stamp) || isNaN(days)) {
                 return self.getCompleteTime();
+            }
             
             // Is it today?
-            if(current_day == old_day)
+            if(current_day == old_day) {
                 return old_time;
+            }
             
             // It is yesterday?
-            if(days <= 1)
+            if(days <= 1) {
                 return Common._e("Yesterday") + ' - ' + old_time;
+            }
             
             // Is it less than a week ago?
-            if(days <= 7)
+            if(days <= 7) {
                 return Common.printf(Common._e("%s days ago"), days) + ' - ' + old_time;
+            }
             
             // Another longer period
             return old_date.toLocaleDateString() + ' - ' + old_time;
@@ -371,13 +417,12 @@ var DateUtils = (function () {
             // Read the delay
             d_delay = jQuery(node).find('delay[xmlns="' + NS_URN_DELAY + '"]:first').attr('stamp');
             
-            // New delay (valid XEP)
-            if(d_delay)
+            // Get delay
+            if(d_delay) {
+                // New delay (valid XEP)
                 delay = d_delay;
-            
-            // Old delay (obsolete XEP!)
-            else {
-                // Try to read the old-school delay
+            } else {
+                // Old delay (obsolete XEP!)
                 var x_delay = jQuery(node).find('x[xmlns="' + NS_DELAY + '"]:first').attr('stamp');
                 
                 if(x_delay)

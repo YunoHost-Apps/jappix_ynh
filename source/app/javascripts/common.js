@@ -20,6 +20,10 @@ var Common = (function () {
     var self = {};
 
 
+    /* Constants */
+    self.R_DOMAIN_NAME = /^(([a-zA-Z0-9-\.]+)\.)?[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/i;
+
+
     /**
      * Checks if an element exists in the DOM
      * @public
@@ -110,6 +114,29 @@ var Common = (function () {
 
 
     /**
+     * Matches a domain name
+     * @public
+     * @param {string} xid
+     * @return {boolean}
+     */
+    self.isDomain = function(xid) {
+
+        is_domain = false;
+
+        try {
+            if(xid.match(self.R_DOMAIN_NAME)) {
+                is_domain = true;
+            }
+        } catch(e) {
+            Console.error('Common.isDomain', e);
+        } finally {
+            return is_domain;
+        }
+
+    };
+
+
+    /**
      * Generates the good XID
      * @public
      * @param {string} xid
@@ -120,20 +147,21 @@ var Common = (function () {
 
         try {
             // XID needs to be transformed
-            // .. and made lowercase (uncertain though this is the right place...)
             xid = xid.toLowerCase();
 
-            if(xid && (xid.indexOf('@') == -1)) {
-                // Groupchat
-                if(type == 'groupchat')
+            if(xid && (xid.indexOf('@') === -1)) {
+                // Groupchat XID
+                if(type == 'groupchat') {
                     return xid + '@' + HOST_MUC;
+                }
                 
-                // One-to-one chat
-                if(xid.indexOf('.') == -1)
-                    return xid + '@' + HOST_MAIN;
+                // Gateway XID
+                if(self.isDomain(xid) === true) {
+                    return xid;
+                }
                 
-                // It might be a gateway?
-                return xid;
+                // User XID
+                return xid + '@' + HOST_MAIN;
             }
             
             // Nothing special (yet bare XID)
@@ -190,14 +218,16 @@ var Common = (function () {
     self.strAfterLast = function(given_char, str) {
 
         try {
-            if(!given_char || !str)
+            if(!given_char || !str) {
                 return '';
+            }
             
             var char_index = str.lastIndexOf(given_char);
             var str_return = str;
             
-            if(char_index >= 0)
+            if(char_index >= 0) {
                 str_return = str.substr(char_index + 1);
+            }
             
             return str_return;
         } catch(e) {
@@ -223,10 +253,11 @@ var Common = (function () {
             
             // We split if necessary the string
             if(index !== -1) {
-                if(i === 0)
+                if(i === 0) {
                     toStr = toStr.substr(0, index);
-                else
+                } else {
                     toStr = toStr.substr(index + 1);
+                }
             }
             
             // We return the value
@@ -309,8 +340,9 @@ var Common = (function () {
         // Spec: http://tools.ietf.org/html/rfc6122#appendix-A
 
         try {
-            if(!node)
+            if(!node) {
                 return node;
+            }
 
             // Remove prohibited chars
             var prohibited_chars = ['"', '&', '\'', '/', ':', '<', '>', '@'];
@@ -348,6 +380,40 @@ var Common = (function () {
 
 
     /**
+     * Escapes quotes in a string
+     * @public
+     * @param {string} str
+     * @return {string}
+     */
+    self.escapeQuotes = function(str) {
+
+        try {
+            return escape(self.encodeQuotes(str));
+        } catch(e) {
+            Console.error('Common.escapeQuotes', e);
+        }
+
+    };
+
+
+    /**
+     * Unescapes quotes in a string
+     * @public
+     * @param {string} str
+     * @return {string}
+     */
+    self.unescapeQuotes = function(str) {
+
+        try {
+            return unescape(str);
+        } catch(e) {
+            Console.error('Common.unescapeQuotes', e);
+        }
+
+    };
+
+
+    /**
      * Gets the bare XID from a XID
      * @public
      * @param {string} xid
@@ -360,8 +426,8 @@ var Common = (function () {
             xid = self.cutResource(xid);
             
             // Launch nodeprep
-            if(xid.indexOf('@') != -1) {
-                xid = self.nodeprep(self.getXIDNick(xid)) + '@' + self.getXIDHost(xid);
+            if(xid.indexOf('@') !== -1) {
+                xid = self.nodeprep(self.getXIDNick(xid, true)) + '@' + self.getXIDHost(xid);
             }
             
             return xid;
@@ -386,8 +452,9 @@ var Common = (function () {
             var resource = self.thisResource(xid);
             
             // Any resource?
-            if(resource)
+            if(resource) {
                 full += '/' + resource;
+            }
             
             return full;
         } catch(e) {
@@ -401,14 +468,18 @@ var Common = (function () {
      * Gets the nick from a XID
      * @public
      * @param {string} aXID
+     * @param {boolean} raw_explode
      * @return {string}
      */
-    self.getXIDNick = function(aXID) {
+    self.getXIDNick = function(aXID, raw_explode) {
 
         try {
-            // Gateway nick?
-            if(aXID.match(/\\40/))
-                return self.explodeThis('\\40', aXID, 0);
+            if(raw_explode !== true) {
+                // Gateway nick?
+                if(aXID.match(/\\40/)) {
+                    return self.explodeThis('\\40', aXID, 0);
+                }
+            }
             
             return self.explodeThis('@', aXID, 0);
         } catch(e) {
@@ -549,7 +620,7 @@ var Common = (function () {
         is_gateway = true;
 
         try {
-            if(xid.indexOf('@') != -1) {
+            if(xid.indexOf('@') !== -1) {
                 is_gateway = false;
             }
         } catch(e) {
@@ -618,12 +689,14 @@ var Common = (function () {
 
         try {
             // Negative number (without first 0)
-            if(i > -10 && i < 0)
+            if(i > -10 && i < 0) {
                 return '-0' + (i * -1);
+            }
             
             // Positive number (without first 0)
-            if(i < 10 && i >= 0)
+            if(i < 10 && i >= 0) {
                 return '0' + i;
+            }
             
             // All is okay
             return i;
@@ -643,23 +716,31 @@ var Common = (function () {
      */
     self.escapeRegex = function(query) {
 
-        if (query instanceof Array) {
-            var result = new Array(query.length);
-            for(i=0; i<query.length; i++) {
+        var result = [];
+
+        try {
+            if(query instanceof Array) {
+                result = [query.length];
+
+                for(i = 0; i < query.length; i++) {
+                    try {
+                        result[i] = Common.escapeRegex(query[i]);
+                    } catch(e) {
+                        Console.error('Common.escapeRegex', e);
+                        result[i] = null;
+                    }
+                }
+            } else {
                 try {
-                    result[i] = Common.escapeRegex(query[i]);
+                    result = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
                 } catch(e) {
-                    Console.error('Common.escapeRegex', e);
-                    result[i] = null;
+                    Console.error('Common.escapeRegex[inner]', e);
                 }
             }
+        } catch(e) {
+            Console.error('Common.escapeRegex', e);
+        } finally {
             return result;
-        } else {
-            try {
-                return query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-            } catch(e) {
-                Console.error('Common.escapeRegex', e);
-            }
         }
 
     };

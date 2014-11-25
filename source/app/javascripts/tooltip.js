@@ -37,8 +37,9 @@ var Tooltip = (function () {
             var path_bubble = path_tooltip + ' .bubble-' + type;
             
             // Yet exists?
-            if(Common.exists(path_bubble))
+            if(Common.exists(path_bubble)) {
                 return false;
+            }
             
             // Generates special tooltip HTML code
             var title = '';
@@ -211,47 +212,52 @@ var Tooltip = (function () {
                     // Click event on style bubble
                     $(bubble_style).click(function() {
                         // Hide font selector if opened
-                        if($(font_list).is(':visible'))
+                        if($(font_list).is(':visible')) {
                             $(font_current).click();
+                        }
                         
                         // Hide font-size selector if opened
-                        if($(fontsize_list).is(':visible'))
+                        if($(fontsize_list).is(':visible')) {
                             $(fontsize_current).click();
+                        }
                         
                         // Hide color selector if opened
-                        if($(color_hex).is(':visible'))
+                        if($(color_hex).is(':visible')) {
                             $(color_more).click();
+                        }
                     });
                     
                     // Click event on font picker
                     $(font_current).click(function() {
+                        var this_sel = $(this);
+
                         // The clicked color is yet selected
-                        if($(font_list).is(':visible'))
-                            $(this).parent().removeClass('listed');
-                        else
-                            $(this).parent().addClass('listed');
+                        if($(font_list).is(':visible')) {
+                            this_sel.parent().removeClass('listed');
+                        } else {
+                            this_sel.parent().addClass('listed');
+                        }
                         
                         return false;
                     });
                     
                     // Click event on a new font in the picker
                     $(font_select).click(function() {
+                        var this_sel = $(this);
+
                         // No font selected
-                        if(!$(this).attr('data-value')) {
+                        if(!this_sel.attr('data-value')) {
                             $(font_current).removeAttr('data-font')
                                            .removeAttr('data-value')
                                            .text(Common._e("None"));
                             
                             $(message_area).removeAttr('data-font');
-                        }
-                        
-                        // A font is defined
-                        else {
-                            $(font_current).attr('data-font', $(this).attr('data-font'))
-                                           .attr('data-value', $(this).attr('data-value'))
-                                           .text($(font_list).find('a[data-value="' + $(this).attr('data-value') + '"]').text());
+                        } else {
+                            $(font_current).attr('data-font', this_sel.attr('data-font'))
+                                           .attr('data-value', this_sel.attr('data-value'))
+                                           .text($(font_list).find('a[data-value="' + this_sel.attr('data-value') + '"]').text());
                             
-                            $(message_area).attr('data-font', $(this).attr('data-value'));
+                            $(message_area).attr('data-font', this_sel.attr('data-value'));
                         }
                         
                         return false;
@@ -259,28 +265,33 @@ var Tooltip = (function () {
                     
                     // Click event on font-size picker
                     $(fontsize_current).click(function() {
+                        var this_sel = $(this);
+
                         // The clicked color is yet selected
-                        if($(fontsize_list).is(':visible'))
-                            $(this).parent().removeClass('listed');
-                        else
-                            $(this).parent().addClass('listed');
+                        if($(fontsize_list).is(':visible')) {
+                            this_sel.parent().removeClass('listed');
+                        } else {
+                            this_sel.parent().addClass('listed');
+                        }
                         
                         return false;
                     });
                     
                     // Click event on a new font-size in the picker
                     $(fontsize_select).click(function() {
+                        var this_sel = $(this);
+
                         // No font-size selected
-                        if(!$(this).attr('data-value')) {
+                        if(!this_sel.attr('data-value')) {
                             $(fontsize_current).removeAttr('data-value').text(Common._e("16"));
                             $(message_area).removeAttr('data-fontsize');
                         }
                         
                         // A font-size is defined
                         else {
-                            $(fontsize_current).attr('data-value', $(this).attr('data-value'))
-                                               .text($(this).attr('data-value'));
-                            $(message_area).attr('data-fontsize', $(this).attr('data-value'));
+                            $(fontsize_current).attr('data-value', this_sel.attr('data-value'))
+                                               .text(this_sel.attr('data-value'));
+                            $(message_area).attr('data-fontsize', this_sel.attr('data-value'));
                         }
                         
                         return false;
@@ -288,19 +299,21 @@ var Tooltip = (function () {
                     
                     // Click event on color picker
                     $(colors).click(function() {
+                        var this_sel = $(this);
+
                         // Reset the manual picker
                         $(color_hex).find('input').val('');
                         
                         // The clicked color is yet selected
-                        if($(this).hasClass('selected')) {
+                        if(this_sel.hasClass('selected')) {
                             $(message_area).removeAttr('data-color');
-                            $(this).removeClass('selected');
+                            this_sel.removeClass('selected');
                         }
                         
                         else {
-                            $(message_area).attr('data-color', $(this).attr('data-color'));
+                            $(message_area).attr('data-color', this_sel.attr('data-color'));
                             $(colors).removeClass('selected');
-                            $(this).addClass('selected');
+                            this_sel.addClass('selected');
                         }
                         
                         return false;
@@ -308,12 +321,13 @@ var Tooltip = (function () {
                     
                     // Click event on color picker
                     $(color_more).click(function() {
+                        var this_sel = $(this);
+
                         // The clicked color is yet selected
-                        if($(color_hex).is(':visible'))
-                            $(this).parent().removeClass('opened');
-                        
-                        else {
-                            $(this).parent().addClass('opened');
+                        if($(color_hex).is(':visible')) {
+                            this_sel.parent().removeClass('opened');
+                        } else {
+                            this_sel.parent().addClass('opened');
                             
                             // Focus
                             $(document).oneTime(10, function() {
@@ -331,6 +345,8 @@ var Tooltip = (function () {
                     
                     // Keyup event on color picker
                     $(color_hex).find('input').keyup(function(e) {
+                        var this_sel = $(this);
+
                         // Submit
                         if(e.keyCode == 13) {
                             if($(color_hex).is(':visible')) {
@@ -350,32 +366,37 @@ var Tooltip = (function () {
                         $(colors).removeClass('selected');
                         
                         // Change value
-                        var new_value = $(this).val().replace(/([^a-z0-9]+)/gi, '');
-                        $(this).val(new_value);
+                        var new_value = this_sel.val().replace(/([^a-z0-9]+)/gi, '');
+                        this_sel.val(new_value);
                         
-                        if(new_value)
+                        if(new_value) {
                             $(message_area).attr('data-color', new_value);
+                        }
                         
                         // Regenerate style
                         var style = Message.generateStyle(hash);
                         
                         // Any style to apply?
-                        if(style)
+                        if(style) {
                             $(message_area).attr('style', style);
-                        else
+                        } else {
                             $(message_area).removeAttr('style');
+                        }
                     }).placeholder();
                     
                     // Change event on text style checkboxes
                     $(style).change(function() {
+                        var this_sel = $(this);
+
                         // Get current type
-                        var style_data = 'data-' + $(this).attr('class');
+                        var style_data = 'data-' + this_sel.attr('class');
                         
                         // Checked checkbox?
-                        if($(this).filter(':checked').size())
+                        if(this_sel.filter(':checked').size()) {
                             $(message_area).attr(style_data, true);
-                        else
+                        } else {
                             $(message_area).removeAttr(style_data);
+                        }
                     });
                     
                     // Update the textarea style when it is changed
@@ -383,10 +404,11 @@ var Tooltip = (function () {
                         var style = Message.generateStyle(hash);
                         
                         // Any style to apply?
-                        if(style)
+                        if(style) {
                             $(message_area).attr('style', style);
-                        else
+                        } else {
                             $(message_area).removeAttr('style');
+                        }
                         
                         // Focus again on the message textarea
                         $(document).oneTime(10, function() {
@@ -410,24 +432,31 @@ var Tooltip = (function () {
                     
                     // Upload form submit event
                     $(path_tooltip + ' #oob-upload').submit(function() {
-                        if($(path_tooltip + ' #oob-upload input[type="file"]').val())
-                            $(this).ajaxSubmit(oob_upload_options);
+                        var this_sel = $(this);
+
+                        if($(path_tooltip + ' #oob-upload input[type="file"]').val()) {
+                            this_sel.ajaxSubmit(oob_upload_options);
+                        }
                         
                         return false;
                     });
                     
                     // Upload input change event
                     $(path_tooltip + ' #oob-upload input[type="file"]').change(function() {
-                        if($(this).val())
+                        var this_sel = $(this);
+
+                        if(this_sel.val()) {
                             $(path_tooltip + ' #oob-upload').ajaxSubmit(oob_upload_options);
+                        }
                         
                         return false;
                     });
                     
                     // Input click event
                     $(path_tooltip + ' #oob-upload input[type="file"], ' + path_tooltip + ' #oob-upload input[type="submit"]').click(function() {
-                        if(Common.exists(path_tooltip + ' #oob-upload input[type="reset"]'))
+                        if(Common.exists(path_tooltip + ' #oob-upload input[type="reset"]')) {
                             return;
+                        }
                         
                         // Lock the bubble
                         $(path_bubble).addClass('locked');
@@ -569,17 +598,21 @@ var Tooltip = (function () {
             
             // Apply the options to the style selector
             $(bubble_style + ' input[type="checkbox"]').each(function() {
+                var this_sel = $(this);
+
                 // Current input enabled?
-                if(message_area.attr('data-' + $(this).attr('class')))
-                    $(this).attr('checked', true);
+                if(message_area.attr('data-' + this_sel.attr('class'))) {
+                    this_sel.attr('checked', true);
+                }
             });
             
             // Apply message color
             if(color) {
-                if($(bubble_style + ' a.color[data-color="' + color + '"]').size())
+                if($(bubble_style + ' a.color[data-color="' + color + '"]').size()) {
                     $(bubble_style + ' a.color[data-color="' + color + '"]').addClass('selected');
-                else
+                } else {
                     $(bubble_style + ' div.color-hex input.hex-value').val(color);
+                }
             }
         } catch(e) {
             Console.error('Tooltip.loadStyleSelector', e);

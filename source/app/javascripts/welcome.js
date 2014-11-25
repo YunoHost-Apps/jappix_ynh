@@ -203,6 +203,7 @@ var Welcome = (function () {
             // Update the "save" button if all is okay
             if(!Common.exists(tab + '.tab-missing')) {
                 var finish = welcome + '.finish.';
+
                 $(finish + 'save').show();
                 $(finish + 'next').hide();
             }
@@ -280,19 +281,22 @@ var Welcome = (function () {
             $('#welcome a.box').each(function() {
                 var current = '0';
                 
-                if($(this).hasClass('enabled'))
+                if($(this).hasClass('enabled')) {
                     current = '1';
+                }
                 
                 array.push(current);
             });
             
             // If XMPP links is enabled
-            if(array[2] == '1')
+            if(array[2] == '1') {
                 Utils.xmppLinksHandler();
+            }
             
             // If offline buddies showing is enabled
-            if(array[4] == '1')
+            if(array[4] == '1') {
                 Interface.showAllBuddies('welcome');
+            }
             
             // If archiving is supported by the server
             if(Features.enabledMAM()) {
@@ -336,8 +340,9 @@ var Welcome = (function () {
             var next = 1;
             var missing = '#welcome .tab a.tab-missing';
             
-            if(Common.exists(missing))
+            if(Common.exists(missing)) {
                 next = parseInt($(missing + ':first').attr('data-step'));
+            }
             
             // Switch to the next step
             self.switchTab(next);
@@ -360,26 +365,36 @@ var Welcome = (function () {
         try {
             // Click events
             $('#welcome .tab a').click(function() {
+                var this_sel = $(this);
+
                 // Switch to the good tab
-                var key = parseInt($(this).attr('data-step'));
+                var key = parseInt(this_sel.attr('data-step'));
                 
                 return self.switchTab(key);
             });
             
             $('#welcome a.box:not(.share)').click(function() {
-                if($(this).hasClass('enabled'))
-                    $(this).removeClass('enabled').attr('title', Common._e("Click to enable"));
-                else
-                    $(this).addClass('enabled').attr('title', Common._e("Click to disable"));
+                var this_sel = $(this);
+
+                if(this_sel.hasClass('enabled')) {
+                    this_sel.removeClass('enabled').attr('title', Common._e("Click to enable"));
+                } else {
+                    this_sel.addClass('enabled').attr('title', Common._e("Click to disable"));
+                }
                 
                 return false;
             });
             
             $('#welcome .bottom .finish').click(function() {
-                if($(this).is('.next'))
+                var this_sel = $(this);
+                
+                if(this_sel.is('.next')) {
                     return self.next();
-                if($(this).is('.save'))
+                }
+                
+                if(this_sel.is('.save')) {
                     return self.save();
+                }
                 
                 return false;
             });
