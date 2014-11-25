@@ -37,6 +37,7 @@ then
   language="en"
 fi
 
+sudo yunohost app setting jappix name -v $language
 sudo yunohost app setting jappix language -v $language
 
 sudo sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf

@@ -6,6 +6,7 @@ sudo rm -f /etc/nginx/conf.d/$domain.d/jappix.conf
 
 sudo yunohost app setting jappix domain -d
 sudo yunohost app setting jappix path -d
+sudo yunohost app setting jappix name -d
 sudo yunohost app setting jappix language -d
 
 sudo service nginx reload
