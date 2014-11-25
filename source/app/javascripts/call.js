@@ -22,6 +22,10 @@ var Call = (function() {
 
     /* Variables */
     self._start_stamp = 0;
+    self.call_auto_accept = {
+        'from' : null,
+        'sid'  : null
+    };
 
 
     /**
@@ -94,7 +98,7 @@ var Call = (function() {
 
                 // TODO: setting a fallback fucks up some calls...
                 // fallback: './server/jingle.php',
-                
+
                 single_initiate: function(stanza) {
                     try {
                         // Already in a call?
@@ -136,6 +140,123 @@ var Call = (function() {
                         Jingle.receive(xid, stanza);
                     } catch(e) {
                         Console.error('Call.init[single_initiate]', e);
+                    }
+                },
+
+                single_propose: function(stanza, proposed_medias) {
+                    try {
+                        var stanza_from = stanza.getFrom() || null;
+                        var call_id = JSJaCJingleBroadcast.get_call_id(stanza);
+
+                        // Request for Jingle session to be accepted
+                        if(stanza_from && call_id) {
+                            var call_media_main = 'audio';
+
+                            if(JSJAC_JINGLE_MEDIA_VIDEO in proposed_medias) {
+                                call_media_main = 'video';
+                            }
+
+                            Call.notify(
+                                JSJAC_JINGLE_SESSION_SINGLE,
+                                Common.bareXID(stanza_from),
+                                ('broadcast_' + call_media_main),
+                                call_media_main,
+                                null,
+
+                                {
+                                    full_xid: stanza_from,
+                                    call_id: call_id,
+                                    medias: proposed_medias
+                                }
+                            );
+
+                            Audio.play('incoming-call', true);
+
+                            // Save initiator (security: don't save SID until it's accepted)
+                            self.call_auto_accept.from = stanza_from;
+                            self.call_auto_accept.sid  = null;
+                        }
+                    } catch(e) {
+                        Console.error('Call.init[single_propose]', e);
+                    }
+                },
+
+                single_retract: function(stanza) {
+                    try {
+                        var stanza_from = stanza.getFrom() || null;
+                        var call_id = JSJaCJingleBroadcast.get_call_id(stanza);
+                        var call_medias = JSJaCJingleBroadcast.get_call_medias(call_id);
+
+                        // Call retracted (from initiator)
+                        if(self.call_auto_accept.from == stanza_from) {
+                            Audio.stop('incoming-call');
+
+                            Call.notify(
+                                JSJAC_JINGLE_SESSION_SINGLE,
+                                Common.bareXID(stanza_from),
+                                'remote_canceled'
+                            );
+                        }
+                    } catch(e) {
+                        Console.error('Call.init[single_retract]', e);
+                    }
+                },
+
+                single_accept: function(stanza) {
+                    try {
+                        var stanza_from = stanza.getFrom() || null;
+                        var call_id = JSJaCJingleBroadcast.get_call_id(stanza);
+
+                        // Another resource accepted the call
+                        if(self.call_auto_accept.sid == call_id  &&
+                           stanza_from && Common.getFullXID() != stanza_from) {
+                            self._unnotify();
+                            Audio.stop('incoming-call');
+                        }
+                    } catch(e) {
+                        Console.error('Call.init[single_accept]', e);
+                    }
+                },
+
+                single_reject: function(stanza) {
+                    try {
+                        var stanza_from = stanza.getFrom() || null;
+                        var call_id = JSJaCJingleBroadcast.get_call_id(stanza);
+
+                        // Another resource rejected the call
+                        if(self.call_auto_accept.sid == call_id  &&
+                           stanza_from && Common.getFullXID() != stanza_from) {
+                            self._unnotify();
+                            Audio.stop('incoming-call');
+                        }
+                    } catch(e) {
+                        Console.error('Call.init[single_reject]', e);
+                    }
+                },
+
+                single_proceed: function(stanza) {
+                    try {
+                        // Read broadcast parameters
+                        var call_to = stanza.getFrom() || null;
+                        var call_id = JSJaCJingleBroadcast.get_call_id(stanza);
+                        var call_medias = JSJaCJingleBroadcast.get_call_medias(call_id);
+
+                        // Check medias to include
+                        var has_media_video = false;
+
+                        for(var i = 0; i < call_medias.length; i++) {
+                            if(call_medias[i] === JSJAC_JINGLE_MEDIA_VIDEO) {
+                                has_media_video = true;
+                                break;
+                            }
+                        }
+
+                        var call_media_picked = has_media_video ? JSJAC_JINGLE_MEDIA_VIDEO : JSJAC_JINGLE_MEDIA_AUDIO;
+
+                        // Follow up Jingle call
+                        Jingle.follow_up(call_to, call_media_picked, call_id);
+                    } catch(e) {
+                        Console.error('Call.init[single_proceed]', e);
                     }
                 },
 
@@ -186,13 +307,14 @@ var Call = (function() {
     /**
      * Stops current call
      * @public
+     * @param {boolean} abort
      * @return {boolean}
      */
-    self.stop = function() {
+    self.stop = function(abort) {
 
         try {
-            Jingle.stop();
-            Muji.stop();
+            Jingle.stop(abort);
+            Muji.stop(abort);
         } catch(e) {
             Console.error('Call.stop', e);
         } finally {
@@ -286,7 +408,7 @@ var Call = (function() {
         is_same = false;
 
         try {
-            if(compare_session && session  && 
+            if(compare_session && session  &&
                compare_session.get_sid() === session.get_sid()) {
                 is_same = true;
             }
@@ -464,9 +586,10 @@ var Call = (function() {
      * @param {string} xid
      * @param {string} type
      * @param {string} mode
+     * @param {object} [options_arr]
      * @return {boolean}
      */
-    self.notify = function(call_type, xid, type, mode, sender_xid) {
+    self.notify = function(call_type, xid, type, mode, sender_xid, options_arr) {
 
         try {
             sender_xid = sender_xid || xid;
@@ -505,21 +628,21 @@ var Call = (function() {
 
             // Append notification to DOM
             call_subitem_sel.html(
-                '<div class="call-notify notify-' + type + ' ' + hex_md5(sender_xid) + '" data-type="' + type + '" data-xid="' + Common.encodeQuotes(xid) + '">' + 
-                    '<div class="avatar-pane">' + 
-                        '<div class="avatar-container">' + 
-                            '<img class="avatar" src="' + './images/others/default-avatar.png' + '" alt="" />' + 
-                        '</div>' + 
+                '<div class="call-notify notify-' + type + ' ' + hex_md5(sender_xid) + '" data-type="' + type + '" data-xid="' + Common.encodeQuotes(xid) + '">' +
+                    '<div class="avatar-pane">' +
+                        '<div class="avatar-container">' +
+                            '<img class="avatar" src="' + './images/others/default-avatar.png' + '" alt="" />' +
+                        '</div>' +
 
-                        '<span class="icon call-images"></span>' + 
-                    '</div>' + 
+                        '<span class="icon call-images"></span>' +
+                    '</div>' +
 
-                    '<div class="notification-content">' + 
-                        '<span class="fullname">' + fullname + '</span>' + 
-                        '<span class="text">' + map[type].text + '</span>' + 
+                    '<div class="notification-content">' +
+                        '<span class="fullname">' + fullname + '</span>' +
+                        '<span class="text">' + map[type].text + '</span>' +
 
-                        '<div class="reply-buttons">' + buttons_html + '</div>' + 
-                    '</div>' + 
+                        '<div class="reply-buttons">' + buttons_html + '</div>' +
+                    '</div>' +
                 '</div>'
             );
 
@@ -532,11 +655,11 @@ var Call = (function() {
                     call_tools_all_sel.find('a.reply-button[data-action="' + button + '"]').click(function() {
                         try {
                             // Remove notification
-                            self._unnotify(xid);
+                            self._unnotify();
 
                             // Execute callback, if any
                             if(typeof attrs.cb === 'function') {
-                                attrs.cb(xid, mode);
+                                attrs.cb(xid, mode, options_arr);
                             }
 
                             Console.info('Closed call notification drawer');
@@ -750,7 +873,7 @@ var Call = (function() {
             self.stop_counter();
             self._start_stamp = DateUtils.getTimeStamp();
             self._fire_clock();
-            
+
             // Fire it every second
             $('#top-content .tools.call .counter').everyTime('1s', self._fire_clock);
 
@@ -778,7 +901,7 @@ var Call = (function() {
             // Reset counter
             var counter_sel = $('#top-content .tools.call .counter');
             var default_count = counter_sel.attr('data-default');
-            
+
             counter_sel.stopTime();
 
             $('#top-content .tools.call .counter').text(default_count);
@@ -807,13 +930,13 @@ var Call = (function() {
                 DateUtils.getTimeStamp(),
                 self._start_stamp
             );
-            
+
             if(count.getHours()) {
                 count = count.toString('H:mm:ss');
             } else {
                 count = count.toString('mm:ss');
             }
-            
+
             // Display updated counter
             $('#top-content .tools.call .counter').text(count);
             $('#jingle, #muji').find('.elapsed').text(count);
