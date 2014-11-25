@@ -5,6 +5,7 @@
     "en": "A free social network",
     "fr": "Un réseau social libre"
   },
+  "licence": "AGPL v3",
   "developer": {
     "name": "titoko",
     "email": "titoko@titoko.fr",
