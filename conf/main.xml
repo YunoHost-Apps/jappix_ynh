@@ -18,6 +18,7 @@
     <https_storage>off</https_storage>
     <https_force>off</https_force>
     <compression>off</compression>
+	<caching>on</caching>
     <analytics_track>off</analytics_track>
     <analytics_url></analytics_url>
     <analytics_id></analytics_id>

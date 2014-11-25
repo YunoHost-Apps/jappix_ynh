@@ -3,7 +3,7 @@
 # Retrieve arguments
 domain=$(sudo yunohost app setting jappix domain)
 path=$(sudo yunohost app setting jappix path)
-name=$(sudo yunohost app setting jappix path)
+name=$(sudo yunohost app setting jappix name)
 language=$(sudo yunohost app setting jappix language)
 
 if [[ "$name" = "" ]];
