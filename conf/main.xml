@@ -12,7 +12,7 @@
     <http_auth>on</http_auth>
     <registration>off</registration>
     <manager_link>on</manager_link>
-    <groupchats_join>support@conference.yunohost.org</groupchats_join>
+    <groupchats_join></groupchats_join>
     <groupchats_suggest>off</groupchats_suggest>
     <encryption>on</encryption>
     <https_storage>off</https_storage>
