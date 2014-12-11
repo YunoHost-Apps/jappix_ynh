@@ -22,7 +22,7 @@ var Carbons = (function () {
 
     /**
      * Configures Message Carbons options
-     * @public
+     * @private
      * @param {string} type
      * @return {undefined}
      */
@@ -35,9 +35,9 @@ var Carbons = (function () {
 
             var iq = new JSJaCIQ();
             iq.setType('set');
-            
+
             iq.appendNode(type, {'xmlns': NS_URN_CARBONS});
-            
+
             con.send(iq, function(iq) {
                 self._handleConfigure(iq, type);
             });
@@ -50,7 +50,7 @@ var Carbons = (function () {
 
     /**
      * Configures Message Carbons options
-     * @public
+     * @private
      * @param {object} iq
      * @param {string} type
      * @return {undefined}
@@ -193,6 +193,9 @@ var Carbons = (function () {
                         } else {
                             Console.debug('Got a sent message from another resource to: ' + (to || 'none') + ', was ignored because body empty');
                         }
+
+                        // Handle chat markers change
+                        Markers.handleCarbonChange(forwarded_message);
                     } else {
                         Console.debug('Got a sent message from another resource to: ' + (to || 'none') + ', was ignored because chat not open');
                     }

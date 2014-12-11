@@ -327,6 +327,93 @@ html[dir="rtl"] #page-engine .list .user .user-details .avatar-container {
     margin-bottom: 10px;
 }
 
+#page-engine .one-line {
+    position: relative;
+}
+
+#page-engine .one-line.is-sending {
+    opacity: 0.6;
+}
+
+#page-engine .one-line .correction-edit,
+#page-engine .one-line .correction-label,
+#page-engine .one-line.user-message[data-edited] .corrected-info,
+#page-engine .one-line .message-marker {
+    font-size: 0.8em;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+html[dir="rtl"] #page-engine .one-line .correction-edit,
+html[dir="rtl"] #page-engine .one-line .correction-label,
+html[dir="rtl"] #page-engine .one-line.user-message[data-edited] .corrected-info,
+html[dir="rtl"] #page-engine .one-line .message-marker  {
+    left: 0;
+    right: auto;
+}
+
+#page-engine .one-line .correction-edit,
+#page-engine .one-line .correction-label {
+    border: 1px solid #7f7f7f;
+    color: black;
+    font-size: 0.8em;
+    text-decoration: none;
+    margin-top: -1px;
+    padding: 2px 5px;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+#page-engine .one-line .correction-edit {
+    opacity: 0.4;
+    display: none;
+}
+
+#page-engine .page-engine-chan[data-correction="true"] .one-line .correction-edit:hover,
+#page-engine .page-engine-chan[data-correction="true"] .one-line .correction-edit:focus {
+    opacity: 1;
+}
+
+#page-engine .one-line.user-message[data-edited] .corrected-info,
+#page-engine .one-line .message-marker {
+    color: #969696;
+    margin-top: 2px;
+}
+
+#page-engine .one-line .message-marker {
+    display: none;
+}
+
+#page-engine .one-line .message-marker.message-marker-read {
+    background-position: 0 -2227px;
+    padding-left: 11px;
+}
+
+#page-engine .page-engine-chan[data-correction="true"] .one-line.user-message[data-mode="me"]:last-child:hover .correction-edit {
+    display: block;
+}
+
+#page-engine .one-line.correction-active .corrected-info,
+#page-engine .one-line.user-message[data-mode="me"]:last-child:hover .corrected-info {
+    display: none;
+}
+
+#page-engine .one-line.correction-active .message-marker,
+#page-engine .one-line.user-message[data-mode="me"]:last-child:hover .message-marker {
+    display: none !important;
+}
+
+#page-engine .one-line .message-content {
+    margin-right: 80px;
+}
+
+html[dir="rtl"] #page-engine .one-line .message-content {
+    margin-right: 0;
+    margin-left: 80px;
+}
+
 #page-engine .one-line,
 #page-engine .one-group b.name {
     padding-left: 50px;
@@ -337,6 +424,10 @@ html[dir="rtl"] #page-engine .one-line,
 html[dir="rtl"] #page-engine .one-group b.name {
     padding-left: auto;
     padding-right: 50px;
+}
+
+#page-engine .one-line.correction-active {
+    opacity: 0.5;
 }
 
 #page-engine .one-group b.name {
@@ -556,7 +647,9 @@ html[dir="rtl"] #page-engine .text .chat-tools-smileys {
 }
 
 body.in_jingle_call #page-engine .text .tools-jingle-video,
-body.in_jingle_call #page-engine .text .tools-jingle-audio {
+body.in_jingle_call #page-engine .text .tools-jingle-audio,
+body.in_muji_call #page-engine .text .tools-jingle-video,
+body.in_muji_call #page-engine .text .tools-jingle-audio {
     opacity: 0.35;
     cursor: default;
 }
@@ -834,20 +927,65 @@ body.in_jingle_call #page-engine .text .tools-jingle-audio {
 }
 
 #page-engine .text .compose,
-#page-engine .muc-ask {
+#page-engine .muc-ask,
+#page-engine .correction-toolbox {
     position: absolute;
     left: 0;
 }
 
-#page-engine .text .compose {
+#page-engine .text .compose,
+#page-engine .correction-toolbox {
     top: 29px;
-    right: 12px;
     bottom: 12px;
+}
+
+#page-engine .text .compose {
+    right: 12px;
 }
 
 html[dir="rtl"] #page-engine .text .compose {
     right: 0;
     left: 12px;
+}
+
+#page-engine .text.correction-active .compose {
+    left: 120px;
+}
+
+html[dir="rtl"] #page-engine .text.correction-active .compose {
+    right: 120px;
+}
+
+#page-engine .correction-toolbox {
+    width: 120px;
+}
+
+html[dir="rtl"] #page-engine .correction-toolbox {
+    right: 0;
+    left: auto;
+}
+
+#page-engine .correction-toolbox .correction-editing,
+#page-engine .correction-toolbox .correction-cancel {
+    display: block;
+    color: black;
+    font-size: 0.8em;
+    text-decoration: none;
+    text-align: center;
+    margin: 7px 12px;
+    padding: 2px 5px;
+}
+
+#page-engine .correction-toolbox .correction-editing {
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+#page-engine .correction-toolbox .correction-cancel {
+    background: #d15e6b;
+    border: 1px solid #cc273f;
+    color: white;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
 }
 
 #page-engine .muc-ask {
@@ -870,6 +1008,21 @@ html[dir="rtl"] #page-engine .text .compose {
     -webkit-border-top-left-radius: 0;
     border-top-right-radius: 0;
     border-top-left-radius: 0;
+}
+
+#page-engine .text.correction-active textarea {
+    -moz-border-radius-bottomleft: 0;
+    -webkit-border-bottom-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+html[dir="rtl"] #page-engine .text.correction-active textarea {
+    -moz-border-radius-bottomleft: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    -moz-border-radius-bottomright: 0;
+    -webkit-border-bottom-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 #page-engine .muc-ask {

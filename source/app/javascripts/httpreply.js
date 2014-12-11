@@ -37,23 +37,31 @@ var HTTPReply = (function () {
             var id = confirm.attr('id');
             var method = confirm.attr('method');
             var url = confirm.attr('url');
-            
+
             // We generate the reply message
             var aMsg = new JSJaCMessage();
             aMsg.setTo(from);
-            
+
             // If "no"
             if(value == 'no') {
                 aMsg.setType('error');
-                aMsg.appendNode('error', {'code': '401', 'type': 'auth'});
+                aMsg.appendNode('error', {
+                    'code': '401',
+                    'type': 'auth'
+                });
             }
-            
+
             // We set the confirm node
-            aMsg.appendNode('confirm', {'xmlns': xmlns, 'url': url, 'id': id, 'method': method});
-            
+            aMsg.appendNode('confirm', {
+                'xmlns': xmlns,
+                'url': url,
+                'id': id,
+                'method': method
+            });
+
             // We send the message
             con.send(aMsg, Errors.handleReply);
-            
+
             Console.info('Replying HTTP auth request: ' + from);
         } catch(e) {
             Console.error('HTTPReply.go', e);

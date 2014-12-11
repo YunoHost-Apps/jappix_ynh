@@ -31,6 +31,7 @@ var Bubble = (function () {
             // Destroy all the elements
             $('.bubble.hidable:visible').hide();
             $('.bubble.removable').remove();
+
             $('body').off('click');
         } catch(e) {
             Console.error('Bubble.close', e);
@@ -53,33 +54,36 @@ var Bubble = (function () {
             // Hidable bubbles special things
             if($(selector).is('.hidable')) {
                 // This bubble is yet displayed? So abort!
-                if($(selector).is(':visible'))
+                if($(selector).is(':visible')) {
                     return self.close();
-                
+                }
+
                 // Close all the bubbles
                 self.close();
-                
+
                 // Show the requested bubble
                 $(selector).show();
             }
-            
+
             // Removable bubbles special things
             else {
                 // This bubble is yet added? So abort!
-                if(Common.exists(selector))
+                if(Common.exists(selector)) {
                     return self.close();
-                
+                }
+
                 // Close all the bubbles
                 self.close();
             }
-            
+
             // Creates a new click event to close the bubble
             $('body').on('click', function(evt) {
                 var target = evt.target;
-                
+
                 // If this is a click away from a bubble
-                if(!$(target).parents('.ibubble').size())
+                if(!$(target).parents('.ibubble').size()) {
                     self.close();
+                }
             });
         } catch(e) {
             Console.error('Bubble.show', e);

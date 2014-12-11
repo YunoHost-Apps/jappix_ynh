@@ -3,7 +3,8 @@
 # Retrieve arguments
 domain=$1
 path=$2
-language=$3
+name=$3
+language=$4
 
 # Check domain/path availability
 sudo yunohost app checkurl $domain$path -a jappix
@@ -15,10 +16,10 @@ fi
 path=${path%/}
 
 # Copy files to the right place
-  final_path=/var/www/jappix
-  sudo mkdir -p $final_path
-  sudo cp -r ../source/* $final_path
-  sudo cp ../conf/*.xml $final_path/store/conf/
+final_path=/var/www/jappix
+sudo mkdir -p $final_path
+sudo cp -r ../source/* $final_path
+sudo cp ../conf/*.xml $final_path/store/conf/
 
 # Set permissions to jappix directory
 sudo chown -R www-data: $final_path
@@ -27,7 +28,7 @@ sudo chown -R www-data: $final_path
 sudo sed -i "s@PATHTOCHANGE2@$path@g" ../conf/nginx.conf
 
 if [ -z "$path" ]; then
-    path="/"
+  path="/"
 fi
 
 sudo ls $final_path/i18n/$language > /dev/null 2>&1
@@ -36,6 +37,7 @@ then
   language="en"
 fi
 
+sudo yunohost app setting jappix name -v $name
 sudo yunohost app setting jappix language -v $language
 
 sudo sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
@@ -45,6 +47,7 @@ sudo sed -i "s@PATHTOCHANGE@$path@g" $final_path/store/conf/main.xml
 sudo sed -i "s@PATHTOCHANGE@$path@g" $final_path/store/conf/hosts.xml
 sudo sed -i "s@DOMAINTOCHANGE@$domain@g" $final_path/store/conf/main.xml
 sudo sed -i "s@CHANGELANG@$language@g" $final_path/store/conf/main.xml
+sudo sed -i "s@CHANGENAME@$name@g" $final_path/store/conf/main.xml
 sudo sed -i "s@DOMAINTOCHANGE@$domain@g" $final_path/store/conf/hosts.xml
 
 # Reload Nginx and regenerate SSOwat conf
