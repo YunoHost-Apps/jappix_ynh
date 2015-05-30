@@ -5,4 +5,4 @@ Jappix for Yunohost
 
 Official website: <https://jappix.org/>
 
-Jappix v1.1.2
+Jappix v1.1.4
