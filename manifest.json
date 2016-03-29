@@ -1,6 +1,7 @@
 {
   "name": "Jappix",
   "id": "jappix",
+  "packaging_format": 1,
   "description": {
     "en": "A free social network",
     "fr": "Un réseau social libre"
