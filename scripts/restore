@@ -1,16 +1,18 @@
 #!/bin/bash
-app=jappix
 
-# The parameter $1 is the uncompressed restore directory location
-backup_dir=$1/apps/$app
+app=${!#}
+
+# Retrieve arguments
+backup_dir=$1
+
+# Retrieve old app settings
+domain=$(sudo yunohost app setting "$app" domain)
 
 # Restore sources & data
-sudo cp -a $backup_dir/sources/. /var/www/$app
+sudo cp -a ./sources "/var/www/${app}"
 
 # Restore Nginx and YunoHost parameters
-sudo cp -a $backup_dir/yunohost/. /etc/yunohost/apps/$app
-domain=$(sudo yunohost app setting $app domain)
-sudo cp -a $backup_dir/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
+sudo cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
 
-# Restart webserver
+# Reload services
 sudo service nginx reload

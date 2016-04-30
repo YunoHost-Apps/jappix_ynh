@@ -1,6 +1,10 @@
 #!/bin/bash
 
+set -e
+
 source ./_common.sh
+
+app=${!#}
 
 # Retrieve arguments
 domain=$1
@@ -9,7 +13,7 @@ name=$3
 language=$4
 
 # Check domain/path availability
-sudo yunohost app checkurl $domain$path -a jappix
+sudo yunohost app checkurl "${domain}${path}" -a "$app"
 if [[ ! $? -eq 0 ]]; then
 exit 1
 fi
@@ -21,16 +25,16 @@ path=${path%/}
 wget -nv -O jappix.tar.gz https://github.com/jappix/jappix/archive/${VERSION}.tar.gz
 
 # Copy files to the right place
-final_path=/var/www/jappix
-sudo mkdir -p $final_path
-sudo tar -C $final_path -xf jappix.tar.gz --strip-components 1
-sudo cp ../conf/*.xml $final_path/store/conf/
+final_path="/var/www/${app}"
+sudo mkdir -p "${final_path}/store/conf"
+sudo tar -C "$final_path" -xf jappix.tar.gz --strip-components 1
+sudo cp ../conf/*.xml "${final_path}/store/conf/"
 
 # Set permissions to jappix directory
-sudo chown -R www-data: $final_path
+sudo chown -R www-data: "$final_path"
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
-sudo sed -i "s@PATHTOCHANGE2@$path@g" ../conf/nginx.conf
+sudo sed -i "s@PATHTOCHANGE2@${path}@g" ../conf/nginx.conf
 
 if [ -z "$path" ]; then
   path="/"
@@ -42,19 +46,18 @@ then
   language="en"
 fi
 
-sudo yunohost app setting jappix name -v $name
-sudo yunohost app setting jappix language -v $language
+sudo yunohost app setting "$app" name -v "$name"
+sudo yunohost app setting "$app" language -v "$language"
 
-sudo sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
-sudo sed -i "s@ALIASTOCHANGE@$final_path/@g" ../conf/nginx.conf
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/jappix.conf
-sudo sed -i "s@PATHTOCHANGE@$path@g" $final_path/store/conf/main.xml
-sudo sed -i "s@PATHTOCHANGE@$path@g" $final_path/store/conf/hosts.xml
-sudo sed -i "s@DOMAINTOCHANGE@$domain@g" $final_path/store/conf/main.xml
-sudo sed -i "s@CHANGELANG@$language@g" $final_path/store/conf/main.xml
-sudo sed -i "s@CHANGENAME@$name@g" $final_path/store/conf/main.xml
-sudo sed -i "s@DOMAINTOCHANGE@$domain@g" $final_path/store/conf/hosts.xml
+sudo sed -i "s@PATHTOCHANGE@${path}@g" ../conf/nginx.conf
+sudo sed -i "s@ALIASTOCHANGE@${final_path}/@g" ../conf/nginx.conf
+sudo cp ../conf/nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
+sudo sed -i "s@PATHTOCHANGE@${path}@g" "${final_path}/store/conf/main.xml"
+sudo sed -i "s@PATHTOCHANGE@${path}@g" "${final_path}/store/conf/hosts.xml"
+sudo sed -i "s@DOMAINTOCHANGE@${domain}@g" "${final_path}/store/conf/main.xml"
+sudo sed -i "s@CHANGELANG@${language}@g" "${final_path}/store/conf/main.xml"
+sudo sed -i "s@CHANGENAME@${name}@g" "${final_path}/store/conf/main.xml"
+sudo sed -i "s@DOMAINTOCHANGE@${domain}@g" "${final_path}/store/conf/hosts.xml"
 
-# Reload Nginx and regenerate SSOwat conf
+# Reload services
 sudo service nginx reload
-sudo yunohost app ssowatconf

@@ -1,15 +1,15 @@
 #!/bin/bash
-app=jappix
 
-# The parameter $1 is the backup directory location
-# which will be compressed afterward
-backup_dir=$1/apps/$app
-mkdir -p $backup_dir
+app=${!#}
 
-# Backup sources & data
-sudo cp -a /var/www/$app/. $backup_dir/sources
+# Retrieve arguments
+backup_dir=$1
 
-# Copy Nginx and YunoHost parameters to make the script "standalone"
-sudo cp -a /etc/yunohost/apps/$app/. $backup_dir/yunohost
-domain=$(sudo yunohost app setting $app domain)
-sudo cp -a /etc/nginx/conf.d/$domain.d/$app.conf $backup_dir/nginx.conf
+# Retrieve app settings
+domain=$(sudo yunohost app setting "$app" domain)
+
+# Save sources & data
+sudo cp -a "/var/www/${app}" ./sources
+
+# Copy NGINX configuration
+sudo cp -a "/etc/nginx/conf.d/${domain}.d/${app}.conf" ./nginx.conf
