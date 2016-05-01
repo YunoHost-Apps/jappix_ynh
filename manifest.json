@@ -6,7 +6,8 @@
     "en": "A free social network",
     "fr": "Un réseau social libre"
   },
-  "url": "https://project.jappix.com/",
+  "url": "https://jappix.org/",
+  "license": "AGPL-3",
   "maintainer": {
     "name": "titoko",
     "email": "titoko@titoko.fr"
