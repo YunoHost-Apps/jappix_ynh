@@ -11,7 +11,7 @@
     "name": "titoko",
     "email": "titoko@titoko.fr"
   },
-  "multi_instance": "true",
+  "multi_instance": "false",
   "services": [
       "nginx",
       "php5-fpm",
