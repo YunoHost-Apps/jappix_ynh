@@ -18,7 +18,7 @@ fi
 path=${path%/}
 
 # Retrieve sources
-wget -nv -O jappix.tar.gz https://github.com/jappix/jappix/archive/${VERSION}.tar.gz
+wget -nv -q -O jappix.tar.gz https://github.com/jappix/jappix/archive/${VERSION}.tar.gz
 
 # Copy files to the right place
 final_path=/var/www/jappix
