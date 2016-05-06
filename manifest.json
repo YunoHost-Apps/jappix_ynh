@@ -2,6 +2,9 @@
   "name": "Jappix",
   "id": "jappix",
   "packaging_format": 1,
+  "requirements": {
+    "yunohost": ">> 2.3.15"
+  },
   "description": {
     "en": "A free social network",
     "fr": "Un réseau social libre"
