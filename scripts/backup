@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# causes the shell to exit if any subcommand or pipeline returns a non-zero status
+set -e
+
+# Source YNH helpers
+. /usr/share/yunohost/helpers
+
 app=${!#}
 
 # Retrieve arguments
@@ -9,7 +15,7 @@ backup_dir=$1
 domain=$(sudo yunohost app setting "$app" domain)
 
 # Save sources & data
-sudo cp -a "/var/www/${app}" ./sources
+ynh_backup "/var/www/${app}" "sources"
 
 # Copy NGINX configuration
-sudo cp -a "/etc/nginx/conf.d/${domain}.d/${app}.conf" ./nginx.conf
+ynh_backup "/etc/nginx/conf.d/${domain}.d/${app}.conf" "nginx.conf"
