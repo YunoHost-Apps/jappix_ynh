@@ -1,22 +1,18 @@
 #!/bin/bash
-app=jappix
 
 # causes the shell to exit if any subcommand or pipeline returns a non-zero status
 set -e
 
-app=${!#}
-
-# Retrieve arguments
-backup_dir=$1
+app="jappix"
 
 # Retrieve old app settings
 domain=$(sudo yunohost app setting "$app" domain)
 
 # Restore sources & data
-sudo cp -a "./sources" "/var/www/$app"
+sudo cp -a ./sources "/var/www/${app}"
 
-domain=$(sudo yunohost app setting $app domain)
-sudo cp -a $"./nginx.conf" "/etc/nginx/conf.d/$domain.d/$app.conf"
+# Restore Nginx and YunoHost parameters
+sudo cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
 
-# Restart webserver
+# Reload services
 sudo service nginx reload

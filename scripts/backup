@@ -1,5 +1,4 @@
 #!/bin/bash
-app=jappix
 
 # causes the shell to exit if any subcommand or pipeline returns a non-zero status
 set -e
@@ -7,7 +6,7 @@ set -e
 # Source YNH helpers
 . /usr/share/yunohost/helpers
 
-app=${!#}
+app="jappix"
 
 # Retrieve app settings
 domain=$(sudo yunohost app setting "$app" domain)
