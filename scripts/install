@@ -3,6 +3,7 @@
 set -e
 source .fonctions
 source ./_common
+source /usr/share/yunohost/helpers
 
 ynh_check_error # Active trap pour arrêter le script si une erreur est détectée.
 
