@@ -1,8 +1,10 @@
 #!/bin/bash
 
 set -e
-
+source .fonctions
 source ./_common
+
+ynh_check_error # Active trap pour arrêter le script si une erreur est détectée.
 
 app="jappix"
 
@@ -13,8 +15,9 @@ name=$3
 language=$4
 
 # Check domain/path availability
-sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-  || exit 1
+CHECK_DOMAINPATH
+path=$(ynh_normalize_url_path $path)	# Vérifie et corrige la syntaxe du path.
+CHECK_FINALPATH	# Vérifie que le dossier de destination n'est pas déjà utilisé.
 
 # Retrieve sources
 wget -q -O jappix.tar.gz "$JAPPIX_SOURCE_URL"
