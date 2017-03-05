@@ -2,7 +2,7 @@
 
 set -e
 
-source ./_common.sh
+source ./_common
 
 app="jappix"
 
