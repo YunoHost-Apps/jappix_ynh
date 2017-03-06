@@ -19,9 +19,6 @@ CHECK_DOMAINPATH
 path=$(ynh_normalize_url_path $path)	# Vérifie et corrige la syntaxe du path.
 CHECK_FINALPATH	# Vérifie que le dossier de destination n'est pas déjà utilisé.
 
-# Retrieve sources
-wget -q -O jappix.tar.gz "$JAPPIX_SOURCE_URL"
-
 # Copy files to the right place
 final_path="/var/www/${app}"
 ynh_app_setting_set $app final_path $final_path
