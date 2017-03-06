@@ -1,28 +1,30 @@
 #!/bin/bash
 
 set -e
+source .fonctions
+source /usr/share/yunohost/helpers
 
-source ./_common.sh
+ynh_check_error # Active trap pour arrêter le script si une erreur est détectée.
 
 app="jappix"
 
 # Retrieve arguments
 domain=$1
-path=${2%/}
+path=$2
 name=$3
 language=$4
 
 # Check domain/path availability
-sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-  || exit 1
-
-# Retrieve sources
-wget -q -O jappix.tar.gz "$JAPPIX_SOURCE_URL"
+CHECK_DOMAINPATH
+path=$(ynh_normalize_url_path $path)	# Vérifie et corrige la syntaxe du path.
+CHECK_FINALPATH	# Vérifie que le dossier de destination n'est pas déjà utilisé.
 
 # Copy files to the right place
 final_path="/var/www/${app}"
+ynh_app_setting_set $app final_path $final_path
+SETUP_SOURCE	# Télécharge la source, décompresse et copie dans $final_path
+
 sudo mkdir -p "${final_path}/store/conf"
-sudo tar -C "$final_path" -xf jappix.tar.gz --strip-components 1
 sudo cp ../conf/*.xml "${final_path}/store/conf/"
 
 # Set permissions to jappix directory

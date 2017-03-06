@@ -2,8 +2,6 @@
 
 set -e
 
-source ./_common.sh
-
 app="jappix"
 
 # Retrieve arguments
