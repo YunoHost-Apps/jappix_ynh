@@ -10,7 +10,7 @@ app="jappix"
 
 # Retrieve arguments
 domain=$1
-path=${2%/}
+path=$2
 name=$3
 language=$4
 
