@@ -17,7 +17,7 @@ name="${name:-YunoJappix}"
 language="${language:-en}"
 
 # Remove trailing "/" for next commands
-path=$(ynh_normalize_url_path $path)	# Vérifie et corrige la syntaxe du path.
+CHECK_PATH
 
 #=================================================
 # Copy files to the right place
