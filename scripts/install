@@ -31,7 +31,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 
 CHECK_DOMAINPATH
-path=$(ynh_normalize_url_path $path)	# Vérifie et corrige la syntaxe du path.
+CHECK_PATH	# Vérifie et corrige la syntaxe du path.
 CHECK_FINALPATH	# Vérifie que le dossier de destination n'est pas déjà utilisé.
 
 #=================================================
