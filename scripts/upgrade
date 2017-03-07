@@ -4,7 +4,7 @@ set -e
 source .fonctions
 source /usr/share/yunohost/helpers
 
-app=$YNH_APP_INSTANCE_NAME
+app="jappix"
 
 # Retrieve arguments
 domain=$(ynh_app_setting_set "$app" domain)
