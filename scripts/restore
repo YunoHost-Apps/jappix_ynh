@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # causes the shell to exit if any subcommand or pipeline returns a non-zero status
-set -e
-
-app="jappix"
+set -eu
+source /usr/share/yunohost/helpers
 
 # Retrieve old app settings
-domain=$(sudo yunohost app setting "$app" domain)
+domain=$(ynh_app_setting_get $app domain)
+app=$YNH_APP_INSTANCE_NAME
 
 # Restore sources & data
 sudo cp -a ./sources "/var/www/${app}"
