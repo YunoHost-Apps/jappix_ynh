@@ -4,20 +4,26 @@ set -e
 source .fonctions
 source /usr/share/yunohost/helpers
 
-app=$YNH_APP_INSTANCE_NAME
+app="jappix"
+
+# Récupère les infos de l'application.
+domain=$(ynh_app_setting_get $app domain)
+path=$(ynh_app_setting_get $app path)
+name=$(ynh_app_setting_get "$app" name)
+language=$(ynh_app_setting_get "$app" language)
 
 # Retrieve arguments
-domain=$(ynh_app_setting_set "$app" domain)
-path=$(ynh_app_setting_set "$app" path)
-name=$(ynh_app_setting_set "$app" name)
-language=$(ynh_app_setting_set "$app" language)
+domain=$(ynh_app_setting_set "$app" $domain)
+path=$(ynh_app_setting_set "$app" $path)
+name=$(ynh_app_setting_set "$app" $name)
+language=$(ynh_app_setting_set "$app" $language)
 
 # Set default values
 name="${name:-YunoJappix}"
 language="${language:-en}"
 
 # Remove trailing "/" for next commands
-path=$(ynh_normalize_url_path $path)	# Vérifie et corrige la syntaxe du path.
+CHECK_PATH
 
 #=================================================
 # Copy files to the right place
