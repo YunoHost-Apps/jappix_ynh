@@ -1,29 +1,32 @@
 #!/bin/bash
 
 set -e
+source .fonctions
+source /usr/share/yunohost/helpers
 
-app="jappix"
+app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve arguments
-domain=$(sudo yunohost app setting "$app" domain)
-path=$(sudo yunohost app setting "$app" path)
-name=$(sudo yunohost app setting "$app" name)
-language=$(sudo yunohost app setting "$app" language)
+domain=$(ynh_app_setting_set "$app" domain)
+path=$(ynh_app_setting_set "$app" path)
+name=$(ynh_app_setting_set "$app" name)
+language=$(ynh_app_setting_set "$app" language)
 
 # Set default values
 name="${name:-YunoJappix}"
 language="${language:-en}"
 
 # Remove trailing "/" for next commands
-path=${path%/}
+path=$(ynh_normalize_url_path $path)	# Vérifie et corrige la syntaxe du path.
 
-# Retrieve sources
-wget -q -O jappix.tar.gz "$JAPPIX_SOURCE_URL"
-
+#=================================================
 # Copy files to the right place
+#=================================================
+
 final_path="/var/www/${app}"
+ynh_app_setting_set $app final_path $final_path
+SETUP_SOURCE	# Télécharge la source, décompresse et copie dans $final_path
 sudo mkdir -p "${final_path}/store/conf"
-sudo tar -C "$final_path" -xf jappix.tar.gz --strip-components 1
 sudo cp ../conf/*.xml "${final_path}/store/conf/"
 
 # Set permissions to jappix directory
