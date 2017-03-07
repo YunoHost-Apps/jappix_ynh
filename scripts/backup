@@ -9,7 +9,7 @@ source /usr/share/yunohost/helpers
 app="jappix"
 
 # Retrieve app settings
-domain=$(ynh_app_setting_set "$app" domain)
+domain=$(ynh_app_setting_get $app domain)
 
 # Save sources & data
 ynh_backup "/var/www/${app}" "sources"
