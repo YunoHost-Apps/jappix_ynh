@@ -6,6 +6,7 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
+set -eu
 source .fonctions
 source /usr/share/yunohost/helpers
 
