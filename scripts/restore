@@ -6,7 +6,7 @@ source /usr/share/yunohost/helpers
 
 # Retrieve old app settings
 domain=$(ynh_app_setting_get $app domain)
-app=$YNH_APP_INSTANCE_NAME
+app="jappix"
 
 # Restore sources & data
 sudo cp -a ./sources "/var/www/${app}"
