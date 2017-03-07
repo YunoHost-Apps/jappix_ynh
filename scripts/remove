@@ -3,7 +3,7 @@
 set -u
 source /usr/share/yunohost/helpers
 
-app="jappix"
+app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve arguments
 domain=$(ynh_app_setting_set "$app" domain)
