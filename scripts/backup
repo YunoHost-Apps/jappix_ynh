@@ -6,7 +6,7 @@ set -eu
 # Source YNH helpers
 source /usr/share/yunohost/helpers
 
-app="jappix"
+app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve app settings
 domain=$(ynh_app_setting_get $app domain)
