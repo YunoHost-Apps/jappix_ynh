@@ -13,10 +13,10 @@ name=$(ynh_app_setting_get "$app" name)
 language=$(ynh_app_setting_get "$app" language)
 
 # Retrieve arguments
-domain=$(ynh_app_setting_set "$app" $domain)
-path=$(ynh_app_setting_set "$app" $path)
-name=$(ynh_app_setting_set "$app" $name)
-language=$(ynh_app_setting_set "$app" $language)
+domain=$(ynh_app_setting_set "$app" domain)
+path=$(ynh_app_setting_set "$app" path)
+name=$(ynh_app_setting_set "$app" name)
+language=$(ynh_app_setting_set "$app" language)
 
 # Set default values
 name="${name:-YunoJappix}"
