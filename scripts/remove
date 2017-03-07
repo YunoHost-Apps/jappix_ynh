@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -u
 source /usr/share/yunohost/helpers
 
 app="jappix"
