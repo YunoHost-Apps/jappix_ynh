@@ -4,11 +4,6 @@
 # CHECKING
 #=================================================
 
-CHECK_USER () {	# Vérifie la validité de l'user admin
-# $1 = Variable de l'user admin.
-	ynh_user_exists "$1" || ynh_die "Wrong user"
-}
-
 CHECK_PATH () {	# Vérifie la présence du / en début de path. Et son absence à la fin.
 	if [ "${path:0:1}" != "/" ]; then    # Si le premier caractère n'est pas un /
 		path="/$path"    # Ajoute un / en début de path
@@ -91,13 +86,6 @@ POOL_FPM () {	# Créer le fichier de configuration du pool php-fpm et le configu
 	sudo cp ../conf/php-fpm.ini $finalphpini
 	sudo chown root: $finalphpini
 	sudo service php5-fpm reload
-}
-
-YNH_CURL () {
-	data_post=$1
-	url_access=$2
-	sleep 1
-	SUPPRESS_WARNING curl -kL -H \"Host: $domain\" --resolve $domain:443:127.0.0.1 --data \"$data_post\" \"https://localhost$path_url$url_access\"
 }
 
 #=================================================
@@ -230,73 +218,6 @@ ynh_no_log() {
   return $?
 }
 
-# Normalize the url path syntax
-# Handle the slash at the beginning of path and its absence at ending
-# Return a normalized url path
-#
-# example: url_path=$(ynh_normalize_url_path $url_path)
-#          ynh_normalize_url_path example -> /example
-#          ynh_normalize_url_path /example -> /example
-#          ynh_normalize_url_path /example/ -> /example
-#
-# usage: ynh_normalize_url_path path_to_normalize
-# | arg: url_path_to_normalize - URL path to normalize before using it
-ynh_normalize_url_path () {
-	path=$1
-	test -n "$path" || ynh_die "ynh_normalize_url_path expect a URL path as first argument and received nothing."
-	if [ "${path:0:1}" != "/" ]; then    # If the first character is not a /
-		path="/$path"    # Add / at begin of path variable
-	fi
-	if [ "${path:${#path}-1}" == "/" ] && [ ${#path} -gt 1 ]; then    # If the last character is a / and that not the only character.
-		path="${path:0:${#path}-1}"	# Delete the last character
-	fi
-	echo $path
-}
-
-# Create a database, an user and its password. Then store the password in the app's config
-#
-# User of database will be store in db_user's variable.
-# Name of database will be store in db_name's variable.
-# And password in db_pwd's variable.
-#
-# usage: ynh_mysql_generate_db user name
-# | arg: user - Owner of the database
-# | arg: name - Name of the database
-ynh_mysql_generate_db () {
-	db_pwd=$(ynh_string_random)	# Generate a random password
-	ynh_mysql_create_db "$2" "$1" "$db_pwd"	# Create the database
-	ynh_app_setting_set $app mysqlpwd $db_pwd	# Store the password in the app's config
-}
-
-# Remove a database if it exist and the associated user
-#
-# usage: ynh_mysql_remove_db user name
-# | arg: user - Proprietary of the database
-# | arg: name - Name of the database
-ynh_mysql_remove_db () {
-	if mysqlshow -u root -p$(sudo cat $MYSQL_ROOT_PWD_FILE) | grep -q "^| $2"; then	# Check if the database exist
-		echo "Remove database $2" >&2
-		ynh_mysql_drop_db $2	# Remove the database
-		ynh_mysql_drop_user $1	# Remove the associated user to database
-	else
-		echo "Database $2 not found" >&2
-	fi
-}
-
-# Correct the name given in argument for mariadb
-#
-# Avoid invalid name for your database
-#
-# Exemple: dbname=$(ynh_make_valid_dbid $app)
-#
-# usage: ynh_make_valid_dbid name
-# | arg: name - name to correct
-# | ret: the corrected name
-ynh_make_valid_dbid () {
-	dbid=${1//[-.]/_}	# Mariadb doesn't support - and . in the name of databases. It will be replace by _
-	echo $dbid
-}
-
 # Manage a fail of the script
 #
 # Print a warning to inform that the script was failed
@@ -375,74 +296,4 @@ EOF
 ynh_remove_app_dependencies () {
     dep_app=${app/_/-}	# Replace all '_' by '-'
     ynh_package_autoremove ${dep_app}-ynh-deps	# Remove the fake package and its dependencies if they not still used.
-}
-
-# Use logrotate to manage the logfile
-#
-# usage: ynh_use_logrotate [logfile]
-# | arg: logfile - absolute path of logfile
-#
-# If no argument provided, a standard directory will be use. /var/log/${app}
-# You can provide a path with the directory only or with the logfile.
-# /parentdir/logdir/
-# /parentdir/logdir/logfile.log
-#
-# It's possible to use this helper several times, each config will added to same logrotate config file.
-ynh_use_logrotate () {
-	if [ -n "$1" ]; then
-		if [ "$(echo ${1##*.})" == "log" ]; then	# Keep only the extension to check if it's a logfile
-			logfile=$1	# In this case, focus logrotate on the logfile
-		else
-			logfile=$1/.log	# Else, uses the directory and all logfile into it.
-		fi
-	else
-		logfile="/var/log/${app}/.log" # Without argument, use a defaut directory in /var/log
-	fi
-	cat > ./${app}-logrotate << EOF	# Build a config file for logrotate
-$logfile {
-		# Rotate if the logfile exceeds 100Mo
-	size 100M
-		# Keep 12 old log maximum
-	rotate 12
-		# Compress the logs with gzip
-	compress
-		# Compress the log at the next cycle. So keep always 2 non compressed logs
-	delaycompress
-		# Copy and truncate the log to allow to continue write on it. Instead of move the log.
-	copytruncate
-		# Do not do an error if the log is missing
-	missingok
-		# Not rotate if the log is empty
-	notifempty
-		# Keep old logs in the same dir
-	noolddir
-}
-EOF
-	sudo mkdir -p $(dirname "$logfile")	# Create the log directory, if not exist
-	cat ${app}-logrotate | sudo tee -a /etc/logrotate.d/$app > /dev/null	# Append this config to the others for this app. If a config file already exist
-}
-
-# Remove the app's logrotate config.
-#
-# usage: ynh_remove_logrotate
-ynh_remove_logrotate () {
-	if [ -e "/etc/logrotate.d/$app" ]; then
-		sudo rm "/etc/logrotate.d/$app"
-	fi
-}
-
-# Find a free port and return it
-#
-# example: port=$(ynh_find_port 8080)
-#
-# usage: ynh_find_port begin_port
-# | arg: begin_port - port to start to search
-ynh_find_port () {
-	port=$1
-	test -n "$port" || ynh_die "The argument of ynh_find_port must be a valid port."
-	while netcat -z 127.0.0.1 $port       # Check if the port is free
-	do
-		port=$((port+1))	# Else, pass to next port
-	done
-	echo $port
 }
