@@ -33,7 +33,9 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 
 CHECK_DOMAINPATH
+echo $path >&2
 CHECK_PATH	# Vérifie et corrige la syntaxe du path.
+echo $path >&2
 CHECK_FINALPATH	# Vérifie que le dossier de destination n'est pas déjà utilisé.
 
 #=================================================
