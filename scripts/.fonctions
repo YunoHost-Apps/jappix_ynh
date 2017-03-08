@@ -23,32 +23,6 @@ CHECK_FINALPATH () {	# Vérifie que le dossier de destination n'est pas déjà u
 }
 
 #=================================================
-# DISPLAYING
-#=================================================
-
-NO_PRINT () {	# Supprime l'affichage dans stdout pour la commande en argument.
-	set +x
-	eval "$@"
-	set -x
-}
-
-WARNING () {	# Écrit sur le canal d'erreur pour passer en warning.
-	eval "$@" >&2
-}
-
-SUPPRESS_WARNING () {	# Force l'écriture sur la sortie standard
-	eval "$@" 2>&1
-}
-
-QUIET () {	# Redirige la sortie standard dans /dev/null
-	eval "$@" > /dev/null
-}
-
-ALL_QUIET () {	# Redirige la sortie standard et d'erreur dans /dev/null
-	eval "$@" > /dev/null 2>&1
-}
-
-#=================================================
 # SETUP
 #=================================================
 
@@ -68,135 +42,6 @@ SETUP_SOURCE () {	# Télécharge la source, décompresse et copie dans $final_pa
 	fi
 }
 
-ADD_SYS_USER () {   # Créer un utilisateur système dédié à l'app
-        if ! ynh_system_user_exists "$app"	# Test l'existence de l'utilisateur
-        then
-            sudo useradd -d /var/www/$app --system --user-group $app --shell /usr/sbin/nologin || ynh_die "Unable to create $app system account"
-        fi
-}
-
-POOL_FPM () {	# Créer le fichier de configuration du pool php-fpm et le configure.
-	sed -i "s@__NAMETOCHANGE__@$app@g" ../conf/php-fpm.conf
-	sed -i "s@__FINALPATH__@$final_path@g" ../conf/php-fpm.conf
-	sed -i "s@__USER__@$app@g" ../conf/php-fpm.conf
-	finalphpconf=/etc/php5/fpm/pool.d/$app.conf
-	sudo cp ../conf/php-fpm.conf $finalphpconf
-	sudo chown root: $finalphpconf
-	finalphpini=/etc/php5/fpm/conf.d/20-$app.ini
-	sudo cp ../conf/php-fpm.ini $finalphpini
-	sudo chown root: $finalphpini
-	sudo service php5-fpm reload
-}
-
-#=================================================
-# REMOVE
-#=================================================
-
-REMOVE_NGINX_CONF () {	# Suppression de la configuration nginx
-	if [ -e "/etc/nginx/conf.d/$domain.d/$app.conf" ]; then	# Delete nginx config
-		echo "Delete nginx config"
-		sudo rm "/etc/nginx/conf.d/$domain.d/$app.conf"
-		sudo service nginx reload
-	fi
-}
-
-REMOVE_FPM_CONF () {	# Suppression de la configuration du pool php-fpm
-	if [ -e "/etc/php5/fpm/pool.d/$app.conf" ]; then	# Delete fpm config
-		echo "Delete fpm config"
-		sudo rm "/etc/php5/fpm/pool.d/$app.conf"
-	fi
-	if [ -e "/etc/php5/fpm/conf.d/20-$app.ini" ]; then	# Delete php config
-		echo "Delete php config"
-		sudo rm "/etc/php5/fpm/conf.d/20-$app.ini"
-	fi
-	sudo service php5-fpm reload
-}
-
-SECURE_REMOVE () {      # Suppression de dossier avec vérification des variables
-	chaine="$1"	# L'argument doit être donné entre quotes simple '', pour éviter d'interpréter les variables.
-	no_var=0
-	while (echo "$chaine" | grep -q '\$')	# Boucle tant qu'il y a des $ dans la chaine
-	do
-		no_var=1
-		global_var=$(echo "$chaine" | cut -d '$' -f 2)	# Isole la première variable trouvée.
-		only_var=\$$(expr "$global_var" : '\([A-Za-z0-9_]*\)')	# Isole complètement la variable en ajoutant le $ au début et en gardant uniquement le nom de la variable. Se débarrasse surtout du / et d'un éventuel chemin derrière.
-		real_var=$(eval "echo ${only_var}")		# `eval "echo ${var}` permet d'interpréter une variable contenue dans une variable.
-		if test -z "$real_var" || [ "$real_var" = "/" ]; then
-			WARNING echo "Variable $only_var is empty, suppression of $chaine cancelled."
-			return 1
-		fi
-		chaine=$(echo "$chaine" | sed "s@$only_var@$real_var@")	# remplace la variable par sa valeur dans la chaine.
-	done
-	if [ "$no_var" -eq 1 ]
-	then
-		if [ -e "$chaine" ]; then
-			echo "Delete directory $chaine"
-			sudo rm -r "$chaine"
-		fi
-		return 0
-	else
-		WARNING echo "No detected variable."
-		return 1
-	fi
-}
-
-REMOVE_SYS_USER () {   # Supprime l'utilisateur système dédié à l'app
-    if ynh_system_user_exists "$app"	# Test l'existence de l'utilisateur
-    then
-    	sudo userdel $app
-    fi
-}
-
-#=================================================
-# BACKUP
-#=================================================
-
-BACKUP_FAIL_UPGRADE () {
-	WARNING echo "Upgrade failed."
-	if ALL_QUIET sudo yunohost backup list | grep -q $app-before-upgrade$backup_number; then	# Vérifie l'existence de l'archive avant de supprimer l'application et de restaurer
-		sudo yunohost app remove $app	# Supprime l'application avant de la restaurer.
-		sudo yunohost backup restore --ignore-hooks $app-before-upgrade$backup_number --apps $app --force	# Restore the backup if upgrade failed
-		ynh_die "The app was restored to the way it was before the failed upgrade."
-	fi
-}
-
-BACKUP_BEFORE_UPGRADE () {	# Backup the current version of the app, restore it if the upgrade fails
-	backup_number=1
-	old_backup_number=2
-	if ALL_QUIET sudo yunohost backup list | grep -q $app-before-upgrade1; then	# Vérifie l'existence d'une archive déjà numéroté à 1.
-		backup_number=2	# Et passe le numéro de l'archive à 2
-		old_backup_number=1
-	fi
-
-	sudo yunohost backup create --ignore-hooks --apps $app --name $app-before-upgrade$backup_number	# Créer un backup différent de celui existant.
-	if [ "$?" -eq 0 ]; then	# Si le backup est un succès, supprime l'archive précédente.
-		if ALL_QUIET sudo yunohost backup list | grep -q $app-before-upgrade$old_backup_number; then	# Vérifie l'existence de l'ancienne archive avant de la supprimer, pour éviter une erreur.
-			QUIET sudo yunohost backup delete $app-before-upgrade$old_backup_number
-		fi
-	else	# Si le backup a échoué
-		ynh_die "Backup failed, the upgrade process was aborted."
-	fi
-}
-
-#=================================================
-# CONFIGURATION
-#=================================================
-
-STORE_MD5_CONFIG () {	# Enregistre la somme de contrôle du fichier de config
-# $1 = Nom du fichier de conf pour le stockage dans settings.yml
-# $2 = Nom complet et chemin du fichier de conf.
-	ynh_app_setting_set $app $1_file_md5 $(sudo md5sum "$2" | cut -d' ' -f1)
-}
-
-CHECK_MD5_CONFIG () {	# Créé un backup du fichier de config si il a été modifié.
-# $1 = Nom du fichier de conf pour le stockage dans settings.yml
-# $2 = Nom complet et chemin du fichier de conf.
-	if [ "$(ynh_app_setting_get $app $1_file_md5)" != $(sudo md5sum "$2" | cut -d' ' -f1) ]; then
-		sudo cp -a "$2" "$2.backup.$(date '+%d.%m.%y_%Hh%M,%Ss')"	# Si le fichier de config a été modifié, créer un backup.
-	fi
-}
-
-
 #=================================================
 #=================================================
 # FUTUR YNH HELPERS
@@ -204,19 +49,6 @@ CHECK_MD5_CONFIG () {	# Créé un backup du fichier de config si il a été modi
 # Importer ce fichier de fonction avant celui des helpers officiel
 # Ainsi, les officiels prendront le pas sur ceux-ci le cas échéant
 #=================================================
-
-# Ignore the yunohost-cli log to prevent errors with conditionals commands
-# usage: ynh_no_log COMMAND
-# Simply duplicate the log, execute the yunohost command and replace the log without the result of this command
-# It's a very badly hack...
-ynh_no_log() {
-  ynh_cli_log=/var/log/yunohost/yunohost-cli.log
-  sudo cp -a ${ynh_cli_log} ${ynh_cli_log}-move
-  eval $@
-  exit_code=$?
-  sudo mv ${ynh_cli_log}-move ${ynh_cli_log}
-  return $?
-}
 
 # Manage a fail of the script
 #
@@ -260,40 +92,4 @@ ynh_exit_properly () {
 ynh_check_error () {
 	set -eu	# Exit if a command fail, and if a variable is used unset.
 	trap ynh_exit_properly EXIT	# Capturing exit signals on shell script
-}
-
-# Install dependencies with a equivs control file
-#
-# usage: ynh_app_dependencies dep [dep [...]]
-# | arg: dep - the package name to install in dependence
-ynh_app_dependencies () {
-    dependencies=$@
-    manifest_path="../manifest.json"
-    if [ ! -e "$manifest_path" ]; then
-    	manifest_path="../settings/manifest.json"	# Into the restore script, the manifest is not at the same place
-    fi
-    version=$(sudo python3 -c "import sys, json;print(json.load(open(\"$manifest_path\"))['version'])")	# Retrieve the version number in the manifest file.
-    dep_app=${app//_/-}	# Replace all '_' by '-'
-    cat > ./${dep_app}-ynh-deps.control << EOF	# Make a control file for equivs-build
-Section: misc
-Priority: optional
-Package: ${dep_app}-ynh-deps
-Version: ${version}
-Depends: ${dependencies}
-Architecture: all
-Description: Fake package for ${app} (YunoHost app) dependencies
- This meta-package is only responsible of installing its dependencies.
-EOF
-    ynh_package_install_from_equivs ./${dep_app}-ynh-deps.control \
-        || ynh_die "Unable to install dependencies"	# Install the fake package and its dependencies
-}
-
-# Remove fake package and its dependencies
-#
-# Dependencies will removed only if no other package need them.
-#
-# usage: ynh_remove_app_dependencies
-ynh_remove_app_dependencies () {
-    dep_app=${app/_/-}	# Replace all '_' by '-'
-    ynh_package_autoremove ${dep_app}-ynh-deps	# Remove the fake package and its dependencies if they not still used.
 }
