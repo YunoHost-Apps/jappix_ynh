@@ -1,9 +1,12 @@
 #!/bin/bash
 
-app="jappix"
+set -u
+source /usr/share/yunohost/helpers
+
+app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve arguments
-domain=$(sudo yunohost app setting "$app" domain)
+domain=$(ynh_app_setting_get "$app" domain)
 
 # Remove sources and configuration
 sudo rm -rf "/var/www/${app}"
