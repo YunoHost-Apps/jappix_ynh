@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # causes the shell to exit if any subcommand or pipeline returns a non-zero status
-set -e
+set -eu
 
 # Source YNH helpers
-. /usr/share/yunohost/helpers
+source /usr/share/yunohost/helpers
 
-app="jappix"
+app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve app settings
-domain=$(sudo yunohost app setting "$app" domain)
+domain=$(ynh_app_setting_get $app domain)
 
 # Save sources & data
 ynh_backup "/var/www/${app}" "sources"
