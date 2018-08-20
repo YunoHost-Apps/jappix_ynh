@@ -1,4 +1,4 @@
-#Jappix package for YunoHost
+# Jappix package for YunoHost
 
 - **YunoHost**: https://yunohost.org/
 - **Shipped version:** 1.1.7
