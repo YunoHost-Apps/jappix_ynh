@@ -1,5 +1,7 @@
 # Jappix package for YunoHost
 
+[![Integration level](https://dash.yunohost.org/integration/jappix.svg)](https://dash.yunohost.org/appci/app/jappix) ![](https://ci-apps.yunohost.org/ci/badges/jappix.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/jappix.maintain.svg)
+
 - **YunoHost**: https://yunohost.org/
 - **Shipped version:** 1.1.7
 
