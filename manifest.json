@@ -8,18 +8,17 @@
   },
   "url": "https://jappix.org/",
   "license": "AGPL-3",
-  "version": "1.1.7",
+  "version": "1.1.7~ynh1",
   "maintainer": {
     "name": "titoko",
     "email": "titoko@titoko.fr"
   },
   "multi_instance": false,
   "requirements": {
-    "yunohost": ">> 2.3.15"
+    "yunohost": ">> 3.8.1"
   },
   "services": [
-      "nginx",
-      "php5-fpm",
+      "nginx"
       "metronome"
   ],
   "arguments": {

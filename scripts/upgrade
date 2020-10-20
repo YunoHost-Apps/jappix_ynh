@@ -1,8 +1,18 @@
 #!/bin/bash
 
-set -eu
-source .fonctions
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
 source /usr/share/yunohost/helpers
+
+#=================================================
+# LOAD SETTINGS
+#=================================================
+ynh_script_progression --message="Loading installation settings..." --time --weight=1
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -26,22 +36,33 @@ CHECK_PATH
 final_path="/var/www/${app}"
 ynh_app_setting_set $app final_path $final_path
 SETUP_SOURCE	# Télécharge la source, décompresse et copie dans $final_path
-sudo mkdir -p "${final_path}/store/conf"
-sudo cp ../conf/*.xml "${final_path}/store/conf/"
+mkdir -p "${final_path}/store/conf"
+cp ../conf/*.xml "${final_path}/store/conf/"
 
 # Set permissions to jappix directory
 sudo chown -R www-data: "$final_path"
 
 # Set and copy NGINX configuraion
-sudo sed -i "s@PATHTOCHANGE@${path}@g" ../conf/nginx.conf
-sudo sed -i "s@ALIASTOCHANGE@${final_path}/@g" ../conf/nginx.conf
-sudo cp ../conf/nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
+sed -i "s@PATHTOCHANGE@${path}@g" ../conf/nginx.conf
+sed -i "s@ALIASTOCHANGE@${final_path}/@g" ../conf/nginx.conf
+cp ../conf/nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
 
 # Set Jappix configuration
-sudo sed -i "s@PATHTOCHANGE@${path}@g" "${final_path}/store/conf/hosts.xml"
-sudo sed -i "s@CHANGELANG@${language}@g" "${final_path}/store/conf/main.xml"
-sudo sed -i "s@CHANGENAME@${name}@g" "${final_path}/store/conf/main.xml"
-sudo sed -i "s@DOMAINTOCHANGE@${domain}@g" "${final_path}/store/conf/hosts.xml"
+sed -i "s@PATHTOCHANGE@${path}@g" "${final_path}/store/conf/hosts.xml"
+sed -i "s@CHANGELANG@${language}@g" "${final_path}/store/conf/main.xml"
+sed -i "s@CHANGENAME@${name}@g" "${final_path}/store/conf/main.xml"
+sed -i "s@DOMAINTOCHANGE@${domain}@g" "${final_path}/store/conf/hosts.xml"
 
-# Reload services
-sudo service nginx reload
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading nginx web server..." --time --weight=1
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Upgrade of $app completed" --time --last
+
