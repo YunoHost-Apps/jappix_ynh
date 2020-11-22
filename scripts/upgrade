@@ -23,6 +23,7 @@ domain=$(ynh_app_setting_get $app domain)
 path=$(ynh_app_setting_get $app path)
 name=$(ynh_app_setting_get "$app" name)
 language=$(ynh_app_setting_get "$app" language)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -43,7 +44,7 @@ fi
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --time --weight=1
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=1
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -58,30 +59,46 @@ ynh_abort_if_errors
 # Copy files to the right place
 #=================================================
 
-final_path="/var/www/${app}"
-ynh_app_setting_set $app final_path $final_path
-SETUP_SOURCE	# Télécharge la source, décompresse et copie dans $final_path
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression --message="Setting up source files..." --weight=6
+
+ynh_setup_source --dest_dir=$final_path
+
 mkdir -p "${final_path}/store/conf"
 cp ../conf/*.xml "${final_path}/store/conf/"
 
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
+
 # Set permissions to jappix directory
-sudo chown -R www-data: "$final_path"
+chown -R www-data: $final_path
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading nginx web server configuration..." --time --weight=1
+ynh_script_progression --message="Upgrading nginx web server configuration..." --weight=1
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
 
-
-
+#=================================================
 # Set Jappix configuration
-sed -i "s@PATHTOCHANGE@${path}@g" "${final_path}/store/conf/hosts.xml"
-sed -i "s@CHANGELANG@${language}@g" "${final_path}/store/conf/main.xml"
-sed -i "s@CHANGENAME@${name}@g" "${final_path}/store/conf/main.xml"
-sed -i "s@DOMAINTOCHANGE@${domain}@g" "${final_path}/store/conf/hosts.xml"
+#=================================================
+
+cp ../conf/hosts.xml $final_path/store/conf/hosts.xml
+
+ynh_replace_string --match_string="__DOMAIN__" --replace_string=$domain --target_file="$final_path/store/conf/hosts.xml"
+ynh_replace_string --match_string="__FINALPATH__" --replace_string=$final_path --target_file="$final_path/store/conf/hosts.xml"
+
+cp ../conf/main.xml $final_path/store/conf/main.xml
+
+ynh_replace_string --match_string="__LANGUAGE__" --replace_string=$language --target_file="$final_path/store/conf/main.xml"
+ynh_replace_string --match_string="__NAME__" --replace_string=$name --target_file="$final_path/store/conf/main.xml"
 
 #=================================================
 # RELOAD NGINX
