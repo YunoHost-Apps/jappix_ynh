@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # causes the shell to exit if any subcommand or pipeline returns a non-zero status
-set -eu
+
 source /usr/share/yunohost/helpers
+
+ynh_abort_if_errors
 
 # Retrieve old app settings
 app=$YNH_APP_INSTANCE_NAME
@@ -10,10 +12,10 @@ domain=$(ynh_app_setting_get $app domain)
 
 
 # Restore sources & data
-sudo cp -a ./sources "/var/www/${app}"
+cp -a ./sources "/var/www/${app}"
 
 # Restore Nginx and YunoHost parameters
-sudo cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
+cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
 
 # Reload services
-sudo service nginx reload
+ynh_systemd_action --service_name=nginx --action=reload
