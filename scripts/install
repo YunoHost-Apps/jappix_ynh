@@ -27,14 +27,6 @@ language=$YNH_APP_ARG_LANGUAGE
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
-# Check domain/path availability
-#=================================================
-
-CHECK_PATH	# Vérifie et corrige la syntaxe du path.
-CHECK_DOMAINPATH
-CHECK_FINALPATH	# Vérifie que le dossier de destination n'est pas déjà utilisé.
-
-#=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
 
@@ -44,10 +36,13 @@ ynh_app_setting_set $app domain $domain
 ynh_app_setting_set $app final_path $final_path
 
 #=================================================
-# Copy files to the right place
+# DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_script_progression --message="Setting up source files..." --weight=1
 
-SETUP_SOURCE	# Télécharge la source, décompresse et copie dans $final_path
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source --dest_dir="$final_path"
 
 mkdir -p "${final_path}/store/conf"
 cp ../conf/*.xml "${final_path}/store/conf/"
@@ -59,12 +54,14 @@ cp ../conf/*.xml "${final_path}/store/conf/"
 chown -R www-data: "$final_path"
 
 #=================================================
-# Set and copy NGINX configuraion
+# NGINX CONFIGURATION
 #=================================================
+ynh_script_progression --message="Configuring nginx web server..." --weight=1
 
-sed -i "s@PATHTOCHANGE@${path}@g" ../conf/nginx.conf
-sed -i "s@ALIASTOCHANGE@${final_path}/@g" ../conf/nginx.conf
-cp ../conf/nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
+### `ynh_add_nginx_config` will use the file conf/nginx.conf
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
 
 #=================================================
 # Validate language
@@ -94,4 +91,3 @@ ynh_systemd_action --service_name=nginx --action=reload
 #=================================================
 
 ynh_script_progression --message="Installation of $app completed" --last
-

@@ -1,2 +1,7 @@
-SOURCE_URL=https://github.com/jappix/jappix/archive/1.1.7.tar.gz
-SOURCE_SUM=515b8079b42f280da9b624d8f9825109
+SOURCE_URL=https://jappix.org/jappix-1-2.zip
+SOURCE_SUM=0f47ee4c08360e1ff0830a7eda1deec07f60dba719df5ab599c974ca3d763bd5
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=true
+SOURCE_FILENAME=
+
