@@ -1,25 +1,25 @@
 {
-  "packaging_format": 1,
-  "id": "jappix",
   "name": "Jappix",
+  "id": "jappix",
+  "packaging_format": 1,
   "description": {
     "en": "A free social network",
     "fr": "Un réseau social libre"
   },
   "url": "https://jappix.org/",
-  "license": "AGPL-3",
-  "version": "1.1.7",
+  "license": "AGPL-3.0-only",
+  "version": "1.1.7~ynh1",
   "maintainer": {
     "name": "titoko",
     "email": "titoko@titoko.fr"
   },
   "multi_instance": false,
   "requirements": {
-    "yunohost": ">> 2.3.15"
+    "yunohost": ">> 3.8.1"
   },
   "services": [
       "nginx",
-      "php5-fpm",
+      "php7.0-fpm",
       "metronome"
   ],
   "arguments": {
@@ -45,6 +45,7 @@
     },
     {
       "name": "name",
+      "type": "string",
       "ask": {
         "en": "Choose a name for Jappix",
         "fr": "Choisissez un nom pour Jappix"
@@ -54,6 +55,7 @@
     },
     {
       "name": "language",
+      "type": "string",
       "ask": {
           "en": "Choose the default language of Jappix",
           "fr": "Choissisez la langue par défaut de Jappix"
