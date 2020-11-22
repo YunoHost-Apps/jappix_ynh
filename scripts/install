@@ -20,7 +20,7 @@ ynh_abort_if_errors
 #=================================================
 
 domain=$YNH_APP_ARG_DOMAIN
-path=$YNH_APP_ARG_PATH
+path_url=$YNH_APP_ARG_PATH
 name=$YNH_APP_ARG_NAME
 language=$YNH_APP_ARG_LANGUAGE
 
@@ -29,11 +29,12 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
+ynh_script_progression --message="Storing installation settings..." --weight=1
 
-ynh_app_setting_set $app name $name
-ynh_app_setting_set $app language $language
-ynh_app_setting_set $app domain $domain
-ynh_app_setting_set $app final_path $final_path
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=name --value=$name
+ynh_app_setting_set --app=$app --key=language --value=$language
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -44,21 +45,19 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path"
 
-mkdir -p "${final_path}/store/conf"
-cp ../conf/*.xml "${final_path}/store/conf/"
+mkdir -p "$final_path/store/conf"
+cp ../conf/*.xml "$final_path/store/conf/"
 
 #=================================================
 # Set permissions to jappix directory
 #=================================================
 
-chown -R www-data: "$final_path"
+chown -R www-data: $final_path
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
 ynh_script_progression --message="Configuring nginx web server..." --weight=1
-
-### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
