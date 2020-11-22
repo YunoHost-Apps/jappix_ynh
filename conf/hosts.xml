@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <jappix xmlns="jappix:conf:hosts">
-    <main>DOMAINTOCHANGE</main>
-    <muc>muc.DOMAINTOCHANGE</muc>
-    <pubsub>pubsub.DOMAINTOCHANGE</pubsub>
-    <vjud>vjud.DOMAINTOCHANGE</vjud>
-    <anonymous>anonymous.DOMAINTOCHANGE</anonymous>
+    <main>__DOMAIN__</main>
+    <muc>muc.__DOMAIN__</muc>
+    <pubsub>pubsub.__DOMAIN__</pubsub>
+    <vjud>vjud.__DOMAIN__</vjud>
+    <anonymous>anonymous.__DOMAIN__</anonymous>
     <stun>stun.jappix.com</stun>
     <turn></turn>
     <turn_username></turn_username>
     <turn_password></turn_password>
-    <bosh>https://DOMAINTOCHANGEPATHTOCHANGE/http-bind</bosh>
+    <bosh>https://__DOMAIN____FINALPATH__/http-bind</bosh>
     <bosh_main></bosh_main>
     <bosh_mini></bosh_mini>
     <websocket></websocket>

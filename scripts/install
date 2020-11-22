@@ -68,26 +68,24 @@ chown -R www-data: $final_path
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..." --weight=1
+ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
 
 #=================================================
-# Validate language
-#=================================================
-
-[[ -e "${final_path}/i18n/${language}" ]] \
-  || language="en"
-
-#=================================================
 # Set Jappix configuration
 #=================================================
 
-sed -i "s@PATHTOCHANGE@${final_path}@g" "$final_path/store/conf/hosts.xml"
-sed -i "s@CHANGELANG@${language}@g" "$final_path/store/conf/main.xml"
-sed -i "s@CHANGENAME@${name}@g" "$final_path/store/conf/main.xml"
-sed -i "s@DOMAINTOCHANGE@${domain}@g" "$final_path/store/conf/hosts.xml"
+cp ../conf/hosts.xml $final_path/store/conf/hosts.xml
+
+ynh_replace_string --match_string="__DOMAIN__" --replace_string=$domain --target_file="$final_path/store/conf/hosts.xml"
+ynh_replace_string --match_string="__FINALPATH__" --replace_string=$final_path --target_file="$final_path/store/conf/hosts.xml"
+
+cp ../conf/main.xml $final_path/store/conf/main.xml
+
+ynh_replace_string --match_string="__LANGUAGE__" --replace_string=$language --target_file="$final_path/store/conf/main.xml"
+ynh_replace_string --match_string="__NAME__" --replace_string=$name --target_file="$final_path/store/conf/main.xml"
 
 #=================================================
 # RELOAD NGINX
