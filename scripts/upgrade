@@ -1,8 +1,9 @@
 #!/bin/bash
 
-set -eu
 source .fonctions
 source /usr/share/yunohost/helpers
+
+ynh_abort_if_errors
 
 app=$YNH_APP_INSTANCE_NAME
 
