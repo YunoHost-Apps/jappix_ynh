@@ -9,8 +9,8 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get "$app" domain)
 
 # Remove sources and configuration
-sudo rm -rf "/var/www/${app}"
-sudo rm -f "/etc/nginx/conf.d/${domain}.d/${app}.conf"
+ynh_secure_remove --file="/var/www/${app}"
+ynh_secure_remove --file="/etc/nginx/conf.d/${domain}.d/${app}.conf"
 
 # Reload services
 sudo service nginx reload
