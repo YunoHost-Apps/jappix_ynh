@@ -1,7 +1,7 @@
 # Jappix for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/jappix.svg)](https://dash.yunohost.org/appci/app/jappix) ![](https://ci-apps.yunohost.org/ci/badges/jappix.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/jappix.maintain.svg)  
-[![Install Jappix with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=jappix)
+[![Install Jappix with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=jappix)
 
 > *This package allows you to install Jappix quickly and simply on a YunoHost server.  
 If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
@@ -13,8 +13,8 @@ Jappix is a fully-featured XMPP web-client with an open social platform which en
 
 #### Supported architectures
 
-* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/jappix%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/jappix/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/jappix%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/jappix/)
+* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/jappix.svg)](https://ci-apps.yunohost.org/ci/apps/jappix/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/jappix.svg)](https://ci-apps-arm.yunohost.org/ci/apps/jappix/)
 
 ## Links
 
