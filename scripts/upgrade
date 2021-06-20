@@ -26,6 +26,12 @@ language=$(ynh_app_setting_get "$app" language)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
 #=================================================
+# CHECK VERSION
+#=================================================
+
+upgrade_type=$(ynh_check_app_version_changed)
+
+#=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..."--weight=1
@@ -40,6 +46,26 @@ if [ -z "$name" ]; then
 	name=${name:-YunoJappix}
 	ynh_app_setting_set --app=$app --key=name --value=$name
 fi
+
+# If db_name doesn't exist, create it
+if [ -z "$final_path/store/conf" ]; then
+	mkdir -p "$final_path/store/conf"
+fi
+
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+	ynh_legacy_permissions_delete_all
+
+	ynh_app_setting_delete --app=$app --key=is_public
+fi
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
@@ -56,27 +82,21 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
-# Copy files to the right place
-#=================================================
-
-#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression --message="Setting up source files..." --weight=6
 
-ynh_setup_source --dest_dir=$final_path
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_script_progression --message="Upgrading source files..." --weight=1
 
-mkdir -p "${final_path}/store/conf"
-cp ../conf/*.xml "${final_path}/store/conf/"
+	# Download, check integrity, uncompress and patch the source from app.src
+	ynh_setup_source --dest_dir="$final_path"
+fi
 
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-
-# Set permissions to jappix directory
-chown -R www-data: $final_path
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -92,6 +112,7 @@ ynh_add_nginx_config
 
 ynh_add_config --template="../conf/hosts.xml" --destination="$final_path/store/conf/hosts.xml"
 ynh_add_config --template="../conf/main.xml" --destination="$final_path/store/conf/main.xml"
+ynh_add_config --template="../conf/installed.xml" --destination="$final_path/store/conf/installed.xml"
 
 #=================================================
 # RELOAD NGINX

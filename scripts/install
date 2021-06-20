@@ -48,6 +48,14 @@ ynh_app_setting_set --app=$app --key=name --value=$name
 ynh_app_setting_set --app=$app --key=language --value=$language
 
 #=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..." --weight=1
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression --message="Setting up source files..." --weight=1
@@ -56,14 +64,9 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path"
 
-mkdir -p "$final_path/store/conf"
-cp ../conf/*.xml "$final_path/store/conf/"
-
-#=================================================
-# Set permissions to jappix directory
-#=================================================
-
-chown -R www-data: $final_path
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -77,8 +80,11 @@ ynh_add_nginx_config
 # Set Jappix configuration
 #=================================================
 
+mkdir -p "$final_path/store/conf"
+
 ynh_add_config --template="../conf/hosts.xml" --destination="$final_path/store/conf/hosts.xml"
 ynh_add_config --template="../conf/main.xml" --destination="$final_path/store/conf/main.xml"
+ynh_add_config --template="../conf/installed.xml" --destination="$final_path/store/conf/installed.xml"
 
 #=================================================
 # RELOAD NGINX
