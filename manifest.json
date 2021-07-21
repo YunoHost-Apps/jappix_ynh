@@ -23,37 +23,37 @@
     ],
     "arguments": {
         "install" : [
-    {
-        "name": "domain",
-        "type": "domain",
-        "example": "domain.org"
-    },
-    {
-        "name": "path",
-        "type": "path",
-        "example": "/jappix",
-        "default": "/jappix"
-    },
-    {
-        "name": "name",
-        "type": "string",
-        "ask": {
-            "en": "Choose a name for Jappix",
-            "fr": "Choisissez un nom pour Jappix"
-    },
-        "example": "YunoJappix",
-        "default": "YunoJappix"
-    },
-    {
-        "name": "language",
-        "type": "string",
-        "ask": {
-            "en": "Choose the default language of Jappix",
-            "fr": "Choissisez la langue par défaut de Jappix"
-    },
-        "choices" : ["en", "fr", "es"],
-        "default" : "en"
-    }
+        {
+            "name": "domain",
+            "type": "domain",
+            "example": "domain.org"
+        },
+        {
+            "name": "path",
+            "type": "path",
+            "example": "/jappix",
+            "default": "/jappix"
+        },
+        {
+            "name": "name",
+            "type": "string",
+            "ask": {
+                "en": "Choose a name for Jappix",
+                "fr": "Choisissez un nom pour Jappix"
+        },
+            "example": "YunoJappix",
+            "default": "YunoJappix"
+        },
+        {
+            "name": "language",
+            "type": "string",
+            "ask": {
+                "en": "Choose the default language of Jappix",
+                "fr": "Choissisez la langue par défaut de Jappix"
+        },
+            "choices" : ["en", "fr", "es"],
+            "default" : "en"
+        }
     ]
   }
 }

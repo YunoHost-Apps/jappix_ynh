@@ -19,10 +19,10 @@ ynh_script_progression --message="Loading installation settings..." --weight=1
 app=$YNH_APP_INSTANCE_NAME
 
 # Récupère les infos de l'application.
-domain=$(ynh_app_setting_get $app domain)
-path=$(ynh_app_setting_get $app path)
-name=$(ynh_app_setting_get "$app" name)
-language=$(ynh_app_setting_get "$app" language)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path=$(ynh_app_setting_get --app=$app --key=path)
+name=$(ynh_app_setting_get --app=$app --key=name)
+language=$(ynh_app_setting_get --app=$app --key=language)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
 #=================================================
