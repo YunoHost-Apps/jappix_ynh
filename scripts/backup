@@ -1,21 +1,56 @@
 #!/bin/bash
 
-# causes the shell to exit if any subcommand or pipeline returns a non-zero status
-set -e
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Source YNH helpers
-. /usr/share/yunohost/helpers
+source ../settings/scripts/_common.sh
+source /usr/share/yunohost/helpers
 
-app=${!#}
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
 
-# Retrieve arguments
-backup_dir=$1
+ynh_abort_if_errors
 
-# Retrieve app settings
-domain=$(sudo yunohost app setting "$app" domain)
+#=================================================
+# LOAD SETTINGS
+#=================================================
+ynh_print_info --message="Loading installation settings..."
 
-# Save sources & data
-ynh_backup "/var/www/${app}" "sources"
+app=$YNH_APP_INSTANCE_NAME
 
-# Copy NGINX configuration
-ynh_backup "/etc/nginx/conf.d/${domain}.d/${app}.conf" "nginx.conf"
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
+
+#=================================================
+# DECLARE DATA AND CONF FILES TO BACKUP
+#=================================================
+ynh_print_info --message="Declaring files to be backed up..."
+
+#=================================================
+# BACKUP THE APP MAIN DIR
+#=================================================
+
+ynh_backup --src_path="$final_path"
+
+#=================================================
+# BACKUP THE PHP-FPM CONFIGURATION
+#=================================================
+
+ynh_backup --src_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
+
+#=================================================
+# BACKUP THE NGINX CONFIGURATION
+#=================================================
+
+ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."
