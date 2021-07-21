@@ -9,8 +9,6 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-ynh_abort_if_errors
-
 #=================================================
 # LOAD SETTINGS
 #=================================================
@@ -102,6 +100,8 @@ ynh_add_fpm_config
 #=================================================
 # Set Jappix configuration
 #=================================================
+
+mkdir -p "$final_path/store/conf"
 
 ynh_add_config --template="../conf/hosts.xml" --destination="$final_path/store/conf/hosts.xml"
 ynh_add_config --template="../conf/main.xml" --destination="$final_path/store/conf/main.xml"

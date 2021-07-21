@@ -21,6 +21,10 @@ A free social network
 
 
 
+## Screenshots
+
+![](./doc/screenshots/jappix-social.png)
+
 ## Documentation and resources
 
 * Official app website: https://jappix.org/
