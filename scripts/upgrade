@@ -9,8 +9,6 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-ynh_abort_if_errors
-
 #=================================================
 # LOAD SETTINGS
 #=================================================
@@ -19,48 +17,101 @@ ynh_script_progression --message="Loading installation settings..." --weight=1
 app=$YNH_APP_INSTANCE_NAME
 
 # Récupère les infos de l'application.
-domain=$(ynh_app_setting_get $app domain)
-path=$(ynh_app_setting_get $app path)
-name=$(ynh_app_setting_get "$app" name)
-language=$(ynh_app_setting_get "$app" language)
-
-# Set default values
-name="${name:-YunoJappix}"
-language="${language:-en}"
-
-# Remove trailing "/" for next commands
-CHECK_PATH
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path=$(ynh_app_setting_get --app=$app --key=path)
+name=$(ynh_app_setting_get --app=$app --key=name)
+language=$(ynh_app_setting_get --app=$app --key=language)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 
 #=================================================
-# Copy files to the right place
+# CHECK VERSION
 #=================================================
 
-final_path="/var/www/${app}"
-ynh_app_setting_set $app final_path $final_path
-SETUP_SOURCE	# Télécharge la source, décompresse et copie dans $final_path
-mkdir -p "${final_path}/store/conf"
-cp ../conf/*.xml "${final_path}/store/conf/"
+upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
-# GENERIC FINALIZATION
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-# SECURE FILES AND DIRECTORIES
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=1
+
+# Backup the current version of the app
+ynh_backup_before_upgrade
+ynh_clean_setup () {
+	# Restore it if the upgrade fails
+	ynh_restore_upgradebackup
+}
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
 #=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
+ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
-chown -R www-data: "$final_path"
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+	ynh_legacy_permissions_delete_all
 
-# Set and copy NGINX configuraion
-sed -i "s@PATHTOCHANGE@${path}@g" ../conf/nginx.conf
-sed -i "s@ALIASTOCHANGE@${final_path}/@g" ../conf/nginx.conf
-cp ../conf/nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
+	ynh_app_setting_delete --app=$app --key=is_public
+fi
 
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression --message="Setting up source files..." --weight=6
+
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_script_progression --message="Upgrading source files..." --weight=1
+	ynh_secure_remove --file=$final_path
+	# Download, check integrity, uncompress and patch the source from app.src
+	ynh_setup_source --dest_dir="$final_path"
+fi
+
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=1
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=2
+
+# Create a dedicated PHP-FPM config
+ynh_add_fpm_config 
+
+#=================================================
 # Set Jappix configuration
-sed -i "s@PATHTOCHANGE@${path}@g" "${final_path}/store/conf/hosts.xml"
-sed -i "s@CHANGELANG@${language}@g" "${final_path}/store/conf/main.xml"
-sed -i "s@CHANGENAME@${name}@g" "${final_path}/store/conf/main.xml"
-sed -i "s@DOMAINTOCHANGE@${domain}@g" "${final_path}/store/conf/hosts.xml"
+#=================================================
 
-# Reload services
+mkdir -p "$final_path/store/conf"
+
+ynh_add_config --template="../conf/hosts.xml" --destination="$final_path/store/conf/hosts.xml"
+ynh_add_config --template="../conf/main.xml" --destination="$final_path/store/conf/main.xml"
+ynh_add_config --template="../conf/installed.xml" --destination="$final_path/store/conf/installed.xml"
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
+
 ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================

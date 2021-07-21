@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <jappix xmlns="jappix:conf:main">
-    <name>CHANGENAME</name>
+    <name>__NAME__</name>
     <desc>a free social network</desc>
     <owner_name></owner_name>
     <owner_website></owner_website>
     <legal></legal>
-    <language>CHANGELANG</language>
-    <resource>CHANGENAME</resource>
+    <language>__LANGUAGE__</language>
+    <resource>__NAME__</resource>
     <lock>on</lock>
     <anonymous>off</anonymous>
     <http_auth>on</http_auth>

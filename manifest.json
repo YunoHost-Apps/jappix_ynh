@@ -1,68 +1,64 @@
 {
-  "name": "Jappix",
-  "id": "jappix",
-  "packaging_format": 1,
-  "description": {
-    "en": "A free social network",
-    "fr": "Un réseau social libre"
-  },
-  "url": "https://jappix.org/",
-  "license": "AGPL-3.0-only",
-  "version": "1.1.7~ynh1",
-  "maintainer": {
-    "name": "titoko",
-    "email": "titoko@titoko.fr"
-  },
-  "multi_instance": false,
-  "requirements": {
-    "yunohost": ">> 3.8.1"
-  },
-  "services": [
-      "nginx",
-      "php7.0-fpm",
-      "metronome"
-  ],
-  "arguments": {
-    "install" : [
-    {
-      "name": "domain",
-      "type": "domain",
-      "ask": {
-        "en": "Choose a domain for Jappix",
-        "fr": "Choisissez un domaine pour Jappix"
-      },
-      "example": "domain.org"
+    "name": "Jappix",
+    "id": "jappix",
+    "packaging_format": 1,
+    "description": {
+        "en": "A free social network",
+        "fr": "Un réseau social libre"
     },
-    {
-      "name": "path",
-      "type": "path",
-      "ask": {
-        "en": "Choose a path for Jappix",
-        "fr": "Choisissez un chemin pour Jappix"
-      },
-      "example": "/jappix",
-      "default": "/jappix"
+    "version": "1.2~ynh1",
+    "url": "https://jappix.org/",
+    "upstream": {
+        "license": "AGPL-3.0-only",
+        "website": "https://jappix.org/",
+        "code": "https://github.com/jappix/jappix/"
     },
-    {
-      "name": "name",
-      "type": "string",
-      "ask": {
-        "en": "Choose a name for Jappix",
-        "fr": "Choisissez un nom pour Jappix"
-      },
-      "example": "YunoJappix",
-      "default": "YunoJappix"
+    "license": "AGPL-3.0-only",
+    "maintainer": {
+        "name": "titoko",
+        "email": "titoko@titoko.fr"
     },
-    {
-      "name": "language",
-      "type": "string",
-      "ask": {
-          "en": "Choose the default language of Jappix",
-          "fr": "Choissisez la langue par défaut de Jappix"
+    "requirements": {
+        "yunohost": ">> 4.2.4"
+    },
+    "multi_instance": false,
+    "services": [
+        "nginx",
+        "metronome"
+    ],
+    "arguments": {
+        "install" : [
+        {
+            "name": "domain",
+            "type": "domain",
+            "example": "domain.org"
         },
-      "choices" : ["en", "fr", "es"],
-      "default" : "en"
-    }
+        {
+            "name": "path",
+            "type": "path",
+            "example": "/jappix",
+            "default": "/jappix"
+        },
+        {
+            "name": "name",
+            "type": "string",
+            "ask": {
+                "en": "Choose a name for Jappix",
+                "fr": "Choisissez un nom pour Jappix"
+        },
+            "example": "YunoJappix",
+            "default": "YunoJappix"
+        },
+        {
+            "name": "language",
+            "type": "string",
+            "ask": {
+                "en": "Choose the default language of Jappix",
+                "fr": "Choissisez la langue par défaut de Jappix"
+        },
+            "choices" : ["en", "fr", "es"],
+            "default" : "en"
+        }
     ]
   }
 }
