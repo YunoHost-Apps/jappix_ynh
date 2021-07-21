@@ -17,6 +17,10 @@ Un réseau social libre
 
 
 
+## Captures d'écran
+
+![](./doc/screenshots/jappix-social.png)
+
 ## Documentations et ressources
 
 * Site officiel de l'app : https://jappix.org/
