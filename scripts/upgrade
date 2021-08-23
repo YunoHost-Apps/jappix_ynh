@@ -99,6 +99,7 @@ ynh_add_fpm_config
 #=================================================
 # Set Jappix configuration
 #=================================================
+ynh_script_progression --message="Configuring Jappix..." --weight=1
 
 mkdir -p "$final_path/store/conf"
 
