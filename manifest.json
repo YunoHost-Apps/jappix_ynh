@@ -19,7 +19,7 @@
         "email": "titoko@titoko.fr"
     },
     "requirements": {
-        "yunohost": ">> 4.2.4"
+        "yunohost": ">> 4.3.0"
     },
     "multi_instance": false,
     "services": [
@@ -30,8 +30,7 @@
         "install" : [
         {
             "name": "domain",
-            "type": "domain",
-            "example": "domain.org"
+            "type": "domain"
         },
         {
             "name": "path",
