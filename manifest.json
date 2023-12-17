@@ -19,7 +19,7 @@
         "email": "titoko@titoko.fr"
     },
     "requirements": {
-        "yunohost": ">> 4.3.0"
+        "yunohost": ">> 11.2"
     },
     "multi_instance": false,
     "services": [
@@ -50,7 +50,7 @@
         },
         {
             "name": "language",
-            "type": "string",
+            "type": "select",
             "ask": {
                 "en": "Choose the default language of Jappix",
                 "fr": "Choissisez la langue par défaut de Jappix"
