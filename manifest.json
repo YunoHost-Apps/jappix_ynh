@@ -6,7 +6,7 @@
         "en": "A free social network",
         "fr": "Un réseau social libre"
     },
-    "version": "1.2~ynh1",
+    "version": "1.2~ynh2",
     "url": "https://jappix.org/",
     "upstream": {
         "license": "AGPL-3.0-only",
@@ -19,7 +19,7 @@
         "email": "titoko@titoko.fr"
     },
     "requirements": {
-        "yunohost": ">> 4.2.4"
+        "yunohost": ">> 11.2"
     },
     "multi_instance": false,
     "services": [
@@ -30,8 +30,7 @@
         "install" : [
         {
             "name": "domain",
-            "type": "domain",
-            "example": "domain.org"
+            "type": "domain"
         },
         {
             "name": "path",
@@ -51,7 +50,7 @@
         },
         {
             "name": "language",
-            "type": "string",
+            "type": "select",
             "ask": {
                 "en": "Choose the default language of Jappix",
                 "fr": "Choissisez la langue par défaut de Jappix"

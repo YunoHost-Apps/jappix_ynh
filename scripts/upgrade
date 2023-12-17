@@ -67,7 +67,6 @@ ynh_system_user_create --username=$app --home_dir="$final_path"
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..." --weight=6
 
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
@@ -100,6 +99,7 @@ ynh_add_fpm_config
 #=================================================
 # Set Jappix configuration
 #=================================================
+ynh_script_progression --message="Configuring Jappix..." --weight=1
 
 mkdir -p "$final_path/store/conf"
 

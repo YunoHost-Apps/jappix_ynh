@@ -18,7 +18,7 @@ Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) po
 
 Un réseau social libre
 
-**Version incluse :** 1.2~ynh1
+**Version incluse :** 1.2~ynh2
 
 ## Captures d’écran
 
