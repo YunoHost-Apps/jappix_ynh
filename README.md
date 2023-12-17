@@ -18,7 +18,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 A free social network
 
-**Shipped version:** 1.2~ynh1
+**Shipped version:** 1.2~ynh2
 
 ## Screenshots
 
