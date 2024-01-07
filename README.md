@@ -16,7 +16,8 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-A free social network
+Jappix, a full-featured XMPP web-client (Jappix Desktop, Jappix Mobile & Jappix Mini). 
+
 
 **Shipped version:** 1.2~ynh2
 
