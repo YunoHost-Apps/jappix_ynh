@@ -9,7 +9,7 @@
     <turn></turn>
     <turn_username></turn_username>
     <turn_password></turn_password>
-    <bosh>https://__DOMAIN____FINALPATH__/http-bind</bosh>
+    <bosh>https://__DOMAIN____PATH__/http-bind</bosh>
     <bosh_main></bosh_main>
     <bosh_mini></bosh_mini>
     <websocket></websocket>

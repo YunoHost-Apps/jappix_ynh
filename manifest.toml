@@ -1,0 +1,67 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "jappix"
+name = "Jappix"
+description.en = "A free social network"
+description.fr = "Un réseau social libre"
+
+version = "1.2~ynh2"
+
+maintainers = ["titoko"]
+
+[upstream]
+license = "AGPL-3.0-only"
+website = "https://jappix.org/"
+code = "https://github.com/jappix/jappix/"
+cpe = "cpe:2.3:a:jappix_project:jappix"
+
+[integration]
+yunohost = ">= 11.2"
+architectures = "all"
+multi_instance = false
+ldap = false
+sso = false
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    type = "domain"
+
+    [install.path]
+    type = "path"
+    default = "/jappix"
+
+    [install.name]
+    ask.en = "Choose a name for Jappix"
+    ask.fr = "Choisissez un nom pour Jappix"
+    type = "string"
+    example = "YunoJappix"
+    default = "YunoJappix"
+
+    [install.language]
+    ask.en = "Choose the default language of Jappix"
+    ask.fr = "Choissisez la langue par défaut de Jappix"
+    type = "select"
+    choices = ["en", "fr", "es"]
+    default = "en"
+
+[resources]
+    [resources.sources.main]
+    url = "https://jappix.org/jappix-1-2.zip"
+    sha256 = "0f47ee4c08360e1ff0830a7eda1deec07f60dba719df5ab599c974ca3d763bd5"
+
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.apt]
+    packages = [
+
+    ]
