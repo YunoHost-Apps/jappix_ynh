@@ -7,7 +7,7 @@ name = "Jappix"
 description.en = "A free social network"
 description.fr = "Un réseau social libre"
 
-version = "1.2~ynh2"
+version = "1.2~ynh3"
 
 maintainers = ["titoko"]
 
@@ -48,6 +48,11 @@ ram.runtime = "50M"
     type = "select"
     choices = ["en", "fr", "es"]
     default = "en"
+
+    [install.init_main_permission]
+    help.en = "A public application means that anyone can access this site."
+    type = "group"
+    default = "visitors"
 
 [resources]
     [resources.sources.main]
