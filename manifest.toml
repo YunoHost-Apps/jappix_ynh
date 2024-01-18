@@ -63,5 +63,7 @@ ram.runtime = "50M"
 
     [resources.apt]
     packages = [
-
+        "php7.4-fpm",
+        "php7.4-gd",
+        "php7.4-curl",
     ]
