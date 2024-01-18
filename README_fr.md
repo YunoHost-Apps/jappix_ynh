@@ -19,7 +19,7 @@ Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) po
 Jappix, a full-featured XMPP web-client (Jappix Desktop, Jappix Mobile & Jappix Mini). 
 
 
-**Version incluse :** 1.2~ynh2
+**Version incluse :** 1.2~ynh3
 
 ## Captures d’écran
 

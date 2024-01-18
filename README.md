@@ -19,7 +19,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 Jappix, a full-featured XMPP web-client (Jappix Desktop, Jappix Mobile & Jappix Mini). 
 
 
-**Shipped version:** 1.2~ynh2
+**Shipped version:** 1.2~ynh3
 
 ## Screenshots
 
